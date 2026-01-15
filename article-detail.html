@@ -8,13 +8,14 @@
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link rel="stylesheet" href="assets/css/style.css">
     <script src="assets/js/tailwind-config.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 </head>
 
 <body class="bg-background-light dark:bg-background-dark text-[#181411] dark:text-white font-display">
     <!-- Top Navigation Bar -->
     <div id="navbar-container" class="sticky top-0 z-50 w-full"></div>
 
-    <main class="max-w-[800px] mx-auto px-4 py-8 lg:py-12">
+    <main class="max-w-[1280px] mx-auto px-6 lg:px-10 py-8 lg:py-12">
         <!-- Breadcrumb -->
         <nav class="flex items-center gap-2 text-sm text-[#897261] mb-8">
             <a href="index.html" class="hover:text-primary">หน้าแรก</a>
@@ -131,7 +132,7 @@
                 </p>
             </div>
             <a href="contact.html"
-                class="btn btn-primary px-6 py-3 whitespace-nowrap shadow-lg hover:shadow-primary/30">
+                class="btn btn-primary w-full sm:w-auto px-6 py-3 whitespace-nowrap shadow-lg hover:shadow-primary/30">
                 ติดต่อเราเลย
                 <span class="material-symbols-outlined ml-2">arrow_forward</span>
             </a>
@@ -171,7 +172,24 @@
         </div>
 
     </main>
-
+    <!-- Fixed CTA Button (Consult on LINE) -->
+    <div class="fixed bottom-8 right-8 z-[100] flex flex-col items-end gap-3">
+        <div
+            class="bg-white dark:bg-background-dark px-4 py-2 rounded-xl shadow-xl border border-[#f4f2f0] dark:border-[#3a2d23] hidden md:block">
+            <p class="text-xs text-[#897261]">ต้องการคำแนะนำส่วนตัว?</p>
+            <p class="text-sm font-bold text-primary">ปรึกษาฟรีผ่าน LINE</p>
+        </div>
+        <button
+            class="bg-[#00B900] hover:scale-110 active:scale-95 text-white w-14 h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 group">
+            <svg class="w-8 h-8 md:w-10 md:h-10 fill-current" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M24 10.304c0-5.232-5.383-9.5-12-9.5s-12 4.268-12 9.5c0 4.69 4.27 8.608 10.04 9.351.391.084.922.258 1.18.591.27.35.25.898.12 1.25l-.54 1.63c-.16.51-.78 1.99 3.39.04 3.99-1.88 12.89-7.51 9.81-12.862z">
+                </path>
+            </svg>
+            <span
+                class="absolute right-full mr-4 bg-primary text-white text-xs font-bold py-1 px-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">คุยกับเราตอนนี้</span>
+        </button>
+    </div>
     <!-- Footer -->
     <footer class="bg-white dark:bg-background-dark border-t border-gray-100 dark:border-gray-800">
         <div class="max-w-[1280px] mx-auto px-6 lg:px-10 py-16">

@@ -7,6 +7,12 @@ body {
     font-family: 'Anuphan', sans-serif;
 }
 
+@media (max-width: 640px) {
+    .btn {
+        width: 100%;
+    }
+}
+
 /* Utilities */
 .hide-scrollbar::-webkit-scrollbar {
     display: none;

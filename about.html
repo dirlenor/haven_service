@@ -9,6 +9,7 @@
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link rel="stylesheet" href="assets/css/style.css">
     <script src="assets/js/tailwind-config.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 </head>
 
 <body
@@ -16,9 +17,9 @@
     <!-- Navigation -->
     <div id="navbar-container" class="sticky top-0 z-50 w-full"></div>
     <!-- Main Content -->
-    <main class="flex flex-col items-center">
+    <main class="flex flex-col items-center w-full">
         <!-- Hero Section / Our Story -->
-        <section class="w-full max-w-[1024px] px-4 py-12 md:py-20">
+        <section class="w-full max-w-[1280px] px-6 lg:px-10 py-12 md:py-20">
             <div class="flex flex-col gap-10 md:gap-16 md:flex-row items-center">
                 <!-- Image -->
                 <div
@@ -54,7 +55,7 @@
         </section>
         <!-- Stats Section -->
         <section class="w-full bg-white dark:bg-[#2a1f17] border-y border-stone-200 dark:border-stone-800">
-            <div class="max-w-[1024px] mx-auto px-4 py-16">
+            <div class="max-w-[1280px] mx-auto px-6 lg:px-10 py-16">
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-8">
                     <div class="flex flex-col items-center text-center gap-2 p-4">
                         <div class="p-3 bg-primary/10 rounded-full mb-2">
@@ -81,87 +82,213 @@
                 </div>
             </div>
         </section>
-        <!-- Team Section -->
-        <section class="w-full max-w-[1024px] px-4 py-16 md:py-24">
+        <!-- Why Choose Us Section -->
+        <section class="w-full bg-white dark:bg-[#2a1f17] py-16 md:py-24">
+            <div class="max-w-[1280px] mx-auto px-6 lg:px-10">
+                <div class="text-center max-w-2xl mx-auto flex flex-col items-center gap-4 mb-12">
+                    <span class="text-primary font-bold tracking-wider uppercase text-sm">ทำไมต้องเลือกเรา</span>
+                    <h2 class="text-3xl md:text-4xl font-bold leading-tight tracking-[-0.015em] text-gray-900 dark:text-white">
+                        ทำไมถึงต้องใช้บริการจากเรา
+                    </h2>
+                    <p class="text-gray-600 dark:text-gray-400 text-lg">
+                        เรามุ่งมั่นที่จะมอบประสบการณ์ที่ดีที่สุดและผลลัพธ์ที่เหนือความคาดหวัง
+                    </p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+                    <!-- Reason 1 -->
+                    <div class="flex flex-col gap-4 p-6 rounded-xl bg-background-light dark:bg-[#221810] border border-[#e6e0db] dark:border-[#3d2e23] hover:shadow-lg transition-all">
+                        <div class="bg-primary/10 p-4 rounded-lg w-fit">
+                            <span class="material-symbols-outlined text-primary text-3xl">verified</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white">ประสบการณ์มากกว่า 12 ปี</h3>
+                        <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
+                            ทีมงานมืออาชีพที่มีประสบการณ์ยาวนาน พร้อมให้คำปรึกษาและบริการที่เชื่อถือได้
+                        </p>
+                    </div>
+                    <!-- Reason 2 -->
+                    <div class="flex flex-col gap-4 p-6 rounded-xl bg-background-light dark:bg-[#221810] border border-[#e6e0db] dark:border-[#3d2e23] hover:shadow-lg transition-all">
+                        <div class="bg-primary/10 p-4 rounded-lg w-fit">
+                            <span class="material-symbols-outlined text-primary text-3xl">star</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white">วัสดุคุณภาพสูง</h3>
+                        <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
+                            เราเลือกใช้วัสดุคุณภาพสูงจากผู้ผลิตที่เชื่อถือได้ เพื่อความทนทานและความสวยงามที่ยั่งยืน
+                        </p>
+                    </div>
+                    <!-- Reason 3 -->
+                    <div class="flex flex-col gap-4 p-6 rounded-xl bg-background-light dark:bg-[#221810] border border-[#e6e0db] dark:border-[#3d2e23] hover:shadow-lg transition-all">
+                        <div class="bg-primary/10 p-4 rounded-lg w-fit">
+                            <span class="material-symbols-outlined text-primary text-3xl">groups</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white">ทีมงานมืออาชีพ</h3>
+                        <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
+                            ช่างฝีมือและนักออกแบบผู้เชี่ยวชาญที่ผ่านการฝึกอบรมและมีประสบการณ์สูง
+                        </p>
+                    </div>
+                    <!-- Reason 4 -->
+                    <div class="flex flex-col gap-4 p-6 rounded-xl bg-background-light dark:bg-[#221810] border border-[#e6e0db] dark:border-[#3d2e23] hover:shadow-lg transition-all">
+                        <div class="bg-primary/10 p-4 rounded-lg w-fit">
+                            <span class="material-symbols-outlined text-primary text-3xl">support_agent</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white">บริการหลังการขาย</h3>
+                        <p class="text-gray-600 dark:text-gray-400 leading-relaxed">
+                            เรามีการรับประกันและบริการหลังการขายที่ครอบคลุม เพื่อให้คุณมั่นใจในทุกโครงการ
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Customer Reviews Section -->
+        <section class="w-full max-w-[1280px] px-6 lg:px-10 py-16 md:py-24 mx-auto">
             <div class="flex flex-col gap-10">
                 <div class="text-center max-w-2xl mx-auto flex flex-col items-center gap-4">
-                    <h2
-                        class="text-3xl md:text-4xl font-bold leading-tight tracking-[-0.015em] text-gray-900 dark:text-white">
-                        ทีมงานของเรา</h2>
+                    <span class="text-primary font-bold tracking-wider uppercase text-sm">เสียงจากลูกค้า</span>
+                    <h2 class="text-3xl md:text-4xl font-bold leading-tight tracking-[-0.015em] text-gray-900 dark:text-white">
+                        ผลตอบรับจากลูกค้าที่ผ่านมา
+                    </h2>
                     <p class="text-gray-600 dark:text-gray-400 text-lg">
-                        ช่างฝีมือและนักออกแบบผู้เชี่ยวชาญที่อยู่เบื้องหลังบ้านในฝันของคุณ</p>
+                        ความพึงพอใจของลูกค้าคือแรงบันดาลใจของเรา
+                    </p>
                 </div>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
-                    <!-- Team Member 1 -->
-                    <div class="flex flex-col gap-4 group">
-                        <div class="w-full aspect-[3/4] rounded-xl overflow-hidden bg-gray-200 relative">
-                            <div class="w-full h-full bg-center bg-cover transition-transform duration-500 group-hover:scale-105"
-                                data-alt="Portrait of Araya S. Lead Designer smiling in a modern office"
-                                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB4cfzT6m62OSvyQrl0siO7Pt2OuLaHYPscBKY9e4BRCWoZbHW2lHPpN0qQ2qRHQT_tVBHMVMhllH9YWZnlcK5v10W-EkqiM83hoD7nnrziGKq4EcwY_yli_ArpDPo2YdvpThkGP9Kh6kKu0hju7bg38XKpi2f4YtaRoXHWhoBx8zQzhRys6_1wWg56GbY2fnclojGH-V28CqOyvNDZyI5PVbt4VM3DtrjWu4YnHzl9aF2BID38Eh0QS0HVy3tazezKYnq16jTPJIqf");'>
-                            </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+                    <!-- Review 1 -->
+                    <div class="flex flex-col gap-4 p-6 rounded-xl bg-white dark:bg-[#2d2118] border border-[#e6e0db] dark:border-[#3d2e23] shadow-sm hover:shadow-lg transition-all">
+                        <div class="flex items-center gap-1 mb-2">
+                            <span class="material-symbols-outlined text-primary text-xl">star</span>
+                            <span class="material-symbols-outlined text-primary text-xl">star</span>
+                            <span class="material-symbols-outlined text-primary text-xl">star</span>
+                            <span class="material-symbols-outlined text-primary text-xl">star</span>
+                            <span class="material-symbols-outlined text-primary text-xl">star</span>
                         </div>
-                        <div>
-                            <p class="text-lg font-bold text-gray-900 dark:text-white leading-tight">Araya S.</p>
-                            <p class="text-primary text-sm font-medium leading-normal mt-1">หัวหน้านักออกแบบ</p>
-                        </div>
-                    </div>
-                    <!-- Team Member 2 -->
-                    <div class="flex flex-col gap-4 group">
-                        <div class="w-full aspect-[3/4] rounded-xl overflow-hidden bg-gray-200 relative">
-                            <div class="w-full h-full bg-center bg-cover transition-transform duration-500 group-hover:scale-105"
-                                data-alt="Portrait of Somchai T. Master Carpenter working on wood"
-                                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCoBM72UrVJd01vedUscd55I3DZTwlNL3JEJRvQRULt1Y_HdnB39tWwniwoxsb6qYNlg7ONL2m0KyAqrqS6Oj4v_qPqt5P8n0w35CigS7UyYJw-_tKQ9ips4HA0CV_6V_fhmRYLGU_iwgg-S5v0gzXQ-GQwFFRX4z9Tvt0rC8ZcO31VEkuwrUK1RiiB-MR7xNCd9SmRIgTN2tekfMlANxwRJBwivryBBuhcjKjOs4Ue6pp436dzgwIM1L2tqzagbjvzIeDjyzhA8LAa");'>
-                            </div>
-                        </div>
-                        <div>
-                            <p class="text-lg font-bold text-gray-900 dark:text-white leading-tight">Somchai T.</p>
-                            <p class="text-primary text-sm font-medium leading-normal mt-1">ช่างไม้ผู้เชี่ยวชาญ</p>
+                        <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
+                            "ทีมงานทำงานได้ดีมาก ติดตั้งผ้าม่านเรียบร้อย สวยงามมาก แนะนำเลยค่ะ"
+                        </p>
+                        <div class="pt-4 border-t border-[#e6e0db] dark:border-[#3d2e23]">
+                            <p class="font-bold text-gray-900 dark:text-white">คุณสมใจ ก.</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-500">โครงการ: ติดตั้งผ้าม่าน</p>
                         </div>
                     </div>
-                    <!-- Team Member 3 -->
-                    <div class="flex flex-col gap-4 group">
-                        <div class="w-full aspect-[3/4] rounded-xl overflow-hidden bg-gray-200 relative">
-                            <div class="w-full h-full bg-center bg-cover transition-transform duration-500 group-hover:scale-105"
-                                data-alt="Portrait of Nawat P. Project Manager on site"
-                                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDu-QKXPgpNC2vujH71VEWGeI7M4rHH9ey1dvezLaTFHmqeFcXahzR3HJR3n_vbO4BtQlLpUSSLQ-zsTw_BRB0a1YTupHhKmGZ2UIj5VibjnN0LqX8TdUOjSfm7yVk72wHxDdoK-UiBa8m75ljZhFH2yIAFWbS-MuvtS3ailfzgNWvo5KgL2-pvDPDWc-t2EsR1-z8tlWWPZzZSFUCsbOz5Ef3lHqhPgrdQGsHuKxqrYTYgDNXS52JYLI6T1kr3mj2htySuxmXTO6OQ");'>
-                            </div>
+                    <!-- Review 2 -->
+                    <div class="flex flex-col gap-4 p-6 rounded-xl bg-white dark:bg-[#2d2118] border border-[#e6e0db] dark:border-[#3d2e23] shadow-sm hover:shadow-lg transition-all">
+                        <div class="flex items-center gap-1 mb-2">
+                            <span class="material-symbols-outlined text-primary text-xl">star</span>
+                            <span class="material-symbols-outlined text-primary text-xl">star</span>
+                            <span class="material-symbols-outlined text-primary text-xl">star</span>
+                            <span class="material-symbols-outlined text-primary text-xl">star</span>
+                            <span class="material-symbols-outlined text-primary text-xl">star</span>
                         </div>
-                        <div>
-                            <p class="text-lg font-bold text-gray-900 dark:text-white leading-tight">Nawat P.</p>
-                            <p class="text-primary text-sm font-medium leading-normal mt-1">ผู้จัดการโครงการ</p>
+                        <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
+                            "พอใจมากเลยค่ะ พื้นไม้ SPC สวยมาก ติดตั้งเร็ว ดูแลดี ราคาเหมาะสม"
+                        </p>
+                        <div class="pt-4 border-t border-[#e6e0db] dark:border-[#3d2e23]">
+                            <p class="font-bold text-gray-900 dark:text-white">คุณมาลี ณ.</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-500">โครงการ: ติดตั้งพื้นไม้ SPC</p>
                         </div>
                     </div>
-                    <!-- Team Member 4 -->
-                    <div class="flex flex-col gap-4 group">
-                        <div class="w-full aspect-[3/4] rounded-xl overflow-hidden bg-gray-200 relative">
-                            <div class="w-full h-full bg-center bg-cover transition-transform duration-500 group-hover:scale-105"
-                                data-alt="Portrait of Kanya R. Interior Stylist with fabric samples"
-                                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC7kHitmUl9vnf7bHzJawaaLb_l6s7sXXu8LwLXIn3XC4QmOM9LHr_meTIpYaFKzrqD92zM7BnPQ-pneD_sFdHjOlNavLt4xRVWJyn9RshcTTa6FDFz-VkMLAOi-YmKZLaFJ1G9jRpBbD_Uy-8_WtaeW3NLW5FsOejnZDCReVNdbaDnnwZ8CSINuzAhaPEG-SJwT2pvHiusIOh3ggpub780mGG51aaC5yE08bgC-OjNYx_XZWIvV31QeqlSWpPHsKTgqHNxZzDHXlY2");'>
-                            </div>
+                    <!-- Review 3 -->
+                    <div class="flex flex-col gap-4 p-6 rounded-xl bg-white dark:bg-[#2d2118] border border-[#e6e0db] dark:border-[#3d2e23] shadow-sm hover:shadow-lg transition-all">
+                        <div class="flex items-center gap-1 mb-2">
+                            <span class="material-symbols-outlined text-primary text-xl">star</span>
+                            <span class="material-symbols-outlined text-primary text-xl">star</span>
+                            <span class="material-symbols-outlined text-primary text-xl">star</span>
+                            <span class="material-symbols-outlined text-primary text-xl">star</span>
+                            <span class="material-symbols-outlined text-primary text-xl">star</span>
                         </div>
-                        <div>
-                            <p class="text-lg font-bold text-gray-900 dark:text-white leading-tight">Kanya R.</p>
-                            <p class="text-primary text-sm font-medium leading-normal mt-1">อินทีเรีย สไตลิสต์</p>
+                        <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
+                            "ออกแบบเฟอร์นิเจอร์บิวท์อินได้สวยมาก ใช้พื้นที่ได้เต็มที่ พอใจมากครับ"
+                        </p>
+                        <div class="pt-4 border-t border-[#e6e0db] dark:border-[#3d2e23]">
+                            <p class="font-bold text-gray-900 dark:text-white">คุณประเสริฐ ส.</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-500">โครงการ: เฟอร์นิเจอร์บิวท์อิน</p>
+                        </div>
+                    </div>
+                    <!-- Review 4 -->
+                    <div class="flex flex-col gap-4 p-6 rounded-xl bg-white dark:bg-[#2d2118] border border-[#e6e0db] dark:border-[#3d2e23] shadow-sm hover:shadow-lg transition-all">
+                        <div class="flex items-center gap-1 mb-2">
+                            <span class="material-symbols-outlined text-primary text-xl">star</span>
+                            <span class="material-symbols-outlined text-primary text-xl">star</span>
+                            <span class="material-symbols-outlined text-primary text-xl">star</span>
+                            <span class="material-symbols-outlined text-primary text-xl">star</span>
+                            <span class="material-symbols-outlined text-primary text-xl">star</span>
+                        </div>
+                        <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
+                            "วอลเปเปอร์ติดตั้งเรียบร้อยมาก ไม่มีฟองอากาศ สวยงามมาก แนะนำเลย"
+                        </p>
+                        <div class="pt-4 border-t border-[#e6e0db] dark:border-[#3d2e23]">
+                            <p class="font-bold text-gray-900 dark:text-white">คุณวิไล ภ.</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-500">โครงการ: ติดตั้งวอลเปเปอร์</p>
+                        </div>
+                    </div>
+                    <!-- Review 5 -->
+                    <div class="flex flex-col gap-4 p-6 rounded-xl bg-white dark:bg-[#2d2118] border border-[#e6e0db] dark:border-[#3d2e23] shadow-sm hover:shadow-lg transition-all">
+                        <div class="flex items-center gap-1 mb-2">
+                            <span class="material-symbols-outlined text-primary text-xl">star</span>
+                            <span class="material-symbols-outlined text-primary text-xl">star</span>
+                            <span class="material-symbols-outlined text-primary text-xl">star</span>
+                            <span class="material-symbols-outlined text-primary text-xl">star</span>
+                            <span class="material-symbols-outlined text-primary text-xl">star</span>
+                        </div>
+                        <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
+                            "กันสาดติดตั้งได้สวยมาก แข็งแรง ทนทาน กันแดดกันฝนได้ดีมาก"
+                        </p>
+                        <div class="pt-4 border-t border-[#e6e0db] dark:border-[#3d2e23]">
+                            <p class="font-bold text-gray-900 dark:text-white">คุณสมชาย ล.</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-500">โครงการ: ติดตั้งกันสาด</p>
+                        </div>
+                    </div>
+                    <!-- Review 6 -->
+                    <div class="flex flex-col gap-4 p-6 rounded-xl bg-white dark:bg-[#2d2118] border border-[#e6e0db] dark:border-[#3d2e23] shadow-sm hover:shadow-lg transition-all">
+                        <div class="flex items-center gap-1 mb-2">
+                            <span class="material-symbols-outlined text-primary text-xl">star</span>
+                            <span class="material-symbols-outlined text-primary text-xl">star</span>
+                            <span class="material-symbols-outlined text-primary text-xl">star</span>
+                            <span class="material-symbols-outlined text-primary text-xl">star</span>
+                            <span class="material-symbols-outlined text-primary text-xl">star</span>
+                        </div>
+                        <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
+                            "บริการดีมาก ตั้งแต่ปรึกษา ติดตั้ง จนถึงหลังการขาย ทีมงานเป็นกันเองมาก"
+                        </p>
+                        <div class="pt-4 border-t border-[#e6e0db] dark:border-[#3d2e23]">
+                            <p class="font-bold text-gray-900 dark:text-white">คุณสุรีย์ จ.</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-500">โครงการ: รีโนเวทบ้าน</p>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
         <!-- CTA Section -->
-        <section class="w-full bg-primary text-white py-16 md:py-24 px-4">
-            <div class="max-w-[1024px] mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
+        <section class="w-full bg-primary text-white py-16 md:py-24 px-6 lg:px-10">
+            <div class="max-w-[1280px] mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
                 <div class="flex flex-col gap-3 max-w-xl text-center md:text-left">
                     <h2 class="text-3xl md:text-4xl font-bold leading-tight">พร้อมที่จะเปลี่ยนพื้นที่ของคุณหรือยัง?</h2>
                     <p class="text-white/90 text-lg">เข้าร่วมกับครอบครัวนับร้อยที่ไว้วางใจให้เราสร้างบ้านในฝัน</p>
                 </div>
                 <button
-                    class="bg-white text-primary hover:bg-gray-100 transition-colors px-8 py-4 rounded-xl font-bold text-lg shadow-lg flex items-center gap-2 whitespace-nowrap">
+                    class="w-full sm:w-auto bg-white text-primary hover:bg-gray-100 transition-colors px-8 py-4 rounded-xl font-bold text-lg shadow-lg flex items-center gap-2 whitespace-nowrap">
                     <span>ปรึกษาผู้เชี่ยวชาญ</span>
                     <span class="material-symbols-outlined text-xl">arrow_forward</span>
                 </button>
             </div>
         </section>
     </main>
+    <!-- Fixed CTA Button (Consult on LINE) -->
+    <div class="fixed bottom-8 right-8 z-[100] flex flex-col items-end gap-3">
+        <div
+            class="bg-white dark:bg-background-dark px-4 py-2 rounded-xl shadow-xl border border-[#f4f2f0] dark:border-[#3a2d23] hidden md:block">
+            <p class="text-xs text-[#897261]">ต้องการคำแนะนำส่วนตัว?</p>
+            <p class="text-sm font-bold text-primary">ปรึกษาฟรีผ่าน LINE</p>
+        </div>
+        <button
+            class="bg-[#00B900] hover:scale-110 active:scale-95 text-white w-14 h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 group">
+            <svg class="w-8 h-8 md:w-10 md:h-10 fill-current" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M24 10.304c0-5.232-5.383-9.5-12-9.5s-12 4.268-12 9.5c0 4.69 4.27 8.608 10.04 9.351.391.084.922.258 1.18.591.27.35.25.898.12 1.25l-.54 1.63c-.16.51-.78 1.99 3.39.04 3.99-1.88 12.89-7.51 9.81-12.862z">
+                </path>
+            </svg>
+            <span
+                class="absolute right-full mr-4 bg-primary text-white text-xs font-bold py-1 px-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">คุยกับเราตอนนี้</span>
+        </button>
+    </div>
     <!-- Footer -->
     <footer class="bg-white dark:bg-background-dark border-t border-gray-100 dark:border-gray-800 mt-20">
         <div class="max-w-[1280px] mx-auto px-6 lg:px-10 py-16">

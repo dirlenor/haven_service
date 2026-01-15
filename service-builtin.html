@@ -8,6 +8,7 @@
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link rel="stylesheet" href="assets/css/style.css">
     <script src="assets/js/tailwind-config.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 </head>
 
 <body class="bg-background-light dark:bg-background-dark font-display text-[#181411] dark:text-white">
@@ -234,7 +235,7 @@
                         <p class="text-[#897261] dark:text-[#c4b5ab] text-lg mb-8">
                             มีคำถามเกี่ยวกับบริการเฟอร์นิเจอร์บิวท์อินของเรา? หาคำตอบสำหรับคำถามทั่วไปได้ที่นี่
                         </p>
-                        <button class="flex items-center gap-2 text-primary font-bold hover:underline">
+                        <button class="w-full sm:w-auto flex items-center gap-2 text-primary font-bold hover:underline">
                             ติดต่อฝ่ายสนับสนุน <span class="material-symbols-outlined">arrow_forward</span>
                         </button>
                     </div>
@@ -278,16 +279,34 @@
                     จองการปรึกษาฟรีที่หน้างานวันนี้ ผู้เชี่ยวชาญของเราจะออกแบบและเสนอราคาที่แน่นอนให้คุณ
                 </p>
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <button class="bg-white text-primary px-8 py-3 rounded-lg font-bold shadow-lg hover:bg-gray-100 transition-all transform hover:-translate-y-1">
+                    <button class="w-full sm:w-auto bg-white text-primary px-8 py-3 rounded-lg font-bold shadow-lg hover:bg-gray-100 transition-all transform hover:-translate-y-1">
                         จองการวัดฟรี
                     </button>
-                    <button class="bg-transparent border-2 border-white text-white px-8 py-3 rounded-lg font-bold hover:bg-white/10 transition-all">
+                    <button class="w-full sm:w-auto bg-transparent border-2 border-white text-white px-8 py-3 rounded-lg font-bold hover:bg-white/10 transition-all">
                         ติดต่อเราผ่าน LINE
                     </button>
                 </div>
             </div>
         </section>
     </main>
+    <!-- Fixed CTA Button (Consult on LINE) -->
+    <div class="fixed bottom-8 right-8 z-[100] flex flex-col items-end gap-3">
+        <div
+            class="bg-white dark:bg-background-dark px-4 py-2 rounded-xl shadow-xl border border-[#f4f2f0] dark:border-[#3a2d23] hidden md:block">
+            <p class="text-xs text-[#897261]">ต้องการคำแนะนำส่วนตัว?</p>
+            <p class="text-sm font-bold text-primary">ปรึกษาฟรีผ่าน LINE</p>
+        </div>
+        <button
+            class="bg-[#00B900] hover:scale-110 active:scale-95 text-white w-14 h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 group">
+            <svg class="w-8 h-8 md:w-10 md:h-10 fill-current" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path
+                    d="M24 10.304c0-5.232-5.383-9.5-12-9.5s-12 4.268-12 9.5c0 4.69 4.27 8.608 10.04 9.351.391.084.922.258 1.18.591.27.35.25.898.12 1.25l-.54 1.63c-.16.51-.78 1.99 3.39.04 3.99-1.88 12.89-7.51 9.81-12.862z">
+                </path>
+            </svg>
+            <span
+                class="absolute right-full mr-4 bg-primary text-white text-xs font-bold py-1 px-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">คุยกับเราตอนนี้</span>
+        </button>
+    </div>
     <footer class="bg-white dark:bg-background-dark border-t border-gray-100 dark:border-gray-800 mt-20">
         <div class="max-w-[1280px] mx-auto px-6 lg:px-10 py-16">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
