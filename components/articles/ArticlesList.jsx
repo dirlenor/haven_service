@@ -84,21 +84,15 @@ export default function ArticlesList({ articles = [] }) {
                     {formatDate(article.date)}
                   </span>
                 ) : null}
-                {article.category ? (
-                  <span className="inline-flex items-center gap-1">
-                    <span className="material-symbols-outlined text-[14px]">label</span>
-                    {article.category}
-                  </span>
-                ) : null}
               </div>
-              <h3 className="text-xl font-bold leading-snug mb-3 transition-colors group-hover:text-primary">
+              <h3 className="text-xl font-bold leading-snug mb-3 transition-colors group-hover:text-primary text-[#181411]">
                 {article.title || "บทความ"}
               </h3>
               <p className="text-sm ds-muted line-clamp-3 mb-6 flex-1">
                 {article.summary || "อ่านบทความฉบับเต็มเพื่อรายละเอียดเพิ่มเติม"}
               </p>
               <span
-                className="inline-flex items-center gap-1 font-bold text-primary hover:gap-2 transition-all"
+                className="inline-flex items-center gap-1 font-bold text-[#d46211] hover:gap-2 transition-all"
               >
                 อ่านเพิ่มเติม
                 <span className="material-symbols-outlined text-sm">arrow_forward</span>

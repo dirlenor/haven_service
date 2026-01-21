@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { supabaseServer } from "../../../lib/supabaseServer";
 
@@ -26,6 +27,40 @@ const loadArticle = async (slug) => {
   return byId || null;
 };
 
+const collectCategoryTags = (article) => {
+  if (!article) {
+    return [];
+  }
+  if (Array.isArray(article.categories) && article.categories.length) {
+    return article.categories;
+  }
+  if (article.category) {
+    return [article.category];
+  }
+  return [];
+};
+
+const loadRelatedArticles = async (article, limit = 3) => {
+  if (!supabaseServer || !article) {
+    return [];
+  }
+  const categories = collectCategoryTags(article);
+  const query = supabaseServer
+    .from("articles")
+    .select("id, slug, title, summary, hero_image, date")
+    .eq("status", "published")
+    .neq("id", article.id)
+    .order("date", { ascending: false })
+    .limit(limit);
+
+  if (categories.length) {
+    query.overlaps("categories", categories);
+  }
+
+  const { data } = await query;
+  return data ?? [];
+};
+
 export const generateMetadata = async ({ params }) => {
   const article = await loadArticle(params.slug);
   if (!article) {
@@ -36,23 +71,23 @@ export const generateMetadata = async ({ params }) => {
 
 export default async function ArticleDetailPage({ params }) {
   const article = await loadArticle(params.slug);
-  const fallbackBadgeColor = "#d46211";
-  const categories = Array.isArray(article?.categories) && article.categories.length
-    ? article.categories
-    : article?.category
-    ? [article.category]
-    : [];
-  const colors = Array.isArray(article?.category_colors) && article.category_colors.length
-    ? article.category_colors
-    : article?.categoryColor
-    ? [article.categoryColor]
-    : article?.category_color
-    ? [article.category_color]
-    : [];
-
   if (!article) {
     notFound();
   }
+  const fallbackBadgeColor = "#d46211";
+  const categories = Array.isArray(article.categories) && article.categories.length
+    ? article.categories
+    : article.category
+    ? [article.category]
+    : [];
+  const colors = Array.isArray(article.category_colors) && article.category_colors.length
+    ? article.category_colors
+    : article.categoryColor
+    ? [article.categoryColor]
+    : article.category_color
+    ? [article.category_color]
+    : [];
+  const relatedArticles = await loadRelatedArticles(article);
 
   return (
     <section className="ds-section">
@@ -119,6 +154,47 @@ export default async function ArticleDetailPage({ params }) {
                 {article.cta_button_label}
               </a>
             ) : null}
+          </div>
+        ) : null}
+        {relatedArticles.length ? (
+          <div className="mt-16">
+            <h2 className="text-2xl font-semibold text-[#181411] mb-6">
+              บทความที่เกี่ยวข้อง
+            </h2>
+            <div className="grid gap-6 md:grid-cols-3">
+              {relatedArticles.map((related) => (
+                <Link
+                  key={related.id}
+                  href={`/articles/${related.slug || related.id}`}
+                  className="group block rounded-2xl border border-gray-100 overflow-hidden shadow-sm transition hover:shadow-lg"
+                >
+                  {related.hero_image ? (
+                    <div className="h-40 w-full overflow-hidden">
+                      <img
+                        src={related.hero_image}
+                        alt={related.title || "บทความ"}
+                        className="h-full w-full object-cover transition group-hover:scale-105"
+                      />
+                    </div>
+                  ) : (
+                    <div className="h-40 w-full bg-gray-100" />
+                  )}
+                  <div className="p-4">
+                    <p className="text-xs text-gray-500 mb-1">
+                      {related.date ? new Date(related.date).toLocaleDateString("th-TH") : ""}
+                    </p>
+                    <h3 className="text-lg font-semibold text-[#181411] mb-2">
+                      {related.title}
+                    </h3>
+                    {related.summary ? (
+                      <p className="text-sm text-[#4c3f35] line-clamp-3">
+                        {related.summary}
+                      </p>
+                    ) : null}
+                  </div>
+                </Link>
+              ))}
+            </div>
           </div>
         ) : null}
       </div>
