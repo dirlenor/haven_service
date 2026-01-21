@@ -16,6 +16,8 @@ create table if not exists public.articles (
   hero_image text default '',
   category text default '',
   category_color text default '',
+  categories text[] not null default '{}',
+  category_colors text[] not null default '{}',
   date date,
   content_html text,
   cta_title text,
@@ -42,6 +44,13 @@ create table if not exists public.services (
   sort_order int not null default 0,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
+);
+
+create table if not exists public.article_categories (
+  id uuid primary key default gen_random_uuid(),
+  name text unique not null,
+  color text not null default '#d46211',
+  created_at timestamptz not null default now()
 );
 
 create or replace function public.set_updated_at()
@@ -83,6 +92,7 @@ $$;
 alter table public.admin_users enable row level security;
 alter table public.articles enable row level security;
 alter table public.services enable row level security;
+alter table public.article_categories enable row level security;
 
 drop policy if exists "Admins can manage admin_users" on public.admin_users;
 drop policy if exists "Admins can manage articles" on public.articles;
@@ -117,6 +127,17 @@ create policy "Public can read published services"
   on public.services
   for select
   using (status = 'published');
+
+create policy "Admins can manage article categories"
+  on public.article_categories
+  for all
+  using (public.is_admin())
+  with check (public.is_admin());
+
+create policy "Public can read article categories"
+  on public.article_categories
+  for select
+  using (true);
 
 -- Storage bucket for CMS images (storage.objects RLS is already enabled by Supabase)
 insert into storage.buckets (id, name, public)

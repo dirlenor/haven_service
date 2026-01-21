@@ -37,6 +37,18 @@ export const generateMetadata = async ({ params }) => {
 export default async function ArticleDetailPage({ params }) {
   const article = await loadArticle(params.slug);
   const fallbackBadgeColor = "#d46211";
+  const categories = Array.isArray(article?.categories) && article.categories.length
+    ? article.categories
+    : article?.category
+    ? [article.category]
+    : [];
+  const colors = Array.isArray(article?.category_colors) && article.category_colors.length
+    ? article.category_colors
+    : article?.categoryColor
+    ? [article.categoryColor]
+    : article?.category_color
+    ? [article.category_color]
+    : [];
 
   if (!article) {
     notFound();
@@ -46,12 +58,17 @@ export default async function ArticleDetailPage({ params }) {
     <section className="ds-section">
       <div className="ds-container">
         <div className="mb-10 max-w-3xl">
-          <span
-            className="inline-flex text-white text-xs font-bold px-3 py-1 rounded-full"
-            style={{ backgroundColor: article.category_color || fallbackBadgeColor }}
-          >
-            {article.category || "บทความ"}
-          </span>
+          <div className="flex flex-wrap gap-2">
+            {(categories.length ? categories : ["บทความ"]).slice(0, 3).map((label, index) => (
+              <span
+                key={`${label}-${index}`}
+                className="inline-flex text-white text-xs font-bold px-3 py-1 rounded-full"
+                style={{ backgroundColor: colors[index] || fallbackBadgeColor }}
+              >
+                {label}
+              </span>
+            ))}
+          </div>
           <h1 className="ds-title text-4xl lg:text-5xl mt-4">{article.title}</h1>
           {article.summary ? (
             <p className="ds-muted text-lg mt-4">{article.summary}</p>

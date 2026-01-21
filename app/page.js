@@ -28,7 +28,7 @@ const loadCmsData = async () => {
       .order("created_at", { ascending: false }),
     supabaseServer
       .from("articles")
-      .select("id, slug, title, summary, hero_image, category, category_color, date")
+    .select("id, slug, title, summary, hero_image, category, category_color, categories, category_colors, date")
       .eq("status", "published")
       .order("date", { ascending: false })
       .order("created_at", { ascending: false })
@@ -66,6 +66,8 @@ export default async function HomePage() {
   const afterMain = mainMatch
     ? pageData.body.slice(mainMatch.index + mainMatch[0].length)
     : "";
+  const trimmedBeforeMain = beforeMain.trim();
+  const trimmedAfterMain = afterMain.trim();
 
   let mainContent = mainMatch ? mainMatch[2] || "" : pageData.body;
   mainContent = replaceSectionById(mainContent, "hero-section", markers.hero);
@@ -79,16 +81,17 @@ export default async function HomePage() {
 
   const postMain = replaceSectionById(afterMain, "site-footer", "");
 
+  const trimmedMainContent = mainContent.trim();
   const [mainBeforeContainer, containerBlockRaw, mainAfterContainer] =
-    mainContent.includes(containerMarkers.start) && mainContent.includes(containerMarkers.end)
+    trimmedMainContent.includes(containerMarkers.start) && trimmedMainContent.includes(containerMarkers.end)
       ? (() => {
-          const parts = mainContent.split(containerMarkers.start);
+          const parts = trimmedMainContent.split(containerMarkers.start);
           const before = parts[0] || "";
           const remainder = parts.slice(1).join(containerMarkers.start);
           const afterParts = remainder.split(containerMarkers.end);
           return [before, afterParts[0] || "", afterParts.slice(1).join(containerMarkers.end)];
         })()
-      : [mainContent, "", ""];
+      : [trimmedMainContent, "", ""];
 
   let containerClassName = "";
   let containerInner = "";
@@ -130,15 +133,15 @@ export default async function HomePage() {
 
   return (
     <>
-      {beforeMain ? (
+      {trimmedBeforeMain ? (
         <div
           className="contents"
           suppressHydrationWarning
-          dangerouslySetInnerHTML={{ __html: beforeMain }}
+          dangerouslySetInnerHTML={{ __html: trimmedBeforeMain }}
         />
       ) : null}
       {mainMatch ? (
-        <main className={mainClassName}>
+        <main className={mainClassName} suppressHydrationWarning>
           {mainTokens.map((token, index) => {
             if (token === markers.hero) {
               return <HeroSection key={`hero-${index}`} />;
@@ -199,11 +202,11 @@ export default async function HomePage() {
               })}
             </div>
           ) : null}
-          {mainAfterContainer ? (
+          {trimmedAfterMain ? (
             <div
               className="contents"
               suppressHydrationWarning
-              dangerouslySetInnerHTML={{ __html: mainAfterContainer }}
+              dangerouslySetInnerHTML={{ __html: trimmedAfterMain }}
             />
           ) : null}
         </main>

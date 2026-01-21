@@ -2,6 +2,27 @@ export default function ArticlesSection({ articles = [] }) {
   const hasArticles = articles.length > 0;
   const renderArticles = hasArticles ? articles.slice(0, 3) : [];
   const fallbackBadgeColor = "#d46211";
+  const getBadges = (article) => {
+    const categories = Array.isArray(article.categories) && article.categories.length
+      ? article.categories
+      : article.category
+      ? [article.category]
+      : [];
+    const colors = Array.isArray(article.category_colors) && article.category_colors.length
+      ? article.category_colors
+      : article.categoryColor
+      ? [article.categoryColor]
+      : article.category_color
+      ? [article.category_color]
+      : [];
+    if (!categories.length) {
+      return [{ label: "บทความ", color: fallbackBadgeColor }];
+    }
+    return categories.slice(0, 3).map((label, index) => ({
+      label,
+      color: colors[index] || fallbackBadgeColor
+    }));
+  };
 
   return (
     <section
@@ -41,12 +62,17 @@ export default function ArticlesSection({ articles = [] }) {
                       className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
                       src={article.hero_image || "https://images.unsplash.com/photo-1505691938895-1758d7feb511?q=80&w=1200&auto=format&fit=crop"}
                     />
-                  <div
-                    className="absolute top-4 left-4 text-white text-xs font-bold px-3 py-1 rounded-full backdrop-blur-sm"
-                    style={{ backgroundColor: article.category_color || fallbackBadgeColor }}
-                  >
-                    {article.category || "บทความ"}
-                  </div>
+                    <div className="absolute top-4 left-4 flex flex-wrap gap-2">
+                      {getBadges(article).map((badge) => (
+                        <span
+                          key={badge.label}
+                          className="text-white text-xs font-bold px-3 py-1 rounded-full backdrop-blur-sm"
+                          style={{ backgroundColor: badge.color }}
+                        >
+                          {badge.label}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                   <div className="p-6">
                     <div className="text-xs text-gray-500 mb-3 flex flex-wrap items-center gap-2">

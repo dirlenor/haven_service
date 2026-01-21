@@ -31,6 +31,8 @@ const emptyItem = (type) => ({
   category: "",
   date: "",
   categoryColor: "#d46211",
+  categories: [],
+  categoryColors: [],
   ctaTitle: "",
   ctaBody: "",
   ctaButtonLabel: "",
@@ -44,22 +46,49 @@ const ensureSlug = (value) =>
     .replace(/[^a-z0-9ก-๙]+/g, "-")
     .replace(/^-+|-+$/g, "");
 
-const mapArticleFromRow = (row) => ({
-  id: row.id,
-  slug: row.slug || "",
-  title: row.title || "",
-  summary: row.summary || "",
-  heroImage: row.hero_image || "",
-  category: row.category || "",
-  date: row.date || "",
-  categoryColor: row.category_color || "#d46211",
-  contentHtml: row.content_html || "",
-  ctaTitle: row.cta_title || "",
-  ctaBody: row.cta_body || "",
-  ctaButtonLabel: row.cta_button_label || "",
-  ctaButtonHref: row.cta_button_href || "",
-  status: row.status || "draft"
-});
+const normalizeCategoryList = (labels, colors, fallbackColor = "#d46211") => {
+  const map = new Map();
+  labels.forEach((label, index) => {
+    const cleanLabel = String(label || "").trim();
+    if (!cleanLabel || map.has(cleanLabel)) {
+      return;
+    }
+    map.set(cleanLabel, colors[index] || fallbackColor);
+  });
+  return {
+    categories: Array.from(map.keys()),
+    categoryColors: Array.from(map.values())
+  };
+};
+
+const mapArticleFromRow = (row) => {
+  const rawCategories = Array.isArray(row.categories) ? row.categories : [];
+  const rawColors = Array.isArray(row.category_colors) ? row.category_colors : [];
+  const legacyCategory = row.category || "";
+  const legacyColor = row.category_color || "#d46211";
+  const categories = rawCategories.length ? rawCategories : legacyCategory ? [legacyCategory] : [];
+  const categoryColors = rawColors.length ? rawColors : categories.length ? [legacyColor] : [];
+  const normalized = normalizeCategoryList(categories, categoryColors, legacyColor);
+
+  return {
+    id: row.id,
+    slug: row.slug || "",
+    title: row.title || "",
+    summary: row.summary || "",
+    heroImage: row.hero_image || "",
+    category: normalized.categories[0] || "",
+    date: row.date || "",
+    categoryColor: normalized.categoryColors[0] || "#d46211",
+    categories: normalized.categories,
+    categoryColors: normalized.categoryColors,
+    contentHtml: row.content_html || "",
+    ctaTitle: row.cta_title || "",
+    ctaBody: row.cta_body || "",
+    ctaButtonLabel: row.cta_button_label || "",
+    ctaButtonHref: row.cta_button_href || "",
+    status: row.status || "draft"
+  };
+};
 
 const mapServiceFromRow = (row) => ({
   id: row.id,
@@ -72,15 +101,22 @@ const mapServiceFromRow = (row) => ({
 });
 
 const buildArticleRow = (item) => {
+  const normalized = normalizeCategoryList(
+    item.categories || [],
+    item.categoryColors || [],
+    item.categoryColor || "#d46211"
+  );
   const row = {
     id: item.id || undefined,
     slug: item.slug?.trim() || null,
     title: item.title || "",
     summary: item.summary || "",
     hero_image: item.heroImage || "",
-    category: item.category || "",
+    category: normalized.categories[0] || item.category || "",
     date: item.date || null,
-    category_color: item.categoryColor || "#d46211",
+    category_color: normalized.categoryColors[0] || item.categoryColor || "#d46211",
+    categories: normalized.categories,
+    category_colors: normalized.categoryColors,
     content_html: item.contentHtml || "",
     cta_title: item.ctaTitle || "",
     cta_body: item.ctaBody || "",
@@ -110,6 +146,45 @@ const buildServiceRow = (item) => {
   return row;
 };
 
+const compressImage = (file, options = {}) =>
+  new Promise((resolve) => {
+    const { maxWidth = 1600, quality = 0.8 } = options;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        const scale = Math.min(1, maxWidth / img.width);
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.round(img.width * scale);
+        canvas.height = Math.round(img.height * scale);
+        const ctx = canvas.getContext("2d");
+        if (!ctx) {
+          resolve(file);
+          return;
+        }
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob(
+          (blob) => {
+            if (!blob) {
+              resolve(file);
+              return;
+            }
+            const compressed = new File([blob], file.name.replace(/\.[^.]+$/, ".jpg"), {
+              type: "image/jpeg"
+            });
+            resolve(compressed);
+          },
+          "image/jpeg",
+          quality
+        );
+      };
+      img.onerror = () => resolve(file);
+      img.src = reader.result;
+    };
+    reader.onerror = () => resolve(file);
+    reader.readAsDataURL(file);
+  });
+
 export default function MockCmsApp() {
   const [authLoading, setAuthLoading] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -117,7 +192,7 @@ export default function MockCmsApp() {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
   const [data, setData] = useState({ services: [], articles: [] });
-  const [categories, setCategories] = useState([]);
+  const [categoryOptions, setCategoryOptions] = useState([]);
   const [activeTab, setActiveTab] = useState("articles");
   const [activeId, setActiveId] = useState("");
   const [session, setSession] = useState(null);
@@ -125,6 +200,8 @@ export default function MockCmsApp() {
   const [password, setPassword] = useState("");
   const [dirtyById, setDirtyById] = useState({});
   const [lastSavedAt, setLastSavedAt] = useState("");
+  const [newCategoryName, setNewCategoryName] = useState("");
+  const [newCategoryColor, setNewCategoryColor] = useState("#d46211");
   const [isEditorOpen, setIsEditorOpen] = useState(false);
 
   const items = data[activeTab] || [];
@@ -162,35 +239,56 @@ export default function MockCmsApp() {
     const loadData = async () => {
       setLoading(true);
       setError("");
-      const [{ data: articleRows, error: articleError }, { data: serviceRows, error: serviceError }] =
-        await Promise.all([
-          supabase
-            .from("articles")
-            .select("*")
-            .order("created_at", { ascending: false }),
-          supabase
-            .from("services")
-            .select("*")
-            .order("sort_order", { ascending: true })
-            .order("created_at", { ascending: false })
-        ]);
+      const [
+        { data: articleRows, error: articleError },
+        { data: serviceRows, error: serviceError },
+        { data: categoryRows, error: categoryError }
+      ] = await Promise.all([
+        supabase
+          .from("articles")
+          .select("*")
+          .order("created_at", { ascending: false }),
+        supabase
+          .from("services")
+          .select("*")
+          .order("sort_order", { ascending: true })
+          .order("created_at", { ascending: false }),
+        supabase
+          .from("article_categories")
+          .select("*")
+          .order("name", { ascending: true })
+      ]);
 
-      if (articleError || serviceError) {
-        setError(articleError?.message || serviceError?.message || "โหลดข้อมูลไม่สำเร็จ");
+      if (articleError || serviceError || categoryError) {
+        setError(
+          articleError?.message ||
+            serviceError?.message ||
+            categoryError?.message ||
+            "โหลดข้อมูลไม่สำเร็จ"
+        );
       }
 
       const mappedArticles = (articleRows || []).map(mapArticleFromRow);
       const mappedServices = (serviceRows || []).map(mapServiceFromRow);
 
       setData({ services: mappedServices, articles: mappedArticles });
-      setCategories(
-        Array.from(
-          new Set(
-            mappedArticles
-              .map((article) => article.category)
-              .filter(Boolean)
-          )
-        )
+      const categoryPool = mappedArticles.flatMap((article) => article.categories || []);
+      const mappedOptions = Array.isArray(categoryRows)
+        ? categoryRows.map((row) => ({
+            id: row.id,
+            name: row.name,
+            color: row.color || "#d46211"
+          }))
+        : [];
+      const fallbackOptions = normalizeCategoryList(categoryPool, [], "#d46211").categories.map(
+        (label) => ({
+          id: label,
+          name: label,
+          color: "#d46211"
+        })
+      );
+      setCategoryOptions(
+        mappedOptions.length ? mappedOptions : fallbackOptions
       );
       setLoading(false);
       setDirtyById({});
@@ -209,6 +307,14 @@ export default function MockCmsApp() {
       setActiveId(list[0].id);
     }
   }, [data, activeTab, activeId]);
+
+  useEffect(() => {
+    if (!activeId) {
+      return;
+    }
+    setNewCategoryName("");
+    setNewCategoryColor("#d46211");
+  }, [activeId]);
 
   useEffect(() => {
     if (!isArticle || !activeItem?.id || activeItem.date) {
@@ -356,18 +462,73 @@ export default function MockCmsApp() {
     handleChange("slug", ensureSlug(activeItem.title));
   };
 
+  const handleAddCategory = async () => {
+    if (!activeItem) {
+      return;
+    }
+    const nextLabel = newCategoryName.trim();
+    if (!nextLabel) {
+      return;
+    }
+    const currentCategories = activeItem.categories || [];
+    const currentColors = activeItem.categoryColors || [];
+    if (currentCategories.length >= 3) {
+      alert("กำหนดหมวดหมู่ได้ไม่เกิน 3 รายการ");
+      return;
+    }
+    if (currentCategories.includes(nextLabel)) {
+      return;
+    }
+    const existing = categoryOptions.find((option) => option.name === nextLabel);
+    let color = newCategoryColor;
+    if (!existing && supabase) {
+      const { data, error: insertError } = await supabase
+        .from("article_categories")
+        .insert({ name: nextLabel, color: newCategoryColor })
+        .select("*")
+        .single();
+      if (insertError) {
+        setError(insertError.message);
+        return;
+      }
+      color = data?.color || newCategoryColor;
+      setCategoryOptions((prev) => [
+        ...prev,
+        { id: data?.id || nextLabel, name: nextLabel, color }
+      ]);
+    } else if (existing) {
+      color = existing.color || newCategoryColor;
+    }
+    handleChange("categories", [...currentCategories, nextLabel]);
+    handleChange("categoryColors", [...currentColors, color]);
+    setNewCategoryName("");
+  };
+
+  const handleRemoveCategory = (index) => {
+    if (!activeItem) {
+      return;
+    }
+    const currentCategories = activeItem.categories || [];
+    const currentColors = activeItem.categoryColors || [];
+    const nextCategories = currentCategories.filter((_, i) => i !== index);
+    const nextColors = currentColors.filter((_, i) => i !== index);
+    handleChange("categories", nextCategories);
+    handleChange("categoryColors", nextColors);
+  };
+
   const handleUpload = async (file) => {
     if (!supabase || !activeItem?.id) {
       return;
     }
     setUploading(true);
     setError("");
-    const sanitizedName = file.name.replace(/[^a-zA-Z0-9._-]/g, "-");
+    const compressedFile = await compressImage(file);
+    const sanitizedName = compressedFile.name.replace(/[^a-zA-Z0-9._-]/g, "-");
     const path = `${activeTab}/${activeItem.id}/${Date.now()}-${sanitizedName}`;
     const { error: uploadError } = await supabase
       .storage
       .from("cms-public")
-      .upload(path, file, { upsert: true });
+      .upload(path, compressedFile, { upsert: true });
     if (uploadError) {
       setError(uploadError.message);
       setUploading(false);
@@ -615,7 +776,11 @@ export default function MockCmsApp() {
                     ) : null}
                   </div>
                   <div className="text-sm text-[#4c3f35]">
-                    {isArticle ? item.category || "-" : "-"}
+                    {isArticle && item.categories?.length
+                      ? item.categories.slice(0, 3).join(", ")
+                      : isArticle && item.category
+                      ? item.category
+                      : "-"}
                   </div>
                   <div className="text-sm text-[#4c3f35]">
                     {isArticle ? item.date || "-" : "-"}
@@ -743,6 +908,16 @@ export default function MockCmsApp() {
               </label>
 
               <label className="flex flex-col gap-2 text-sm font-semibold">
+                รูปหลัก (URL)
+                <input
+                  className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                  value={activeItem.heroImage}
+                  onChange={(event) => handleChange("heroImage", event.target.value)}
+                  placeholder="https://..."
+                />
+              </label>
+
+              <label className="flex flex-col gap-2 text-sm font-semibold">
                 รูปหลัก (อัปโหลด)
                 <input
                   className="rounded-lg border border-gray-200 px-3 py-2 text-sm bg-white"
@@ -788,42 +963,83 @@ export default function MockCmsApp() {
                 <>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <label className="flex flex-col gap-2 text-sm font-semibold">
-                      หมวดหมู่
+                      หมวดหมู่ (สูงสุด 3)
+                      <div className="flex flex-wrap gap-2">
+                        {(activeItem.categories || []).map((cat, index) => (
+                          <span
+                            key={`${cat}-${index}`}
+                            className="inline-flex items-center gap-2 text-xs font-bold px-3 py-1 rounded-full text-white"
+                            style={{ backgroundColor: activeItem.categoryColors?.[index] || "#d46211" }}
+                          >
+                            {cat}
+                            <button
+                              type="button"
+                              className="text-[10px] font-bold text-white/80"
+                              onClick={() => handleRemoveCategory(index)}
+                            >
+                              ×
+                            </button>
+                          </span>
+                        ))}
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {categoryOptions.length ? (
+                          categoryOptions.map((option) => {
+                            const selected = (activeItem.categories || []).includes(option.name);
+                            return (
+                              <button
+                                key={option.id}
+                                type="button"
+                                className={`px-3 py-1 rounded-full text-xs font-bold border transition-colors ${
+                                  selected ? "text-white border-transparent" : "border-gray-200 text-[#181411]"
+                                }`}
+                                style={selected ? { backgroundColor: option.color } : undefined}
+                                onClick={() => {
+                                  if (selected) {
+                                    const index = activeItem.categories.indexOf(option.name);
+                                    handleRemoveCategory(index);
+                                    return;
+                                  }
+                                  const currentCategories = activeItem.categories || [];
+                                  const currentColors = activeItem.categoryColors || [];
+                                  if (currentCategories.length >= 3) {
+                                    alert("กำหนดหมวดหมู่ได้ไม่เกิน 3 รายการ");
+                                    return;
+                                  }
+                                  handleChange("categories", [...currentCategories, option.name]);
+                                  handleChange("categoryColors", [...currentColors, option.color || "#d46211"]);
+                                }}
+                              >
+                                {option.name}
+                              </button>
+                            );
+                          })
+                        ) : (
+                          <span className="text-xs text-[#897261]">ยังไม่มีหมวดหมู่</span>
+                        )}
+                      </div>
                       <div className="flex gap-2">
                         <input
                           className="flex-1 rounded-lg border border-gray-200 px-3 py-2 text-sm"
-                          list="article-categories"
-                          value={activeItem.category}
-                          onChange={(event) => handleChange("category", event.target.value)}
-                          placeholder="เช่น ไอเดียแต่งบ้าน"
+                          value={newCategoryName}
+                          onChange={(event) => setNewCategoryName(event.target.value)}
+                          placeholder="เพิ่มหมวดหมู่ใหม่"
                         />
                         <input
                           className="h-10 w-10 rounded-lg border border-gray-200 p-1 bg-white"
                           type="color"
-                          value={activeItem.categoryColor || "#d46211"}
-                          onChange={(event) => handleChange("categoryColor", event.target.value)}
+                          value={newCategoryColor}
+                          onChange={(event) => setNewCategoryColor(event.target.value)}
                           title="สีหมวดหมู่"
                         />
                         <button
                           type="button"
                           className="px-3 py-2 text-xs rounded-lg border border-gray-200"
-                          onClick={() => {
-                            if (!activeItem.category) {
-                              return;
-                            }
-                            setCategories((prev) =>
-                              Array.from(new Set([...(prev || []), activeItem.category]))
-                            );
-                          }}
+                          onClick={handleAddCategory}
                         >
                           เพิ่ม
                         </button>
                       </div>
-                      <datalist id="article-categories">
-                        {(categories || []).map((category) => (
-                          <option key={category} value={category} />
-                        ))}
-                      </datalist>
                     </label>
                     <label className="flex flex-col gap-2 text-sm font-semibold">
                       วันที่
