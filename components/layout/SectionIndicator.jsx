@@ -12,6 +12,7 @@ export default function SectionIndicator() {
   const [sections, setSections] = useState([]);
   const [activeId, setActiveId] = useState("");
   const [copiedId, setCopiedId] = useState("");
+  const [copiedClassId, setCopiedClassId] = useState("");
   const [pickedColor, setPickedColor] = useState("");
   const [colorCopied, setColorCopied] = useState(false);
   const [canEyeDropper, setCanEyeDropper] = useState(false);
@@ -38,7 +39,7 @@ export default function SectionIndicator() {
           section.id = id;
         }
         usedIds.add(id);
-        return { id, label: id };
+        return { id, label: id, className: section.className || "" };
       });
 
     setSections(items);
@@ -156,7 +157,7 @@ export default function SectionIndicator() {
                 const isActive = section.id === activeId;
                 return (
                   <li key={section.id}>
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-col gap-1">
                       <button
                         type="button"
                         onClick={() => {
@@ -174,21 +175,40 @@ export default function SectionIndicator() {
                       >
                         {section.label}
                       </button>
-                      <button
-                        type="button"
-                        className="text-[11px] uppercase tracking-[0.08em] font-bold text-primary/80 hover:text-primary transition-colors"
-                        onClick={() => {
-                          if (navigator?.clipboard?.writeText) {
-                            navigator.clipboard.writeText(section.id);
-                            setCopiedId(section.id);
-                            window.clearTimeout(window.__copyTimeout);
-                            window.__copyTimeout = window.setTimeout(() => setCopiedId(""), 1200);
-                          }
-                        }}
-                        aria-label={`Copy ${section.id}`}
-                      >
-                        {copiedId === section.id ? "Copied" : "Copy"}
-                      </button>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          className="text-[11px] uppercase tracking-[0.08em] font-bold text-primary/80 hover:text-primary transition-colors"
+                          onClick={() => {
+                            if (navigator?.clipboard?.writeText) {
+                              navigator.clipboard.writeText(section.id);
+                              setCopiedId(section.id);
+                              window.clearTimeout(window.__copyTimeout);
+                              window.__copyTimeout = window.setTimeout(() => setCopiedId(""), 1200);
+                            }
+                          }}
+                          aria-label={`Copy ${section.id}`}
+                        >
+                          {copiedId === section.id ? "Copied" : "Copy"}
+                        </button>
+                        <button
+                          type="button"
+                          disabled={!section.className}
+                          className="text-[11px] uppercase tracking-[0.08em] font-bold text-primary/80 hover:text-primary transition-colors disabled:opacity-50"
+                          onClick={() => {
+                            if (!section.className || !navigator?.clipboard?.writeText) {
+                              return;
+                            }
+                            navigator.clipboard.writeText(section.className);
+                            setCopiedClassId(section.id);
+                            window.clearTimeout(window.__copyClassTimeout);
+                            window.__copyClassTimeout = window.setTimeout(() => setCopiedClassId(""), 1200);
+                          }}
+                          aria-label={`Copy classes for ${section.id}`}
+                        >
+                          {copiedClassId === section.id ? "Copied class" : "Copy class"}
+                        </button>
+                      </div>
                     </div>
                   </li>
                 );

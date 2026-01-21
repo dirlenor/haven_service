@@ -66,9 +66,22 @@ window.tailwind.config = {
 };
 `;
 
+const tailwindReady = `
+function markTailwindReady() {
+  document.documentElement.classList.add("tw-ready");
+}
+
+if (document.readyState === "complete") {
+  markTailwindReady();
+} else {
+  window.addEventListener("load", markTailwindReady, { once: true });
+  setTimeout(markTailwindReady, 500);
+}
+`;
+
 export default function RootLayout({ children }) {
   return (
-    <html lang="th" className="light tw-ready" suppressHydrationWarning>
+    <html lang="th" className="light" suppressHydrationWarning>
       <head>
         <link rel="stylesheet" href="/assets/css/style.css" />
         <Script
@@ -79,6 +92,11 @@ export default function RootLayout({ children }) {
         <Script
           src="https://cdn.tailwindcss.com?plugins=forms,container-queries"
           strategy="beforeInteractive"
+        />
+        <Script
+          id="tailwind-ready"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{ __html: tailwindReady }}
         />
         <Script
           id="scroll-restoration"

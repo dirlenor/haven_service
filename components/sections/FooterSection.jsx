@@ -131,7 +131,7 @@ export default function FooterSection() {
           </div>
           <a
             href="/admin"
-            className="opacity-0 hover:opacity-80 transition-opacity text-[10px] uppercase tracking-[0.3em]"
+            className="inline-flex items-center gap-2 rounded-full border border-white/60 px-3 py-1 text-[10px] uppercase tracking-[0.3em] text-white/90 transition-colors hover:text-white hover:border-white"
             aria-label="Admin"
           >
             Admin
