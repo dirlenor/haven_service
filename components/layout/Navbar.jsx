@@ -57,6 +57,20 @@ export default function Navbar() {
     };
   }, []);
 
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = "hidden";
+      document.body.style.touchAction = "none";
+      return () => {
+        document.body.style.overflow = "";
+        document.body.style.touchAction = "";
+      };
+    }
+    document.body.style.overflow = "";
+    document.body.style.touchAction = "";
+    return undefined;
+  }, [mobileOpen]);
+
   const navLinkClass = (key) =>
     key === activeKey
       ? "text-sm font-bold text-primary"
@@ -64,7 +78,7 @@ export default function Navbar() {
 
   const mobileLinkClass = (key) =>
     key === activeKey
-      ? "text-base font-bold text-primary py-2"
+      ? "text-base font-bold py-2"
       : "text-base font-semibold ds-muted hover:text-primary transition-colors py-2";
 
   const activeStyle = { color: "var(--ds-color-primary)" };
@@ -150,7 +164,7 @@ export default function Navbar() {
         </nav>
         <div className="flex items-center gap-3">
           <button
-            className="md:hidden inline-flex items-center justify-center size-10 rounded-lg border border-[#ece7e2] dark:border-[#3d2b1d] text-[#181411] dark:text-white hover:bg-[#f6f2ee] dark:hover:bg-[#2b1f17] transition-colors"
+            className="md:hidden inline-flex items-center justify-center size-10 rounded-lg border border-transparent text-[#d32f2f] hover:bg-[#d32f2f] hover:text-white transition-colors"
             id="mobile-menu-toggle"
             aria-controls="mobile-menu"
             aria-expanded={mobileOpen}
@@ -164,23 +178,30 @@ export default function Navbar() {
       </div>
       <div
         id="mobile-menu"
-        className={`md:hidden border-t border-[#f4f2f0] dark:border-[#3d2b1d] bg-white/95 dark:bg-background-dark/95 ${
+        className={`md:hidden fixed top-16 left-0 right-0 h-[calc(100vh-4rem)] z-40 bg-white ${
           mobileOpen ? "block" : "hidden"
         }`}
       >
-        <div className="ds-container py-4 flex flex-col gap-1">
-          <Link href="/" className={mobileLinkClass("home")} onClick={() => setMobileOpen(false)}>
+        <div className="ds-container h-full py-6 flex flex-col gap-1 overflow-y-auto">
+          <Link
+            href="/"
+            className={mobileLinkClass("home")}
+            style={activeKey === "home" ? activeStyle : undefined}
+            onClick={() => setMobileOpen(false)}
+          >
             หน้าหลัก
           </Link>
-          <div className="mt-2 mb-1">
-            <Link
-              href="/services"
-              className={`${mobileLinkClass("services")} block`}
-              onClick={() => setMobileOpen(false)}
+          <details className="mt-2 mb-1 group">
+            <summary
+              className={`${mobileLinkClass("services")} list-none cursor-pointer flex items-center justify-between`}
+              style={activeKey === "services" ? activeStyle : undefined}
             >
               บริการ
-            </Link>
-            <div className="pl-4 mt-1 flex flex-col gap-0.5 border-l-2 border-gray-200 dark:border-gray-700 ml-2">
+              <span className="material-symbols-outlined text-base transition-transform group-open:rotate-180">
+                expand_more
+              </span>
+            </summary>
+            <div className="pl-4 mt-2 flex flex-col gap-0.5 border-l-2 border-gray-200 dark:border-gray-700 ml-2">
               {services.length ? (
                 services.map((service) => {
                   const href = `/services/${service.slug || service.id}`;
@@ -189,8 +210,9 @@ export default function Navbar() {
                       key={service.id}
                       href={href}
                       className={`text-sm font-normal hover:text-primary transition-colors py-1.5 ${
-                        pathname === href ? "text-primary font-medium" : "ds-muted"
+                        pathname === href ? "font-medium" : "ds-muted"
                       }`}
+                      style={pathname === href ? activeStyle : undefined}
                       onClick={() => setMobileOpen(false)}
                     >
                       {service.title || "บริการ"}
@@ -202,24 +224,40 @@ export default function Navbar() {
               )}
               <Link
                 href="/services"
-                className="text-sm font-medium text-primary hover:text-primary/80 transition-colors py-1.5 mt-1"
+                className="text-sm font-medium hover:text-primary/80 transition-colors py-1.5 mt-1"
+                style={activeStyle}
                 onClick={() => setMobileOpen(false)}
               >
                 ดูบริการทั้งหมด →
               </Link>
             </div>
-          </div>
-          <Link href="/about" className={mobileLinkClass("about")} onClick={() => setMobileOpen(false)}>
+          </details>
+          <Link
+            href="/about"
+            className={mobileLinkClass("about")}
+            style={activeKey === "about" ? activeStyle : undefined}
+            onClick={() => setMobileOpen(false)}
+          >
             เกี่ยวกับเรา
           </Link>
-          <Link href="/articles" className={mobileLinkClass("articles")} onClick={() => setMobileOpen(false)}>
+          <Link
+            href="/articles"
+            className={mobileLinkClass("articles")}
+            style={activeKey === "articles" ? activeStyle : undefined}
+            onClick={() => setMobileOpen(false)}
+          >
             บทความ
           </Link>
-          <Link href="/contact" className={mobileLinkClass("contact")} onClick={() => setMobileOpen(false)}>
+          <Link
+            href="/contact"
+            className={mobileLinkClass("contact")}
+            style={activeKey === "contact" ? activeStyle : undefined}
+            onClick={() => setMobileOpen(false)}
+          >
             ติดต่อเรา
           </Link>
           <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-            <button className="btn btn-primary h-11 px-5 text-sm w-full">ขอใบเสนอราคา</button>
+            <LineCTA className="w-full justify-center h-11 px-5 text-sm" />
           </div>
         </div>
       </div>

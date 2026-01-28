@@ -22,7 +22,8 @@ export default async function HtmlPage({ params }) {
     if (slug === "contact") {
       bodyHtml = bodyHtml
         .replace(/<footer[\s\S]*?<\/footer>/i, "")
-        .replace(/<script[\s\S]*?<\/script>/gi, "");
+        .replace(/<script[\s\S]*?<\/script>/gi, "")
+        .replace(/class=\"w-full h-full bg-center bg-no-repeat bg-cover rounded-xl object-cover shadow-lg border border-\\[#e6e0db\\] dark:border-\\[#3d2e23\\] overflow-hidden\"/g, 'class=\"w-full h-full min-h-[260px] bg-center bg-no-repeat bg-cover rounded-xl object-cover shadow-lg border border-[#e6e0db] dark:border-[#3d2e23] overflow-hidden\"');
     }
     const wrapperClassName = [
       "legacy-page",

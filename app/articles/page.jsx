@@ -124,6 +124,9 @@ export default async function ArticlesPage({ searchParams }) {
       color: option.color || "#d32f2f"
     }))
   ];
+  const activeFilterTitle =
+    categoryFilters.find((filter) => filter.value === activeCategory)?.title ||
+    "ทั้งหมด";
   return (
     <section className="ds-section">
       <div className="ds-container">
@@ -137,25 +140,56 @@ export default async function ArticlesPage({ searchParams }) {
           </div>
         </div>
         {categoryFilters.length ? (
-          <div className="mb-8 flex flex-wrap gap-3">
-            {categoryFilters.map((filter) => {
-              const isActive = filter.value === activeCategory;
-              return (
-                <Link
-                  key={`${filter.value || "all"}-filter`}
-                  href={buildArticlesHref(1, filter.value)}
-                  className={`inline-flex items-center rounded-full border px-4 py-2 text-sm font-semibold transition ${
-                    isActive
-                      ? "border-[#d32f2f] bg-[#d32f2f] text-white"
-                      : "border-gray-200 text-[#181411] hover:border-[#d32f2f] hover:text-[#d32f2f]"
-                  }`}
-                  style={isActive && filter.color ? { backgroundColor: filter.color, borderColor: filter.color } : undefined}
-                >
-                  {filter.title}
-                </Link>
-              );
-            })}
-          </div>
+          <>
+            <div className="mb-6 md:hidden">
+              <details className="group rounded-2xl border border-gray-200 bg-white">
+                <summary className="flex items-center justify-between px-4 py-3 text-sm font-semibold text-[#181411] cursor-pointer">
+                  หมวดหมู่: {activeFilterTitle}
+                  <span className="material-symbols-outlined text-base transition-transform group-open:rotate-180">
+                    expand_more
+                  </span>
+                </summary>
+                <div className="flex flex-col border-t border-gray-100">
+                  {categoryFilters.map((filter) => {
+                    const isActive = filter.value === activeCategory;
+                    return (
+                      <Link
+                        key={`${filter.value || "all"}-filter-mobile`}
+                        href={buildArticlesHref(1, filter.value)}
+                        className={`px-4 py-3 text-sm font-semibold transition ${
+                          isActive
+                            ? "text-white bg-[#d32f2f]"
+                            : "text-[#181411] hover:bg-[#d32f2f] hover:text-white"
+                        }`}
+                        style={isActive && filter.color ? { backgroundColor: filter.color } : undefined}
+                      >
+                        {filter.title}
+                      </Link>
+                    );
+                  })}
+                </div>
+              </details>
+            </div>
+            <div className="mb-8 hidden md:flex flex-wrap gap-3">
+              {categoryFilters.map((filter) => {
+                const isActive = filter.value === activeCategory;
+                return (
+                  <Link
+                    key={`${filter.value || "all"}-filter`}
+                    href={buildArticlesHref(1, filter.value)}
+                    className={`inline-flex items-center rounded-full border px-4 py-2 text-sm font-semibold transition ${
+                      isActive
+                        ? "border-[#d32f2f] bg-[#d32f2f] text-white"
+                        : "border-gray-200 text-[#181411] hover:border-[#d32f2f] hover:text-[#d32f2f]"
+                    }`}
+                    style={isActive && filter.color ? { backgroundColor: filter.color, borderColor: filter.color } : undefined}
+                  >
+                    {filter.title}
+                  </Link>
+                );
+              })}
+            </div>
+          </>
         ) : null}
         <ArticlesList articles={articles} />
         {totalPages > 1 ? (

@@ -431,11 +431,14 @@ export default function ServiceTemplate({ service, content }) {
                   {normalized.faq.items.map((item, index) => (
                     <details
                       key={`${item.question}-${index}`}
-                      className="bg-[#f8f7f6] rounded-3xl border border-[#ebe5dc] p-5 shadow-sm"
+                      className="group bg-[#f8f7f6] rounded-3xl border border-[#ebe5dc] p-5 shadow-sm"
                       open={index === 0}
                     >
-                      <summary className="cursor-pointer text-lg font-semibold text-[#18120c] list-none">
-                        {item.question}
+                      <summary className="cursor-pointer text-lg font-semibold text-[#18120c] list-none flex items-center justify-between gap-4">
+                        <span>{item.question}</span>
+                        <span className="material-symbols-outlined text-xl transition-transform duration-300 group-open:rotate-180">
+                          expand_more
+                        </span>
                       </summary>
                       {item.answer ? (
                         <p className="mt-3 text-sm text-[#4c3f35] leading-relaxed">{item.answer}</p>
