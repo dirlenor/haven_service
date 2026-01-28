@@ -2,7 +2,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap");
 
 :root {
-  --ds-color-primary: #d46211;
+  --ds-color-primary: #d32f2f;
   --ds-color-bg: #f8f7f6;
   --ds-color-surface: #ffffff;
   --ds-color-surface-muted: #f4f2f0;
@@ -72,10 +72,10 @@ img {
 }
 
 .legacy-contact .text-primary {
-  color: #d46211 !important;
+  color: #d32f2f !important;
 }
 .legacy-contact .bg-primary {
-  background-color: #d46211 !important;
+  background-color: #d32f2f !important;
 }
 
 .legacy-contact input,
@@ -93,12 +93,12 @@ img {
 
 .legacy-contact .btn.btn-primary,
 .legacy-contact .btn-primary {
-  background-color: #d46211 !important;
+  background-color: #d32f2f !important;
   color: #ffffff !important;
   box-shadow: 0 10px 25px rgba(212, 98, 17, 0.25);
 }
 
-.legacy-contact .text-[#181411] {
+.legacy-contact .text-\[\#181411\] {
   color: #181411 !important;
 }
 
@@ -151,11 +151,11 @@ img {
 }
 
 .legacy-page .bg-primary {
-  background-color: #d46211 !important;
+  background-color: #d32f2f !important;
 }
 
 .legacy-page .text-primary {
-  color: #d46211 !important;
+  color: #d32f2f !important;
 }
 
 .legacy-page .border-\[\#e6e0db\] {
@@ -174,15 +174,15 @@ img {
   border-color: #f4f2f0 !important;
 }
 
-.legacy-page .border-[#ece7e2] {
+.legacy-page .border-\[\#ece7e2\] {
   border-color: #ece7e2 !important;
 }
 
-.legacy-page .hover\\:bg-primary\\/10:hover {
+.legacy-page .hover\:bg-primary\/10:hover {
   background-color: rgba(212, 98, 17, 0.1) !important;
 }
 
-.legacy-page .text-[#f8f7f6] {
+.legacy-page .text-\[\#f8f7f6\] {
   color: #f8f7f6 !important;
 }
 
@@ -342,8 +342,8 @@ button {
 .legacy-page h1,
 .legacy-page h2,
 .legacy-page h3,
-.legacy-page .text-[#181411],
-.legacy-page .text-[#897261] {
+.legacy-page .text-\[\#181411\],
+.legacy-page .text-\[\#897261\] {
   color: var(--ds-color-text) !important;
 }
 
@@ -358,7 +358,7 @@ button {
 }
 
 .legacy-page .border-gray-100,
-.legacy-page .border-[#e6e0db],
+.legacy-page .border-\[\#e6e0db\],
 .legacy-page .border-b,
 .legacy-page .border-t {
   border-color: #e6e0db !important;

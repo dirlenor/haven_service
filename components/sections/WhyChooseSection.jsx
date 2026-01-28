@@ -5,7 +5,6 @@ export default function WhyChooseSection() {
         <div className="ds-stack gap-24 lg:gap-32">
           <div className="text-center mb-0 lg:mb-10">
             <div className="flex items-center justify-center gap-3 mb-6">
-              <span className="material-symbols-outlined text-primary text-4xl">verified</span>
               <span className="ds-eyebrow">ทำไมต้องเลือกเรา</span>
             </div>
             <h2 className="ds-title text-4xl lg:text-5xl mb-6">คุณภาพและฝีมือระดับมืออาชีพ</h2>

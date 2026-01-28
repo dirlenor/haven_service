@@ -8,6 +8,7 @@ Run these migrations in SQL Editor when adding new fields later:
 - `supabase/migrations/20240915_add_article_category_color.sql`
 - `supabase/migrations/20240915_add_article_categories.sql`
 - `supabase/migrations/20240915_add_article_categories_table.sql`
+- `supabase/migrations/20260125_add_article_meta_fields.sql`
 
 ## 2) Create admin user
 - The SQL seeds `6cat.por@gmail.com` into `admin_users`.

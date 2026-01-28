@@ -1,7 +1,7 @@
 export default function ArticlesSection({ articles = [] }) {
   const hasArticles = articles.length > 0;
   const renderArticles = hasArticles ? articles.slice(0, 3) : [];
-  const fallbackBadgeColor = "#d46211";
+  const fallbackBadgeColor = "#d32f2f";
   const getBadges = (article) => {
     const categories = Array.isArray(article.categories) && article.categories.length
       ? article.categories

@@ -10,30 +10,48 @@ const loadCategoryOptions = async () => {
   if (!supabaseServer) {
     return [];
   }
-  const { data: categories } = await supabaseServer
-    .from("article_categories")
-    .select("name, color")
-    .order("name", { ascending: true });
-  if (categories && categories.length) {
-    return categories.map((category) => ({
-      name: category.name,
-      color: category.color || "#d46211"
-    }));
-  }
-  const { data: legacyCategories } = await supabaseServer
+  const [{ data: categories }, { data: legacyCategories }] = await Promise.all([
+    supabaseServer
+      .from("article_categories")
+      .select("name, color")
+      .order("name", { ascending: true }),
+    supabaseServer
     .from("articles")
-    .select("category")
-    .neq("category", "")
+    .select("category, category_color, categories, category_colors")
     .order("category", { ascending: true })
-    .limit(100);
-  const unique = Array.from(
-    new Set(
-      (legacyCategories || [])
-        .map((row) => String(row.category || "").trim())
-        .filter((value) => value)
-    )
-  );
-  return unique.map((name) => ({ name, color: "#d46211" }));
+    .limit(400)
+  ]);
+  const fallbackColor = "#d32f2f";
+  const colorMap = new Map();
+  (categories || []).forEach((category) => {
+    const name = String(category?.name || "").trim();
+    if (!name) {
+      return;
+    }
+    colorMap.set(name, category.color || fallbackColor);
+  });
+  (legacyCategories || []).forEach((row) => {
+    const singleCategory = String(row.category || "").trim();
+    if (singleCategory) {
+      if (!colorMap.has(singleCategory)) {
+        colorMap.set(singleCategory, row.category_color || fallbackColor);
+      }
+    }
+    const categories = Array.isArray(row.categories) ? row.categories : [];
+    const colors = Array.isArray(row.category_colors) ? row.category_colors : [];
+    categories.forEach((category, index) => {
+      const name = String(category || "").trim();
+      if (!name) {
+        return;
+      }
+      if (!colorMap.has(name)) {
+        colorMap.set(name, colors[index] || fallbackColor);
+      }
+    });
+  });
+  return Array.from(colorMap.entries())
+    .map(([name, color]) => ({ name, color: color || fallbackColor }))
+    .sort((a, b) => a.name.localeCompare(b.name, "th"));
 };
 
 const loadArticles = async (page = 1, categoryFilter) => {
@@ -51,7 +69,12 @@ const loadArticles = async (page = 1, categoryFilter) => {
     .range(offset, offset + ARTICLES_PER_PAGE - 1);
 
   if (categoryFilter) {
-    query.eq("category", categoryFilter);
+    const escapePostgrestText = (value) =>
+      value.replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+    const safeCategory = escapePostgrestText(categoryFilter.trim());
+    const quotedCategory = `"${safeCategory}"`;
+    const arrayLiteral = `{${quotedCategory}}`;
+    query.or(`category.eq.${quotedCategory},categories.cs.${arrayLiteral}`);
   }
 
   const { data, count } = await query;
@@ -63,11 +86,12 @@ const loadArticles = async (page = 1, categoryFilter) => {
 };
 
 export default async function ArticlesPage({ searchParams }) {
-  const requestedPage = Number(searchParams?.page ?? 1);
+  const resolvedParams = await searchParams;
+  const requestedPage = Number(resolvedParams?.page ?? 1);
   const page = Number.isFinite(requestedPage) && requestedPage >= 1
     ? Math.floor(requestedPage)
     : 1;
-  const activeCategory = String(searchParams?.category ?? "").trim();
+  const activeCategory = String(resolvedParams?.category ?? "").trim();
   const [{ articles, totalCount }, categoryOptions] = await Promise.all([
     loadArticles(page, activeCategory || undefined),
     loadCategoryOptions()
@@ -97,7 +121,7 @@ export default async function ArticlesPage({ searchParams }) {
     ...categoryOptions.map((option) => ({
       title: option.name,
       value: option.name,
-      color: option.color || "#d46211"
+      color: option.color || "#d32f2f"
     }))
   ];
   return (
@@ -122,8 +146,8 @@ export default async function ArticlesPage({ searchParams }) {
                   href={buildArticlesHref(1, filter.value)}
                   className={`inline-flex items-center rounded-full border px-4 py-2 text-sm font-semibold transition ${
                     isActive
-                      ? "border-[#d46211] bg-[#d46211] text-white"
-                      : "border-gray-200 text-[#181411] hover:border-[#d46211] hover:text-[#d46211]"
+                      ? "border-[#d32f2f] bg-[#d32f2f] text-white"
+                      : "border-gray-200 text-[#181411] hover:border-[#d32f2f] hover:text-[#d32f2f]"
                   }`}
                   style={isActive && filter.color ? { backgroundColor: filter.color, borderColor: filter.color } : undefined}
                 >
@@ -142,7 +166,7 @@ export default async function ArticlesPage({ searchParams }) {
                 <>
                   <Link
                     href={buildArticlesHref(1)}
-                    className="inline-flex items-center justify-center rounded-full border border-[#d46211] px-4 py-2 font-semibold text-[#d46211] transition hover:bg-[#d46211] hover:text-white"
+                    className="inline-flex items-center justify-center rounded-full border border-[#d32f2f] px-4 py-2 font-semibold text-[#d32f2f] transition hover:bg-[#d32f2f] hover:text-white"
                   >
                     1
                   </Link>
@@ -157,8 +181,8 @@ export default async function ArticlesPage({ searchParams }) {
                     href={buildArticlesHref(pageNumber)}
                     className={`inline-flex items-center justify-center rounded-full border px-4 py-2 font-semibold transition ${
                       pageNumber === safePage
-                        ? "border-[#d46211] bg-[#d46211] text-white"
-                        : "border-[#d46211] text-[#d46211] hover:bg-[#d46211] hover:text-white"
+                        ? "border-[#d32f2f] bg-[#d32f2f] text-white"
+                        : "border-[#d32f2f] text-[#d32f2f] hover:bg-[#d32f2f] hover:text-white"
                     }`}
                   >
                     {pageNumber}
@@ -170,7 +194,7 @@ export default async function ArticlesPage({ searchParams }) {
                   {endPage < totalPages - 1 && <span className="text-[#897261]">…</span>}
                   <Link
                     href={buildArticlesHref(totalPages)}
-                    className="inline-flex items-center justify-center rounded-full border border-[#d46211] px-4 py-2 font-semibold text-[#d46211] transition hover:bg-[#d46211] hover:text-white"
+                    className="inline-flex items-center justify-center rounded-full border border-[#d32f2f] px-4 py-2 font-semibold text-[#d32f2f] transition hover:bg-[#d32f2f] hover:text-white"
                   >
                     {totalPages}
                   </Link>

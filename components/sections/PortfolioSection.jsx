@@ -4,13 +4,9 @@ export default function PortfolioSection() {
       <div className="ds-container">
         <div className="flex flex-col md:flex-row justify-between items-end mb-10 gap-4">
           <div>
-            <h2 className="ds-title text-3xl mb-2">ผลงานไฮไลท์ล่าสุด</h2>
-            <p className="ds-muted">ผลงานล่าสุดที่เราภูมิใจนำเสนอ</p>
+            <h2 className="ds-title text-3xl mb-2">แรงบันดาลใจ</h2>
+            <p className="ds-muted">Inspiration</p>
           </div>
-          <a className="ds-eyebrow hover:underline flex items-center gap-1" href="#">
-            ดูโครงการทั้งหมด
-            <span className="material-symbols-outlined text-sm">arrow_forward</span>
-          </a>
         </div>
         <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
           <div className="break-inside-avoid rounded-2xl overflow-hidden group relative">

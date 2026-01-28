@@ -1,10 +1,8 @@
-import LineCTA from "../ui/LineCTA";
-
 export default function FooterSection() {
   return (
     <footer
       id="site-footer"
-      className="bg-white dark:bg-background-dark mt-20"
+      className="bg-white dark:bg-background-dark mt-0"
     >
       <div className="ds-container py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
@@ -25,7 +23,13 @@ export default function FooterSection() {
             <p className="ds-muted text-sm leading-relaxed">
               เราพร้อมที่จะดูแลบ้านของคุณด้วยหัวใจ มอบบริการที่เหนือระดับและผลลัพธ์ที่น่าประทับใจ
             </p>
-            <LineCTA className="w-fit" />
+            <a
+              href="/admin"
+              className="text-xs uppercase tracking-[0.3em] text-[#d32f2f] hover:text-[#b71c1c] transition-colors"
+              aria-label="เข้าสู่ระบบแอดมิน"
+            >
+              เข้าสู่ระบบadmin
+            </a>
           </div>
           <div className="flex flex-col gap-4">
             <h4 className="font-bold text-lg" style={{ color: "var(--ds-color-text)" }}>
@@ -34,25 +38,25 @@ export default function FooterSection() {
             <nav className="flex flex-col gap-2">
               <a
                 className="text-sm ds-muted hover:text-primary transition-colors"
-                href="/allservices#curtains"
+                href="/services"
               >
                 ผ้าม่านและมู่ลี่
               </a>
               <a
                 className="text-sm ds-muted hover:text-primary transition-colors"
-                href="/allservices#wallpapers"
+                href="/services"
               >
                 ติดตั้งวอลเปเปอร์
               </a>
               <a
                 className="text-sm ds-muted hover:text-primary transition-colors"
-                href="/allservices#flooring"
+                href="/services"
               >
                 โซลูชันพื้น
               </a>
               <a
                 className="text-sm ds-muted hover:text-primary transition-colors"
-                href="/allservices#builtin"
+                href="/services"
               >
                 เฟอร์นิเจอร์บิวท์อิน
               </a>
@@ -118,9 +122,9 @@ export default function FooterSection() {
           </div>
         </div>
       </div>
-      <div style={{ backgroundColor: "#d46311" }}>
+      <div style={{ backgroundColor: "#d32f2f" }}>
         <div className="ds-container py-6 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-white">
-          <p>© 2024 Thai Haven Service. สงวนลิขสิทธิ์</p>
+          <p>© 2026 Thai Haven Service. สงวนลิขสิทธิ์</p>
           <div className="flex gap-6">
             <a className="hover:underline" href="#">
               นโยบายความเป็นส่วนตัว
@@ -129,13 +133,7 @@ export default function FooterSection() {
               เงื่อนไขการบริการ
             </a>
           </div>
-          <a
-            href="/admin"
-            className="inline-flex items-center gap-2 rounded-full border border-white/60 px-3 py-1 text-[10px] uppercase tracking-[0.3em] text-white/90 transition-colors hover:text-white hover:border-white"
-            aria-label="Admin"
-          >
-            Admin
-          </a>
+          <div>Design by 6CAT</div>
         </div>
       </div>
     </footer>

@@ -24,6 +24,7 @@ create table if not exists public.articles (
   cta_body text,
   cta_button_label text,
   cta_button_href text,
+  meta_keywords text default '',
   status text not null default 'draft' check (status in ('draft','published')),
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()

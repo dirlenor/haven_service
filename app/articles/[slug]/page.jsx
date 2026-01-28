@@ -40,6 +40,12 @@ const collectCategoryTags = (article) => {
   return [];
 };
 
+const parseKeywords = (value) =>
+  String(value || "")
+    .split(",")
+    .map((keyword) => keyword.trim())
+    .filter(Boolean);
+
 const loadRelatedArticles = async (article, limit = 3) => {
   if (!supabaseServer || !article) {
     return [];
@@ -62,19 +68,31 @@ const loadRelatedArticles = async (article, limit = 3) => {
 };
 
 export const generateMetadata = async ({ params }) => {
-  const article = await loadArticle(params.slug);
+  const { slug } = await params;
+  const article = await loadArticle(slug);
   if (!article) {
     return { title: "Thai Haven Service" };
   }
-  return { title: article.title || "Thai Haven Service" };
+  const title = article.title || "Thai Haven Service";
+  const description = article.summary || "";
+  const keywords = (article.meta_keywords || "")
+    .split(",")
+    .map((keyword) => keyword.trim())
+    .filter(Boolean);
+  return {
+    title,
+    description,
+    keywords: keywords.length ? keywords : undefined
+  };
 };
 
 export default async function ArticleDetailPage({ params }) {
-  const article = await loadArticle(params.slug);
+  const { slug } = await params;
+  const article = await loadArticle(slug);
   if (!article) {
     notFound();
   }
-  const fallbackBadgeColor = "#d46211";
+  const fallbackBadgeColor = "#d32f2f";
   const categories = Array.isArray(article.categories) && article.categories.length
     ? article.categories
     : article.category
@@ -88,6 +106,7 @@ export default async function ArticleDetailPage({ params }) {
     ? [article.category_color]
     : [];
   const relatedArticles = await loadRelatedArticles(article);
+  const keywords = parseKeywords(article.meta_keywords);
 
   return (
     <section className="ds-section">
@@ -122,6 +141,18 @@ export default async function ArticleDetailPage({ params }) {
               </span>
             ) : null}
           </div>
+          {keywords.length ? (
+            <div className="mt-4 flex flex-wrap gap-2">
+              {keywords.map((keyword, index) => (
+                <span
+                  key={`${keyword}-${index}`}
+                  className="inline-flex items-center text-xs font-semibold px-3 py-1 rounded-full border border-gray-200 text-[#181411] bg-white"
+                >
+                  #{keyword}
+                </span>
+              ))}
+            </div>
+          ) : null}
         </div>
         {article.hero_image ? (
           <div className="rounded-3xl overflow-hidden border border-gray-100 mb-10">
@@ -137,7 +168,7 @@ export default async function ArticleDetailPage({ params }) {
           dangerouslySetInnerHTML={{ __html: article.content_html || "" }}
         />
         {(article.cta_title || article.cta_body) ? (
-          <div className="mt-12 bg-[#d46211]/10 p-6 rounded-2xl border border-[#d46211]/20 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div className="mt-12 bg-[#d32f2f]/10 p-6 rounded-2xl border border-[#d32f2f]/20 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
               <h3 className="text-lg font-bold text-[#181411]">
                 {article.cta_title || "สนใจปรับโฉมบ้านกับเรา?"}

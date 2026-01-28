@@ -7,6 +7,7 @@ import ProcessSection from "../components/sections/ProcessSection";
 import ServicesSection from "../components/sections/ServicesSection";
 import WhyChooseSection from "../components/sections/WhyChooseSection";
 import { readHtmlPageBody, replaceSectionById } from "../lib/html";
+import { parseServiceContent } from "../lib/serviceContent";
 import { supabaseServer } from "../lib/supabaseServer";
 
 const pageData = readHtmlPageBody("index.html");
@@ -22,8 +23,8 @@ const loadCmsData = async () => {
   const [{ data: services }, { data: articles }] = await Promise.all([
     supabaseServer
       .from("services")
-      .select("id, slug, title, summary, hero_image")
-      .eq("status", "published")
+      .select("id, slug, title, summary, hero_image, content")
+      .in("status", ["published", "Published"])
       .order("sort_order", { ascending: true })
       .order("created_at", { ascending: false }),
     supabaseServer
@@ -34,8 +35,16 @@ const loadCmsData = async () => {
       .order("created_at", { ascending: false })
   ]);
 
+  const normalizedServices = (services || []).map((service) => ({
+    ...service,
+    summary:
+      service.summary ||
+      parseServiceContent(service.content || "")?.hero?.subtitle ||
+      ""
+  }));
+
   return {
-    services: services || [],
+    services: normalizedServices,
     articles: articles || []
   };
 };

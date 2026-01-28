@@ -1,16 +1,16 @@
-"use client";
-
 import Navbar from "./Navbar";
-import SectionIndicator from "./SectionIndicator";
+import Breadcrumbs from "./Breadcrumbs";
 import FooterSection from "../sections/FooterSection";
+import FloatingContactButton from "../ui/FloatingContactButton";
 
 export default function MainLayout({ children }) {
   return (
     <>
       <Navbar />
+      <Breadcrumbs />
       {children}
+      <FloatingContactButton />
       <FooterSection />
-      <SectionIndicator />
     </>
   );
 }

@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import MockCmsPreview from "../../../../components/admin/MockCmsPreview";
 import { supabase } from "../../../../lib/supabaseClient";
 
 export default function ServicePreviewPage({ params }) {
+  const resolvedParams = use(params);
   const [item, setItem] = useState(null);
   const [loading, setLoading] = useState(true);
   const searchParams = useSearchParams();
@@ -16,7 +17,7 @@ export default function ServicePreviewPage({ params }) {
         setLoading(false);
         return;
       }
-      const decodedSlug = decodeURIComponent(params.slug);
+      const decodedSlug = decodeURIComponent(resolvedParams.slug);
       const id = searchParams.get("id");
       let query = supabase.from("services").select("*");
       query = id ? query.eq("id", id) : query.eq("slug", decodedSlug);
@@ -43,7 +44,7 @@ export default function ServicePreviewPage({ params }) {
     };
 
     loadPreview();
-  }, [params.slug, searchParams]);
+  }, [resolvedParams.slug, searchParams]);
 
   if (loading) {
     return (

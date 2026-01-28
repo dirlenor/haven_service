@@ -2,27 +2,20 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import LineCTA from "../ui/LineCTA";
-
-const servicePages = new Set([
-  "/service-curtains",
-  "/service-wallpapers",
-  "/service-flooring",
-  "/service-builtin",
-  "/service-awnings",
-  "/service-partition"
-]);
+import { supabase } from "../../lib/supabaseClient";
 
 export default function Navbar() {
   const pathname = usePathname() || "/";
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [services, setServices] = useState([]);
 
   const activeKey = useMemo(() => {
     if (pathname === "/") {
       return "home";
     }
-    if (pathname === "/allservices" || servicePages.has(pathname)) {
+    if (pathname === "/services" || pathname.startsWith("/services/")) {
       return "services";
     }
     if (pathname === "/about") {
@@ -36,6 +29,33 @@ export default function Navbar() {
     }
     return "";
   }, [pathname]);
+
+  useEffect(() => {
+    let mounted = true;
+    const loadServices = async () => {
+      if (!supabase) {
+        return;
+      }
+      const { data, error } = await supabase
+        .from("services")
+        .select("id, slug, title")
+        .in("status", ["published", "Published"])
+        .order("sort_order", { ascending: true })
+        .order("created_at", { ascending: false });
+      if (!mounted) {
+        return;
+      }
+      if (error) {
+        console.warn("Failed to load services for navbar:", error.message);
+        return;
+      }
+      setServices(data || []);
+    };
+    loadServices();
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   const navLinkClass = (key) =>
     key === activeKey
@@ -74,7 +94,7 @@ export default function Navbar() {
           </Link>
           <div className="relative group">
             <Link
-              href="/allservices"
+              href="/services"
               className={`text-sm font-medium hover:text-primary transition-colors flex items-center gap-1 cursor-pointer ${
                 activeKey === "services" ? "font-bold" : "ds-muted"
               }`}
@@ -85,54 +105,25 @@ export default function Navbar() {
                 expand_more
               </span>
             </Link>
-            <div className="absolute top-full left-0 mt-2 w-64 bg-white dark:bg-[#2d2118] rounded-lg shadow-xl border border-gray-100 dark:border-gray-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+            <div className="absolute top-full left-0 mt-2 w-64 bg-white dark:bg-black rounded-lg shadow-xl border border-gray-100 dark:border-gray-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
               <div className="py-2">
-                <Link
-                  href="/service-curtains"
-                  className="block px-4 py-3 text-sm text-[#181411] dark:text-white hover:bg-primary/10 hover:text-primary transition-colors"
-                >
-                  <div className="font-medium">ผ้าม่านและมู่ลี่</div>
-                  <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Curtains & Blinds</div>
-                </Link>
-                <Link
-                  href="/service-wallpapers"
-                  className="block px-4 py-3 text-sm text-[#181411] dark:text-white hover:bg-primary/10 hover:text-primary transition-colors"
-                >
-                  <div className="font-medium">วอลเปเปอร์ติดผนัง</div>
-                  <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Wallpapers</div>
-                </Link>
-                <Link
-                  href="/service-flooring"
-                  className="block px-4 py-3 text-sm text-[#181411] dark:text-white hover:bg-primary/10 hover:text-primary transition-colors"
-                >
-                  <div className="font-medium">พื้นไม้ SPC</div>
-                  <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">SPC Flooring</div>
-                </Link>
-                <Link
-                  href="/service-builtin"
-                  className="block px-4 py-3 text-sm text-[#181411] dark:text-white hover:bg-primary/10 hover:text-primary transition-colors"
-                >
-                  <div className="font-medium">เฟอร์นิเจอร์บิวท์อิน</div>
-                  <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Built-in Furniture</div>
-                </Link>
-                <Link
-                  href="/service-awnings"
-                  className="block px-4 py-3 text-sm text-[#181411] dark:text-white hover:bg-primary/10 hover:text-primary transition-colors"
-                >
-                  <div className="font-medium">กันสาดและหลังคา</div>
-                  <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Awnings & Roofing</div>
-                </Link>
-                <Link
-                  href="/service-partition"
-                  className="block px-4 py-3 text-sm text-[#181411] dark:text-white hover:bg-primary/10 hover:text-primary transition-colors"
-                >
-                  <div className="font-medium">ฉากกั้นห้อง</div>
-                  <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Room Partition</div>
-                </Link>
+                {services.length ? (
+                  services.map((service) => (
+                    <Link
+                      key={service.id}
+                      href={`/services/${service.slug || service.id}`}
+                      className="block px-4 py-3 text-sm text-[#181411] dark:text-white hover:bg-[#d32f2f] hover:text-white transition-colors"
+                    >
+                      <div className="font-medium">{service.title || "บริการ"}</div>
+                    </Link>
+                  ))
+                ) : (
+                  <div className="px-4 py-3 text-xs text-[#897261]">ยังไม่มีบริการที่เผยแพร่</div>
+                )}
                 <div className="border-t border-gray-100 dark:border-gray-700 mt-1"></div>
                 <Link
-                  href="/allservices"
-                  className="block px-4 py-3 text-sm text-primary font-medium hover:bg-primary/10 transition-colors"
+                  href="/services"
+                  className="block px-4 py-3 text-sm text-primary font-medium hover:bg-[#d32f2f] hover:text-white transition-colors"
                 >
                   ดูบริการทั้งหมด →
                 </Link>
@@ -183,69 +174,34 @@ export default function Navbar() {
           </Link>
           <div className="mt-2 mb-1">
             <Link
-              href="/allservices"
+              href="/services"
               className={`${mobileLinkClass("services")} block`}
               onClick={() => setMobileOpen(false)}
             >
               บริการ
             </Link>
             <div className="pl-4 mt-1 flex flex-col gap-0.5 border-l-2 border-gray-200 dark:border-gray-700 ml-2">
+              {services.length ? (
+                services.map((service) => {
+                  const href = `/services/${service.slug || service.id}`;
+                  return (
+                    <Link
+                      key={service.id}
+                      href={href}
+                      className={`text-sm font-normal hover:text-primary transition-colors py-1.5 ${
+                        pathname === href ? "text-primary font-medium" : "ds-muted"
+                      }`}
+                      onClick={() => setMobileOpen(false)}
+                    >
+                      {service.title || "บริการ"}
+                    </Link>
+                  );
+                })
+              ) : (
+                <span className="text-xs text-[#897261] py-2">ยังไม่มีบริการที่เผยแพร่</span>
+              )}
               <Link
-                href="/service-curtains"
-                  className={`text-sm font-normal hover:text-primary transition-colors py-1.5 ${
-                  pathname === "/service-curtains" ? "text-primary font-medium" : "ds-muted"
-                }`}
-                onClick={() => setMobileOpen(false)}
-              >
-                ผ้าม่านและมู่ลี่
-              </Link>
-              <Link
-                href="/service-wallpapers"
-                  className={`text-sm font-normal hover:text-primary transition-colors py-1.5 ${
-                  pathname === "/service-wallpapers" ? "text-primary font-medium" : "ds-muted"
-                }`}
-                onClick={() => setMobileOpen(false)}
-              >
-                วอลเปเปอร์ติดผนัง
-              </Link>
-              <Link
-                href="/service-flooring"
-                  className={`text-sm font-normal hover:text-primary transition-colors py-1.5 ${
-                  pathname === "/service-flooring" ? "text-primary font-medium" : "ds-muted"
-                }`}
-                onClick={() => setMobileOpen(false)}
-              >
-                พื้นไม้ SPC
-              </Link>
-              <Link
-                href="/service-builtin"
-                  className={`text-sm font-normal hover:text-primary transition-colors py-1.5 ${
-                  pathname === "/service-builtin" ? "text-primary font-medium" : "ds-muted"
-                }`}
-                onClick={() => setMobileOpen(false)}
-              >
-                เฟอร์นิเจอร์บิวท์อิน
-              </Link>
-              <Link
-                href="/service-awnings"
-                  className={`text-sm font-normal hover:text-primary transition-colors py-1.5 ${
-                  pathname === "/service-awnings" ? "text-primary font-medium" : "ds-muted"
-                }`}
-                onClick={() => setMobileOpen(false)}
-              >
-                กันสาดและหลังคา
-              </Link>
-              <Link
-                href="/service-partition"
-                  className={`text-sm font-normal hover:text-primary transition-colors py-1.5 ${
-                  pathname === "/service-partition" ? "text-primary font-medium" : "ds-muted"
-                }`}
-                onClick={() => setMobileOpen(false)}
-              >
-                ฉากกั้นห้อง
-              </Link>
-              <Link
-                href="/allservices"
+                href="/services"
                 className="text-sm font-medium text-primary hover:text-primary/80 transition-colors py-1.5 mt-1"
                 onClick={() => setMobileOpen(false)}
               >

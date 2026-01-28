@@ -1,6 +1,8 @@
 "use client";
 
 import { useMemo } from "react";
+import ServiceTemplate from "../services/ServiceTemplate";
+import { parseServiceContent } from "../../lib/serviceContent";
 
 const splitContent = (content) =>
   content
@@ -11,6 +13,22 @@ const splitContent = (content) =>
 export default function MockCmsPreview({ item, type }) {
   const blocks = useMemo(() => splitContent(item?.content || ""), [item?.content]);
   const isArticle = type === "articles";
+  const structuredContent = useMemo(
+    () => (isArticle ? null : parseServiceContent(item?.content || "")),
+    [isArticle, item?.content]
+  );
+  const keywords = useMemo(
+    () =>
+      String(item?.metaKeywords || "")
+        .split(",")
+        .map((keyword) => keyword.trim())
+        .filter(Boolean),
+    [item?.metaKeywords]
+  );
+
+  if (!isArticle && structuredContent) {
+    return <ServiceTemplate service={item} content={structuredContent} />;
+  }
 
   return (
     <div className="min-h-screen bg-[#f8f7f6] text-[#181411]">
@@ -26,12 +44,24 @@ export default function MockCmsPreview({ item, type }) {
           {isArticle ? (
             <div className="mt-5 flex flex-wrap items-center gap-3 text-sm text-[#897261]">
               {item?.category ? (
-                <span className="bg-[#d46211]/10 text-[#d46211] text-xs font-bold px-3 py-1 rounded-full">
+                <span className="bg-[#d32f2f]/10 text-[#d32f2f] text-xs font-bold px-3 py-1 rounded-full">
                   {item.category}
                 </span>
               ) : null}
               {item?.date ? <span>{item.date}</span> : null}
               {item?.readTime ? <span>• {item.readTime}</span> : null}
+            </div>
+          ) : null}
+          {isArticle && keywords.length ? (
+            <div className="mt-4 flex flex-wrap gap-2">
+              {keywords.map((keyword, index) => (
+                <span
+                  key={`${keyword}-${index}`}
+                  className="inline-flex items-center text-xs font-semibold px-3 py-1 rounded-full border border-gray-200 text-[#181411] bg-white"
+                >
+                  #{keyword}
+                </span>
+              ))}
             </div>
           ) : null}
         </div>
@@ -80,7 +110,7 @@ export default function MockCmsPreview({ item, type }) {
           </aside>
         </div>
         {isArticle && (item?.ctaTitle || item?.ctaBody) ? (
-          <div className="mt-12 bg-[#d46211]/10 p-6 rounded-2xl border border-[#d46211]/20 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div className="mt-12 bg-[#d32f2f]/10 p-6 rounded-2xl border border-[#d32f2f]/20 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
               <h3 className="text-lg font-bold text-[#181411]">
                 {item?.ctaTitle || "สนใจปรับโฉมบ้านกับเรา?"}

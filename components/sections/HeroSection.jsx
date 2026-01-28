@@ -3,11 +3,11 @@ export default function HeroSection() {
     <section
       id="hero-section"
       data-nav-label="หน้าแรก"
-      className="relative w-full h-[calc(100vh-4rem)] flex flex-col lg:flex-row overflow-hidden bg-background-light dark:bg-background-dark mt-0 pt-0"
+      className="relative w-full h-auto lg:h-[calc(100vh-4rem)] flex flex-col lg:flex-row overflow-hidden bg-background-light dark:bg-background-dark mt-0 pt-0"
     >
       <div
         id="hero-image-container"
-        className="w-full lg:w-1/2 h-1/2 lg:h-full relative overflow-hidden group"
+        className="w-full lg:w-1/2 h-[45vh] sm:h-[50vh] lg:h-full relative overflow-hidden group"
       >
         <div
           className="absolute inset-0 bg-center bg-no-repeat bg-cover transition-opacity duration-1000 ease-in-out"
@@ -80,7 +80,7 @@ export default function HeroSection() {
 
       <div
         id="hero-text-container"
-        className="w-full lg:w-1/2 h-1/2 lg:h-full flex flex-col justify-center px-6 lg:px-20 py-10 overflow-y-auto"
+        className="w-full lg:w-1/2 h-auto lg:h-full flex flex-col justify-center px-6 lg:px-20 py-10 overflow-visible lg:overflow-y-auto"
       >
         <div id="hero-text-content" className="flex flex-col gap-6 max-w-xl">
           <span className="ds-eyebrow">

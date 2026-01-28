@@ -1,8 +1,13 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import QuillEditor from "./QuillEditor";
+import WysiwygEditor from "./WysiwygEditor";
 import { supabase } from "../../lib/supabaseClient";
+import {
+  buildServiceContentTemplate,
+  parseServiceContent,
+  stringifyServiceContent
+} from "../../lib/serviceContent";
 
 const createId = () => {
   if (typeof crypto === "undefined") {
@@ -19,25 +24,32 @@ const createId = () => {
   return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
 };
 
-const emptyItem = (type) => ({
-  id: createId(),
-  slug: "",
-  title: "",
-  summary: "",
-  heroImage: "",
-  status: "draft",
-  content: "",
-  contentHtml: "",
-  category: "",
-  date: "",
-  categoryColor: "#d46211",
-  categories: [],
-  categoryColors: [],
-  ctaTitle: "",
-  ctaBody: "",
-  ctaButtonLabel: "",
-  ctaButtonHref: ""
-});
+const emptyItem = (type) => {
+  const base = {
+    id: createId(),
+    slug: "",
+    title: "",
+    summary: "",
+    heroImage: "",
+    status: "draft",
+    content: "",
+    contentHtml: "",
+    category: "",
+    date: "",
+    categoryColor: "#d32f2f",
+    categories: [],
+    categoryColors: [],
+    ctaTitle: "",
+    ctaBody: "",
+    ctaButtonLabel: "",
+    ctaButtonHref: "",
+    metaKeywords: ""
+  };
+  if (type === "services") {
+    base.content = stringifyServiceContent(buildServiceContentTemplate());
+  }
+  return base;
+};
 
 const ensureSlug = (value) =>
   value
@@ -46,7 +58,7 @@ const ensureSlug = (value) =>
     .replace(/[^a-z0-9ก-๙]+/g, "-")
     .replace(/^-+|-+$/g, "");
 
-const normalizeCategoryList = (labels, colors, fallbackColor = "#d46211") => {
+const normalizeCategoryList = (labels, colors, fallbackColor = "#d32f2f") => {
   const map = new Map();
   labels.forEach((label, index) => {
     const cleanLabel = String(label || "").trim();
@@ -61,11 +73,18 @@ const normalizeCategoryList = (labels, colors, fallbackColor = "#d46211") => {
   };
 };
 
+const cloneContent = (value) => {
+  if (typeof structuredClone === "function") {
+    return structuredClone(value);
+  }
+  return JSON.parse(JSON.stringify(value));
+};
+
 const mapArticleFromRow = (row) => {
   const rawCategories = Array.isArray(row.categories) ? row.categories : [];
   const rawColors = Array.isArray(row.category_colors) ? row.category_colors : [];
   const legacyCategory = row.category || "";
-  const legacyColor = row.category_color || "#d46211";
+  const legacyColor = row.category_color || "#d32f2f";
   const categories = rawCategories.length ? rawCategories : legacyCategory ? [legacyCategory] : [];
   const categoryColors = rawColors.length ? rawColors : categories.length ? [legacyColor] : [];
   const normalized = normalizeCategoryList(categories, categoryColors, legacyColor);
@@ -78,7 +97,7 @@ const mapArticleFromRow = (row) => {
     heroImage: row.hero_image || "",
     category: normalized.categories[0] || "",
     date: row.date || "",
-    categoryColor: normalized.categoryColors[0] || "#d46211",
+    categoryColor: normalized.categoryColors[0] || "#d32f2f",
     categories: normalized.categories,
     categoryColors: normalized.categoryColors,
     contentHtml: row.content_html || "",
@@ -86,6 +105,7 @@ const mapArticleFromRow = (row) => {
     ctaBody: row.cta_body || "",
     ctaButtonLabel: row.cta_button_label || "",
     ctaButtonHref: row.cta_button_href || "",
+    metaKeywords: row.meta_keywords || "",
     status: row.status || "draft"
   };
 };
@@ -104,7 +124,7 @@ const buildArticleRow = (item) => {
   const normalized = normalizeCategoryList(
     item.categories || [],
     item.categoryColors || [],
-    item.categoryColor || "#d46211"
+    item.categoryColor || "#d32f2f"
   );
   const row = {
     id: item.id || undefined,
@@ -114,7 +134,7 @@ const buildArticleRow = (item) => {
     hero_image: item.heroImage || "",
     category: normalized.categories[0] || item.category || "",
     date: item.date || null,
-    category_color: normalized.categoryColors[0] || item.categoryColor || "#d46211",
+    category_color: normalized.categoryColors[0] || item.categoryColor || "#d32f2f",
     categories: normalized.categories,
     category_colors: normalized.categoryColors,
     content_html: item.contentHtml || "",
@@ -122,6 +142,7 @@ const buildArticleRow = (item) => {
     cta_body: item.ctaBody || "",
     cta_button_label: item.ctaButtonLabel || "",
     cta_button_href: item.ctaButtonHref || "",
+    meta_keywords: item.metaKeywords || "",
     status: item.status || "draft"
   };
   if (!item.id) {
@@ -131,12 +152,17 @@ const buildArticleRow = (item) => {
 };
 
 const buildServiceRow = (item) => {
+  const parsed = parseServiceContent(item.content || "");
+  const contentLabel = parsed?.serviceLabel || "";
+  const fallbackSlug = ensureSlug(contentLabel || item.title || "");
+  const heroFromContent = parsed?.hero?.image?.url || "";
+  const summaryFromContent = parsed?.hero?.subtitle || "";
   const row = {
     id: item.id || undefined,
-    slug: item.slug?.trim() || null,
+    slug: item.slug?.trim() || fallbackSlug || null,
     title: item.title || "",
-    summary: item.summary || "",
-    hero_image: item.heroImage || "",
+    summary: item.summary || summaryFromContent || "",
+    hero_image: item.heroImage || heroFromContent || "",
     content: item.content || "",
     status: item.status || "draft"
   };
@@ -201,12 +227,38 @@ export default function MockCmsApp() {
   const [dirtyById, setDirtyById] = useState({});
   const [lastSavedAt, setLastSavedAt] = useState("");
   const [newCategoryName, setNewCategoryName] = useState("");
-  const [newCategoryColor, setNewCategoryColor] = useState("#d46211");
+  const [newCategoryColor, setNewCategoryColor] = useState("#d32f2f");
   const [isEditorOpen, setIsEditorOpen] = useState(false);
+  const [serviceEditorTab, setServiceEditorTab] = useState("hero");
+  const [articleEditorTab, setArticleEditorTab] = useState("content");
+  const [articleSearch, setArticleSearch] = useState("");
 
   const items = data[activeTab] || [];
   const activeItem = items.find((item) => item.id === activeId);
   const isArticle = activeTab === "articles";
+  const serviceContent = useMemo(() => {
+    if (isArticle || !activeItem) {
+      return null;
+    }
+    return (
+      parseServiceContent(activeItem.content || "") ||
+      buildServiceContentTemplate({
+        serviceLabel: activeItem.title || "",
+        heroImageUrl: activeItem.heroImage || "",
+        heroImageAlt: activeItem.title || ""
+      })
+    );
+  }, [activeItem, isArticle]);
+  const articleCounts = useMemo(() => {
+    const articleList = data.articles || [];
+    const total = articleList.length;
+    const online = articleList.filter((article) => article.status === "published").length;
+    return {
+      total,
+      online,
+      offline: total - online
+    };
+  }, [data.articles]);
 
   useEffect(() => {
     if (!supabase) {
@@ -230,6 +282,16 @@ export default function MockCmsApp() {
       authListener?.subscription?.unsubscribe();
     };
   }, []);
+
+  useEffect(() => {
+    if (activeTab === "services") {
+      setServiceEditorTab("hero");
+      setArticleSearch("");
+    }
+    if (activeTab === "articles") {
+      setArticleEditorTab("content");
+    }
+  }, [activeTab, activeId]);
 
   useEffect(() => {
     if (!session) {
@@ -277,14 +339,14 @@ export default function MockCmsApp() {
         ? categoryRows.map((row) => ({
             id: row.id,
             name: row.name,
-            color: row.color || "#d46211"
+            color: row.color || "#d32f2f"
           }))
         : [];
-      const fallbackOptions = normalizeCategoryList(categoryPool, [], "#d46211").categories.map(
+      const fallbackOptions = normalizeCategoryList(categoryPool, [], "#d32f2f").categories.map(
         (label) => ({
           id: label,
           name: label,
-          color: "#d46211"
+          color: "#d32f2f"
         })
       );
       setCategoryOptions(
@@ -313,7 +375,7 @@ export default function MockCmsApp() {
       return;
     }
     setNewCategoryName("");
-    setNewCategoryColor("#d46211");
+    setNewCategoryColor("#d32f2f");
   }, [activeId]);
 
   useEffect(() => {
@@ -327,6 +389,7 @@ export default function MockCmsApp() {
   const handleSignIn = async (event) => {
     event.preventDefault();
     if (!supabase) {
+      setError("ยังไม่ได้ตั้งค่า Supabase (ตรวจสอบ NEXT_PUBLIC_SUPABASE_URL/ANON_KEY)");
       return;
     }
     setError("");
@@ -343,6 +406,7 @@ export default function MockCmsApp() {
 
   const handleSignUp = async () => {
     if (!supabase) {
+      setError("ยังไม่ได้ตั้งค่า Supabase (ตรวจสอบ NEXT_PUBLIC_SUPABASE_URL/ANON_KEY)");
       return;
     }
     setError("");
@@ -455,11 +519,37 @@ export default function MockCmsApp() {
     }
   };
 
+  const updateServiceContent = (updater) => {
+    if (!serviceContent) {
+      return;
+    }
+    const next = cloneContent(serviceContent);
+    updater(next);
+    handleChange("content", stringifyServiceContent(next));
+  };
+
+  const readLines = (value) =>
+    String(value || "")
+      .split("\n")
+      .map((line) => line.trim());
+
   const handleAutoSlug = () => {
     if (!activeItem?.title) {
       return;
     }
     handleChange("slug", ensureSlug(activeItem.title));
+  };
+
+  const getTypeCompletion = (item) => {
+    const checks = [
+      Boolean(item?.title?.trim()),
+      Boolean(item?.description?.trim()),
+      Boolean(item?.image?.url?.trim()),
+      (item?.fitList || []).some((line) => String(line).trim()),
+      (item?.highlightList || []).some((line) => String(line).trim())
+    ];
+    const completed = checks.filter(Boolean).length;
+    return Math.round((completed / checks.length) * 100);
   };
 
   const handleAddCategory = async () => {
@@ -665,7 +755,7 @@ export default function MockCmsApp() {
               type="button"
               className={`w-full text-left px-4 py-3 rounded-xl text-sm font-bold transition-colors ${
                 activeTab === "articles"
-                  ? "bg-[#d46211] text-white"
+                  ? "bg-[#d32f2f] text-white"
                   : "bg-transparent text-[#181411] hover:bg-[#f8f7f6]"
               }`}
               onClick={() => {
@@ -679,7 +769,7 @@ export default function MockCmsApp() {
               type="button"
               className={`w-full text-left px-4 py-3 rounded-xl text-sm font-bold transition-colors ${
                 activeTab === "services"
-                  ? "bg-[#d46211] text-white"
+                  ? "bg-[#d32f2f] text-white"
                   : "bg-transparent text-[#181411] hover:bg-[#f8f7f6]"
               }`}
               onClick={() => {
@@ -702,7 +792,7 @@ export default function MockCmsApp() {
         </aside>
 
         <main className="flex-1 px-8 py-10">
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
             <div>
               <p className="text-xs uppercase tracking-[0.3em] text-[#897261] font-semibold">
                 {activeTab === "articles" ? "Articles" : "Services"}
@@ -715,10 +805,26 @@ export default function MockCmsApp() {
                   ? "คลิกบทความเพื่อแก้ไขในหน้าต่างแบบป๊อปอัป"
                   : "คลิกบริการเพื่อแก้ไขในหน้าต่างแบบป๊อปอัป"}
               </p>
+              {activeTab === "articles" ? (
+                <div className="mt-3 flex flex-wrap gap-3 text-xs text-[#897261]">
+                  <span>
+                    บทความทั้งหมด{" "}
+                    <span className="text-[#181411] font-semibold">{articleCounts.total}</span>
+                  </span>
+                  <span>
+                    ออนไลน์{" "}
+                    <span className="text-[#181411] font-semibold">{articleCounts.online}</span>
+                  </span>
+                  <span>
+                    ออฟไลน์{" "}
+                    <span className="text-[#181411] font-semibold">{articleCounts.offline}</span>
+                  </span>
+                </div>
+              ) : null}
             </div>
             <button
               type="button"
-              className="px-5 py-2 rounded-full text-sm font-bold bg-[#d46211] text-white"
+              className="px-5 py-2 rounded-full text-sm font-bold bg-[#d32f2f] text-white"
               onClick={handleNew}
             >
               เพิ่มรายการ
@@ -741,20 +847,37 @@ export default function MockCmsApp() {
               <span>สถานะ</span>
             </div>
             <div className="divide-y divide-gray-100">
-              {items.map((item) => (
-                <button
+              {items.map((item) => {
+                const previewBase =
+                  activeTab === "services"
+                    ? `/preview/services/${item.slug || "preview"}`
+                    : `/preview/articles/${item.slug || "preview"}`;
+                const previewHref = item.id ? `${previewBase}?id=${item.id}` : previewBase;
+                const heroImage =
+                  activeTab === "services"
+                    ? item.heroImage || parseServiceContent(item.content || "")?.hero?.image?.url
+                    : item.heroImage;
+                return (
+                <div
                   key={item.id}
-                  type="button"
+                  role="button"
+                  tabIndex={0}
                   className={`w-full text-left px-5 py-4 grid grid-cols-1 md:grid-cols-[88px_minmax(0,1fr)_140px_160px_120px] gap-3 items-center transition-colors ${
                     item.id === activeId ? "bg-[#f4f2f0]" : "hover:bg-[#f8f7f6]"
                   }`}
                   onClick={() => handleSelect(item.id)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault();
+                      handleSelect(item.id);
+                    }
+                  }}
                 >
                   <div className="flex items-center gap-3">
                     <div className="w-16 h-12 rounded-lg overflow-hidden bg-gray-100 border border-gray-200 flex-shrink-0">
-                      {item.heroImage ? (
+                      {heroImage ? (
                         <img
-                          src={item.heroImage}
+                          src={heroImage}
                           alt={item.title || "thumbnail"}
                           className="w-full h-full object-cover"
                         />
@@ -770,7 +893,7 @@ export default function MockCmsApp() {
                       {item.slug ? `/${item.slug}` : "ยังไม่มี slug"}
                     </div>
                     {dirtyById[item.id] ? (
-                      <div className="mt-2 text-[10px] uppercase tracking-[0.25em] text-[#d46211]">
+                      <div className="mt-2 text-[10px] uppercase tracking-[0.25em] text-[#d32f2f]">
                         ยังไม่บันทึก
                       </div>
                     ) : null}
@@ -786,11 +909,21 @@ export default function MockCmsApp() {
                     {isArticle ? item.date || "-" : "-"}
                   </div>
                   <div className="flex items-center gap-3">
+                    <a
+                      href={previewHref}
+                      className="inline-flex items-center justify-center w-9 h-9 rounded-full border border-gray-200 text-[#181411] hover:bg-[#f4f2f0]"
+                      title="ดู preview"
+                      onClick={(event) => event.stopPropagation()}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      <span className="material-symbols-outlined text-[20px]">visibility</span>
+                    </a>
                     <button
                       type="button"
                       className={`relative inline-flex h-7 w-14 items-center rounded-full p-1 transition-colors border ${
                         item.status === "published"
-                          ? "bg-[#d46211] border-[#d46211]"
+                          ? "bg-[#d32f2f] border-[#d32f2f]"
                           : "bg-gray-200 border-gray-200"
                       }`}
                       onClick={(event) => handleToggleStatus(event, item)}
@@ -804,8 +937,9 @@ export default function MockCmsApp() {
                       />
                     </button>
                   </div>
-                </button>
-              ))}
+                </div>
+              );
+              })}
               {!items.length && !loading ? (
                 <div className="text-sm text-[#897261] px-5 py-6">ยังไม่มีรายการ</div>
               ) : null}
@@ -865,102 +999,1016 @@ export default function MockCmsApp() {
             </div>
 
             <div className="p-6 space-y-5">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <label className="flex flex-col gap-2 text-sm font-semibold">
-                  ชื่อเรื่อง
-                  <input
-                    className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
-                    value={activeItem.title}
-                    onChange={(event) => handleChange("title", event.target.value)}
-                    placeholder={isArticle ? "เช่น เทคนิคแต่งบ้าน" : "เช่น ผ้าม่านและมู่ลี่"}
-                  />
-                </label>
-                <label className="flex flex-col gap-2 text-sm font-semibold">
-                  Slug
-                  <div className="flex gap-2">
-                    <input
-                      className="flex-1 rounded-lg border border-gray-200 px-3 py-2 text-sm"
-                      value={activeItem.slug}
-                      onChange={(event) => handleChange("slug", event.target.value)}
-                      placeholder="เช่น curtains"
-                    />
-                    <button
-                      type="button"
-                      className="px-3 py-2 text-xs rounded-lg border border-gray-200"
-                      onClick={handleAutoSlug}
-                    >
-                      Auto
-                    </button>
+              {isArticle ? (
+                <>
+                  <div className="flex flex-wrap gap-2">
+                    {[
+                      { key: "content", label: "Content" },
+                      { key: "meta", label: "Meta keyword" }
+                    ].map((tab) => (
+                      <button
+                        key={tab.key}
+                        type="button"
+                        className={`px-3 py-1.5 text-xs rounded-full border transition-colors ${
+                          articleEditorTab === tab.key
+                            ? "bg-[#d32f2f] text-white border-[#d32f2f]"
+                            : "border-gray-200 text-[#181411] hover:bg-[#f4f2f0]"
+                        }`}
+                        onClick={() => setArticleEditorTab(tab.key)}
+                      >
+                        {tab.label}
+                      </button>
+                    ))}
                   </div>
-                </label>
-              </div>
+                  {articleEditorTab === "content" ? (
+                    <>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <label className="flex flex-col gap-2 text-sm font-semibold">
+                      ชื่อเรื่อง
+                      <input
+                        className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                        value={activeItem.title}
+                        onChange={(event) => handleChange("title", event.target.value)}
+                        placeholder="เช่น เทคนิคแต่งบ้าน"
+                      />
+                    </label>
+                    <label className="flex flex-col gap-2 text-sm font-semibold">
+                      Slug
+                      <div className="flex gap-2">
+                        <input
+                          className="flex-1 rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                          value={activeItem.slug}
+                          onChange={(event) => handleChange("slug", event.target.value)}
+                          placeholder="เช่น curtains"
+                        />
+                        <button
+                          type="button"
+                          className="px-3 py-2 text-xs rounded-lg border border-gray-200"
+                          onClick={handleAutoSlug}
+                        >
+                          Auto
+                        </button>
+                      </div>
+                    </label>
+                  </div>
 
-              <label className="flex flex-col gap-2 text-sm font-semibold">
-                สถานะ
-                <select
-                  className="rounded-lg border border-gray-200 px-3 py-2 text-sm bg-white"
-                  value={activeItem.status}
-                  onChange={(event) => handleChange("status", event.target.value)}
-                >
-                  <option value="draft">Draft</option>
-                  <option value="published">Published</option>
-                </select>
-              </label>
+                  <label className="flex flex-col gap-2 text-sm font-semibold">
+                    สถานะ
+                    <select
+                      className="rounded-lg border border-gray-200 px-3 py-2 text-sm bg-white"
+                      value={activeItem.status}
+                      onChange={(event) => handleChange("status", event.target.value)}
+                    >
+                      <option value="draft">Draft</option>
+                      <option value="published">Published</option>
+                    </select>
+                  </label>
 
-              <label className="flex flex-col gap-2 text-sm font-semibold">
-                รูปหลัก (URL)
-                <input
-                  className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
-                  value={activeItem.heroImage}
-                  onChange={(event) => handleChange("heroImage", event.target.value)}
-                  placeholder="https://..."
-                />
-              </label>
+                  <label className="flex flex-col gap-2 text-sm font-semibold">
+                    รูปหลัก (URL)
+                    <input
+                      className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                      value={activeItem.heroImage}
+                      onChange={(event) => handleChange("heroImage", event.target.value)}
+                      placeholder="https://..."
+                    />
+                  </label>
 
-              <label className="flex flex-col gap-2 text-sm font-semibold">
-                รูปหลัก (อัปโหลด)
-                <input
-                  className="rounded-lg border border-gray-200 px-3 py-2 text-sm bg-white"
-                  type="file"
-                  accept="image/*"
-                  disabled={uploading}
-                  onChange={(event) => {
-                    const file = event.target.files?.[0];
-                    if (!file) {
-                      return;
-                    }
-                    handleUpload(file);
-                  }}
-                />
-              </label>
-              {dirtyById[activeItem.id] ? (
-                <div className="text-xs text-[#897261]">มีการแก้ไขที่ยังไม่บันทึก</div>
+                  <label className="flex flex-col gap-2 text-sm font-semibold">
+                    รูปหลัก (อัปโหลด)
+                    <input
+                      className="rounded-lg border border-gray-200 px-3 py-2 text-sm bg-white"
+                      type="file"
+                      accept="image/*"
+                      disabled={uploading}
+                      onChange={(event) => {
+                        const file = event.target.files?.[0];
+                        if (!file) {
+                          return;
+                        }
+                        handleUpload(file);
+                      }}
+                    />
+                  </label>
+                  {dirtyById[activeItem.id] ? (
+                    <div className="text-xs text-[#897261]">มีการแก้ไขที่ยังไม่บันทึก</div>
+                  ) : null}
+                  {uploading ? (
+                    <div className="text-xs text-[#897261]">กำลังอัปโหลดรูป...</div>
+                  ) : null}
+                  {activeItem.heroImage ? (
+                    <div className="rounded-2xl overflow-hidden border border-gray-100">
+                      <img
+                        src={activeItem.heroImage}
+                        alt={activeItem.title}
+                        className="w-full h-48 object-cover"
+                      />
+                    </div>
+                  ) : null}
+
+                  <label className="flex flex-col gap-2 text-sm font-semibold">
+                    คำโปรย
+                    <textarea
+                      className="rounded-lg border border-gray-200 px-3 py-2 text-sm min-h-[90px]"
+                      value={activeItem.summary}
+                      onChange={(event) => handleChange("summary", event.target.value)}
+                      placeholder="สรุปสั้นๆ ให้ลูกค้าเข้าใจบริการ/บทความนี้"
+                    />
+                  </label>
+                    </>
+                  ) : null}
+                  {articleEditorTab === "meta" ? (
+                    <div className="rounded-2xl border border-gray-100 p-4">
+                      <input
+                        className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                        value={activeItem.metaKeywords}
+                        onChange={(event) => handleChange("metaKeywords", event.target.value)}
+                        placeholder="Keyword (เช่น ตกแต่งบ้าน, ม่าน, วอลเปเปอร์)"
+                      />
+                    </div>
+                  ) : null}
+                </>
               ) : null}
-              {uploading ? (
-                <div className="text-xs text-[#897261]">กำลังอัปโหลดรูป...</div>
-              ) : null}
-              {activeItem.heroImage ? (
-                <div className="rounded-2xl overflow-hidden border border-gray-100">
-                  <img
-                    src={activeItem.heroImage}
-                    alt={activeItem.title}
-                    className="w-full h-48 object-cover"
-                  />
+
+              {!isArticle && serviceContent ? (
+                <div className="space-y-6">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                      <p className="text-sm font-semibold">ข้อมูลหน้า Service (แยกเป็น Section)</p>
+                      <p className="text-xs text-[#897261]">
+                        แก้ไขแต่ละ section ได้โดยไม่ต้องเขียนโค้ด
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="sticky top-[72px] z-10 -mx-6 bg-white px-6 py-3 border-b border-gray-100">
+                    <div className="flex flex-wrap gap-2">
+                      {[
+                        { key: "hero", label: "Hero" },
+                        { key: "intro", label: "Intro" },
+                        { key: "types", label: "ประเภทบริการ" },
+                        { key: "specs", label: "วัสดุ/สี/ขนาด" },
+                        { key: "gallery", label: "แกลเลอรี" },
+                        { key: "articles", label: "บทความ" },
+                      { key: "faq", label: "FAQ" }
+                      ].map((tab) => (
+                        <button
+                          key={tab.key}
+                          type="button"
+                          className={`px-3 py-1.5 text-xs rounded-full border transition-colors ${
+                            serviceEditorTab === tab.key
+                              ? "bg-[#d32f2f] text-white border-[#d32f2f]"
+                              : "border-gray-200 text-[#181411] hover:bg-[#f4f2f0]"
+                          }`}
+                          onClick={() => setServiceEditorTab(tab.key)}
+                        >
+                          {tab.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {serviceEditorTab === "hero" ? (
+                    <div className="rounded-2xl border border-gray-100 p-4 space-y-4">
+                      <h4 className="text-sm font-bold">Hero</h4>
+                      <label className="flex flex-col gap-2 text-sm font-semibold">
+                        สถานะ
+                        <select
+                          className="rounded-lg border border-gray-200 px-3 py-2 text-sm bg-white"
+                          value={activeItem.status}
+                          onChange={(event) => handleChange("status", event.target.value)}
+                        >
+                          <option value="draft">Draft</option>
+                          <option value="published">Published</option>
+                        </select>
+                      </label>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <label className="flex flex-col gap-2 text-sm font-semibold">
+                          คำเรียกบริการ (service label)
+                          <input
+                            className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                            value={serviceContent.serviceLabel}
+                          onChange={(event) => {
+                            const nextLabel = event.target.value;
+                            updateServiceContent((draft) => {
+                              draft.serviceLabel = nextLabel;
+                            });
+                            handleChange("title", nextLabel);
+                            if (!activeItem.slug) {
+                              handleChange("slug", ensureSlug(nextLabel));
+                            }
+                          }}
+                            placeholder="เช่น ฉากกั้นห้อง"
+                          />
+                        </label>
+                        <label className="flex flex-col gap-2 text-sm font-semibold">
+                          Slug
+                          <div className="flex gap-2">
+                            <input
+                              className="flex-1 rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                              value={activeItem.slug}
+                              onChange={(event) => handleChange("slug", event.target.value)}
+                              placeholder="เช่น room-partition"
+                            />
+                            <button
+                              type="button"
+                              className="px-3 py-2 text-xs rounded-lg border border-gray-200"
+                              onClick={() => {
+                                const nextSlug = ensureSlug(serviceContent.serviceLabel || "");
+                                handleChange("slug", nextSlug);
+                              }}
+                            >
+                              Auto
+                            </button>
+                          </div>
+                        </label>
+                        <label className="flex flex-col gap-2 text-sm font-semibold">
+                          หัวข้อหลัก
+                          <input
+                            className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                            value={serviceContent.hero.title}
+                            onChange={(event) =>
+                              updateServiceContent((draft) => {
+                                draft.hero.title = event.target.value;
+                              })
+                            }
+                            placeholder="เช่น บริการติดตั้งฉากกั้นห้อง"
+                          />
+                        </label>
+                        <label className="flex flex-col gap-2 text-sm font-semibold md:col-span-2">
+                          คำอธิบาย
+                          <textarea
+                            className="rounded-lg border border-gray-200 px-3 py-2 text-sm min-h-[90px]"
+                            value={serviceContent.hero.subtitle}
+                            onChange={(event) =>
+                              updateServiceContent((draft) => {
+                                draft.hero.subtitle = event.target.value;
+                              })
+                            }
+                          />
+                        </label>
+                        <label className="flex flex-col gap-2 text-sm font-semibold">
+                          รูปภาพหลัก (URL)
+                          <input
+                            className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                            value={serviceContent.hero.image.url}
+                            onChange={(event) =>
+                              updateServiceContent((draft) => {
+                                draft.hero.image.url = event.target.value;
+                              })
+                            }
+                          />
+                        </label>
+                        <label className="flex flex-col gap-2 text-sm font-semibold">
+                          รูปภาพหลัก (alt)
+                          <input
+                            className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                            value={serviceContent.hero.image.alt}
+                            onChange={(event) =>
+                              updateServiceContent((draft) => {
+                                draft.hero.image.alt = event.target.value;
+                              })
+                            }
+                          />
+                        </label>
+                      </div>
+                    </div>
+                  ) : null}
+
+                  {serviceEditorTab === "intro" ? (
+                    <div className="rounded-2xl border border-gray-100 p-4 space-y-4">
+                      <h4 className="text-sm font-bold">Intro</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <label className="flex flex-col gap-2 text-sm font-semibold">
+                          หัวข้อ
+                          <input
+                            className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                            value={serviceContent.intro.title}
+                            onChange={(event) =>
+                              updateServiceContent((draft) => {
+                                draft.intro.title = event.target.value;
+                              })
+                            }
+                          />
+                        </label>
+                        <label className="flex flex-col gap-2 text-sm font-semibold">
+                          รูปภาพประกอบ (URL)
+                          <input
+                            className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                            value={serviceContent.intro.image.url}
+                            onChange={(event) =>
+                              updateServiceContent((draft) => {
+                                draft.intro.image.url = event.target.value;
+                              })
+                            }
+                          />
+                        </label>
+                        <label className="flex flex-col gap-2 text-sm font-semibold">
+                          รูปภาพประกอบ (alt)
+                          <input
+                            className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                            value={serviceContent.intro.image.alt}
+                            onChange={(event) =>
+                              updateServiceContent((draft) => {
+                                draft.intro.image.alt = event.target.value;
+                              })
+                            }
+                          />
+                        </label>
+                      </div>
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <p className="text-xs font-semibold text-[#897261]">รายการคำอธิบาย</p>
+                          <button
+                            type="button"
+                            className="text-xs font-semibold text-[#d32f2f]"
+                            onClick={() =>
+                              updateServiceContent((draft) => {
+                                draft.intro.items.push({ heading: "", body: "" });
+                              })
+                            }
+                          >
+                            เพิ่มรายการ
+                          </button>
+                        </div>
+                        {serviceContent.intro.items.map((item, index) => (
+                          <div
+                            key={`intro-${index}`}
+                            className="rounded-xl border border-gray-200 p-3 space-y-2"
+                          >
+                            <div className="flex items-center justify-between">
+                              <p className="text-xs font-semibold">หัวข้อ #{index + 1}</p>
+                              <button
+                                type="button"
+                                className="text-xs text-red-500"
+                                onClick={() =>
+                                  updateServiceContent((draft) => {
+                                    draft.intro.items.splice(index, 1);
+                                  })
+                                }
+                              >
+                                ลบ
+                              </button>
+                            </div>
+                            <input
+                              className="rounded-lg border border-gray-200 px-3 py-2 text-sm w-full"
+                              value={item.heading}
+                              onChange={(event) =>
+                                updateServiceContent((draft) => {
+                                  draft.intro.items[index].heading = event.target.value;
+                                })
+                              }
+                              placeholder="หัวข้อ"
+                            />
+                            <textarea
+                              className="rounded-lg border border-gray-200 px-3 py-2 text-sm min-h-[80px] w-full"
+                              value={item.body}
+                              onChange={(event) =>
+                                updateServiceContent((draft) => {
+                                  draft.intro.items[index].body = event.target.value;
+                                })
+                              }
+                              placeholder="รายละเอียด"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ) : null}
+
+                  {serviceEditorTab === "types" ? (
+                    <div className="rounded-2xl border border-gray-100 p-4 space-y-4">
+                      <h4 className="text-sm font-bold">ประเภทสินค้า/บริการ</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <label className="flex flex-col gap-2 text-sm font-semibold md:order-1">
+                          หัวข้อหลัก
+                          <input
+                            className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                            value={serviceContent.types.title}
+                            onChange={(event) =>
+                              updateServiceContent((draft) => {
+                                draft.types.title = event.target.value;
+                              })
+                            }
+                          />
+                        </label>
+                        <label className="flex flex-col gap-2 text-sm font-semibold md:order-2">
+                          หัวข้อเล็ก (eyebrow)
+                          <input
+                            className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                            value={serviceContent.types.eyebrow}
+                            onChange={(event) =>
+                              updateServiceContent((draft) => {
+                                draft.types.eyebrow = event.target.value;
+                              })
+                            }
+                          />
+                        </label>
+                      </div>
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <p className="text-xs font-semibold text-[#897261]">รายการประเภท</p>
+                          <button
+                            type="button"
+                            className="text-xs font-semibold text-[#d32f2f]"
+                            onClick={() =>
+                              updateServiceContent((draft) => {
+                                draft.types.items.push({
+                                  title: "",
+                                  description: "",
+                                  fitTitle: "",
+                                  fitList: [],
+                                  highlightTitle: "",
+                                  highlightList: [],
+                                  image: { url: "", alt: "" }
+                                });
+                              })
+                            }
+                          >
+                            เพิ่มรายการ
+                          </button>
+                        </div>
+                        {serviceContent.types.items.map((item, index) => {
+                          const completion = getTypeCompletion(item);
+                          return (
+                            <details
+                              key={`types-${index}`}
+                              className="rounded-xl border border-gray-200 bg-white"
+                              open={index === 0}
+                            >
+                              <summary className="flex items-center justify-between gap-3 cursor-pointer px-3 py-2">
+                                <div>
+                                  <p className="text-xs font-semibold">
+                                    ประเภท #{index + 1} {item.title ? `· ${item.title}` : ""}
+                                  </p>
+                                  <p className="text-[11px] text-[#897261]">
+                                    กรอกครบ {completion}%
+                                  </p>
+                                </div>
+                                <button
+                                  type="button"
+                                  className="text-xs text-red-500"
+                                  onClick={(event) => {
+                                    event.preventDefault();
+                                    event.stopPropagation();
+                                    updateServiceContent((draft) => {
+                                      draft.types.items.splice(index, 1);
+                                    });
+                                  }}
+                                >
+                                  ลบ
+                                </button>
+                              </summary>
+                              <div className="px-3 pb-3 space-y-3">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                  <input
+                                    className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                                    value={item.title}
+                                    onChange={(event) =>
+                                      updateServiceContent((draft) => {
+                                        draft.types.items[index].title = event.target.value;
+                                      })
+                                    }
+                                    placeholder="ชื่อประเภท"
+                                  />
+                                  <input
+                                    className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                                    value={item.image.url}
+                                    onChange={(event) =>
+                                      updateServiceContent((draft) => {
+                                        draft.types.items[index].image.url = event.target.value;
+                                      })
+                                    }
+                                    placeholder="รูปภาพ (URL)"
+                                  />
+                                  <input
+                                    className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                                    value={item.image.alt}
+                                    onChange={(event) =>
+                                      updateServiceContent((draft) => {
+                                        draft.types.items[index].image.alt = event.target.value;
+                                      })
+                                    }
+                                    placeholder="รูปภาพ (alt)"
+                                  />
+                                  <div className="text-xs text-[#897261] self-center">
+                                    หัวข้อย่อยใช้ค่าคงที่ในหน้าแสดงผล
+                                  </div>
+                                </div>
+                                {item.image.url ? (
+                                  <div className="flex items-center gap-3">
+                                    <div className="w-20 h-20 rounded-xl overflow-hidden border border-gray-200 bg-gray-50">
+                                      <img
+                                        src={item.image.url}
+                                        alt={item.image.alt || "preview"}
+                                        className="w-full h-full object-cover"
+                                      />
+                                    </div>
+                                    <p className="text-xs text-[#897261]">พรีวิวภาพ</p>
+                                  </div>
+                                ) : null}
+                                <textarea
+                                  className="rounded-lg border border-gray-200 px-3 py-2 text-sm min-h-[80px] w-full"
+                                  value={item.description}
+                                  onChange={(event) =>
+                                    updateServiceContent((draft) => {
+                                      draft.types.items[index].description = event.target.value;
+                                    })
+                                  }
+                                  placeholder="คำอธิบาย"
+                                />
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                  <label className="flex flex-col gap-2 text-xs font-semibold">
+                                    รายการเหมาะกับ (ใส่ทีละบรรทัด)
+                                    <textarea
+                                      className="rounded-lg border border-gray-200 px-3 py-2 text-sm min-h-[80px]"
+                                      value={(item.fitList || []).join("\n")}
+                                      onChange={(event) =>
+                                        updateServiceContent((draft) => {
+                                          draft.types.items[index].fitList = readLines(event.target.value);
+                                        })
+                                      }
+                                    />
+                                  </label>
+                                  <label className="flex flex-col gap-2 text-xs font-semibold">
+                                    รายการจุดเด่น (ใส่ทีละบรรทัด)
+                                    <textarea
+                                      className="rounded-lg border border-gray-200 px-3 py-2 text-sm min-h-[80px]"
+                                      value={(item.highlightList || []).join("\n")}
+                                      onChange={(event) =>
+                                        updateServiceContent((draft) => {
+                                          draft.types.items[index].highlightList = readLines(event.target.value);
+                                        })
+                                      }
+                                    />
+                                  </label>
+                                </div>
+                              </div>
+                            </details>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ) : null}
+
+                  {serviceEditorTab === "specs" ? (
+                    <div className="rounded-2xl border border-gray-100 p-4 space-y-4">
+                      <h4 className="text-sm font-bold">วัสดุ / สี / ขนาด</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <label className="flex flex-col gap-2 text-sm font-semibold md:order-1">
+                          หัวข้อหลัก
+                          <input
+                            className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                            value={serviceContent.specs.title}
+                            onChange={(event) =>
+                              updateServiceContent((draft) => {
+                                draft.specs.title = event.target.value;
+                              })
+                            }
+                          />
+                        </label>
+                        <label className="flex flex-col gap-2 text-sm font-semibold md:order-2">
+                          หัวข้อเล็ก (eyebrow)
+                          <input
+                            className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                            value={serviceContent.specs.eyebrow}
+                            onChange={(event) =>
+                              updateServiceContent((draft) => {
+                                draft.specs.eyebrow = event.target.value;
+                              })
+                            }
+                          />
+                        </label>
+                      </div>
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <p className="text-xs font-semibold text-[#897261]">การ์ดข้อมูล</p>
+                          <button
+                            type="button"
+                            className="text-xs font-semibold text-[#d32f2f]"
+                            onClick={() =>
+                              updateServiceContent((draft) => {
+                                draft.specs.cards.push({ title: "", items: [] });
+                              })
+                            }
+                          >
+                            เพิ่มการ์ด
+                          </button>
+                        </div>
+                        {serviceContent.specs.cards.map((card, cardIndex) => (
+                          <div
+                            key={`specs-card-${cardIndex}`}
+                            className="rounded-xl border border-gray-200 p-3 space-y-3"
+                          >
+                            <div className="flex items-center justify-between">
+                              <p className="text-xs font-semibold">การ์ด #{cardIndex + 1}</p>
+                              <button
+                                type="button"
+                                className="text-xs text-red-500"
+                                onClick={() =>
+                                  updateServiceContent((draft) => {
+                                    draft.specs.cards.splice(cardIndex, 1);
+                                  })
+                                }
+                              >
+                                ลบ
+                              </button>
+                            </div>
+                            <input
+                              className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                              value={card.title}
+                              onChange={(event) =>
+                                updateServiceContent((draft) => {
+                                  draft.specs.cards[cardIndex].title = event.target.value;
+                                })
+                              }
+                              placeholder="ชื่อการ์ด"
+                            />
+                            <div className="space-y-2">
+                              <div className="flex items-center justify-between">
+                                <p className="text-xs font-semibold text-[#897261]">รายการในการ์ด</p>
+                                <button
+                                  type="button"
+                                  className="text-xs font-semibold text-[#d32f2f]"
+                                  onClick={() =>
+                                    updateServiceContent((draft) => {
+                                      draft.specs.cards[cardIndex].items.push({
+                                        text: "",
+                                        image: { url: "", alt: "" }
+                                      });
+                                    })
+                                  }
+                                >
+                                  เพิ่มรายการ
+                                </button>
+                              </div>
+                              {card.items.map((item, itemIndex) => (
+                                <div
+                                  key={`specs-item-${cardIndex}-${itemIndex}`}
+                                  className="rounded-lg border border-gray-200 p-2 space-y-2"
+                                >
+                                  <div className="flex items-center justify-between">
+                                    <p className="text-xs font-semibold">รายการ #{itemIndex + 1}</p>
+                                    <button
+                                      type="button"
+                                      className="text-xs text-red-500"
+                                      onClick={() =>
+                                        updateServiceContent((draft) => {
+                                          draft.specs.cards[cardIndex].items.splice(itemIndex, 1);
+                                        })
+                                      }
+                                    >
+                                      ลบ
+                                    </button>
+                                  </div>
+                                  <input
+                                    className="rounded-lg border border-gray-200 px-3 py-2 text-sm w-full"
+                                    value={item.text}
+                                    onChange={(event) =>
+                                      updateServiceContent((draft) => {
+                                        draft.specs.cards[cardIndex].items[itemIndex].text = event.target.value;
+                                      })
+                                    }
+                                    placeholder="ข้อความ"
+                                  />
+                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                    <input
+                                      className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                                      value={item.image.url}
+                                      onChange={(event) =>
+                                        updateServiceContent((draft) => {
+                                          draft.specs.cards[cardIndex].items[itemIndex].image.url =
+                                            event.target.value;
+                                        })
+                                      }
+                                      placeholder="รูป (URL)"
+                                    />
+                                    <input
+                                      className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                                      value={item.image.alt}
+                                      onChange={(event) =>
+                                        updateServiceContent((draft) => {
+                                          draft.specs.cards[cardIndex].items[itemIndex].image.alt =
+                                            event.target.value;
+                                        })
+                                      }
+                                      placeholder="รูป (alt)"
+                                    />
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ) : null}
+
+                  {serviceEditorTab === "gallery" ? (
+                    <div className="rounded-2xl border border-gray-100 p-4 space-y-4">
+                      <h4 className="text-sm font-bold">แกลเลอรีภาพ</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <label className="flex flex-col gap-2 text-sm font-semibold md:order-1">
+                          หัวข้อหลัก
+                          <input
+                            className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                            value={serviceContent.gallery.title}
+                            onChange={(event) =>
+                              updateServiceContent((draft) => {
+                                draft.gallery.title = event.target.value;
+                              })
+                            }
+                          />
+                        </label>
+                        <label className="flex flex-col gap-2 text-sm font-semibold md:order-2">
+                          หัวข้อเล็ก (eyebrow)
+                          <input
+                            className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                            value={serviceContent.gallery.eyebrow}
+                            onChange={(event) =>
+                              updateServiceContent((draft) => {
+                                draft.gallery.eyebrow = event.target.value;
+                              })
+                            }
+                          />
+                        </label>
+                      </div>
+                      <label className="flex flex-col gap-2 text-sm font-semibold">
+                        คำอธิบาย
+                        <textarea
+                          className="rounded-lg border border-gray-200 px-3 py-2 text-sm min-h-[80px]"
+                          value={serviceContent.gallery.subtitle}
+                          onChange={(event) =>
+                            updateServiceContent((draft) => {
+                              draft.gallery.subtitle = event.target.value;
+                            })
+                          }
+                        />
+                      </label>
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <p className="text-xs font-semibold text-[#897261]">รายการภาพ</p>
+                          <button
+                            type="button"
+                            className="text-xs font-semibold text-[#d32f2f]"
+                            onClick={() =>
+                              updateServiceContent((draft) => {
+                                draft.gallery.images.push({ url: "", alt: "" });
+                              })
+                            }
+                          >
+                            เพิ่มภาพ
+                          </button>
+                        </div>
+                        {serviceContent.gallery.images.map((image, index) => (
+                          <div
+                            key={`gallery-${index}`}
+                            className="rounded-xl border border-gray-200 p-3 space-y-2"
+                          >
+                            <div className="flex items-center justify-between">
+                              <p className="text-xs font-semibold">ภาพ #{index + 1}</p>
+                              <button
+                                type="button"
+                                className="text-xs text-red-500"
+                                onClick={() =>
+                                  updateServiceContent((draft) => {
+                                    draft.gallery.images.splice(index, 1);
+                                  })
+                                }
+                              >
+                                ลบ
+                              </button>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                              <input
+                                className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                                value={image.url}
+                                onChange={(event) =>
+                                  updateServiceContent((draft) => {
+                                    draft.gallery.images[index].url = event.target.value;
+                                  })
+                                }
+                                placeholder="รูป (URL)"
+                              />
+                              <input
+                                className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                                value={image.alt}
+                                onChange={(event) =>
+                                  updateServiceContent((draft) => {
+                                    draft.gallery.images[index].alt = event.target.value;
+                                  })
+                                }
+                                placeholder="รูป (alt)"
+                              />
+                            </div>
+                            {image.url ? (
+                              <div className="flex items-center gap-3">
+                                <div className="w-20 h-20 rounded-xl overflow-hidden border border-gray-200 bg-gray-50">
+                                  <img
+                                    src={image.url}
+                                    alt={image.alt || "preview"}
+                                    className="w-full h-full object-cover"
+                                  />
+                                </div>
+                                <p className="text-xs text-[#897261]">พรีวิวภาพ</p>
+                              </div>
+                            ) : null}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ) : null}
+
+                  {serviceEditorTab === "articles" ? (
+                    <div className="rounded-2xl border border-gray-100 p-4 space-y-4">
+                      <h4 className="text-sm font-bold">บทความที่เกี่ยวข้อง</h4>
+                      <p className="text-xs text-[#897261]">
+                        เลือกบทความได้สูงสุด 3 รายการ (ข้อมูลส่วนหัวใช้แบบคงที่)
+                      </p>
+                      <label className="flex flex-col gap-2 text-sm font-semibold">
+                        ค้นหาบทความ
+                        <input
+                          className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                          value={articleSearch}
+                          onChange={(event) => setArticleSearch(event.target.value)}
+                          placeholder="พิมพ์ชื่อบทความ..."
+                        />
+                      </label>
+                      <div className="space-y-2">
+                        {(data.articles || [])
+                          .filter((article) => {
+                            const keyword = articleSearch.trim().toLowerCase();
+                            if (!keyword) {
+                              return true;
+                            }
+                            return String(article.title || "").toLowerCase().includes(keyword);
+                          })
+                          .map((article) => {
+                          const selectedIds = new Set(
+                            (serviceContent.articles.items || [])
+                              .map((item) => item.id)
+                              .filter(Boolean)
+                          );
+                          const isSelected = selectedIds.has(article.id);
+                          return (
+                            <label
+                              key={article.id}
+                              className="flex items-center gap-3 rounded-xl border border-gray-200 p-3"
+                            >
+                              <input
+                                type="checkbox"
+                                checked={isSelected}
+                                onChange={() => {
+                                  const currentIds = (serviceContent.articles.items || [])
+                                    .map((item) => item.id)
+                                    .filter(Boolean);
+                                  let nextIds = currentIds;
+                                  if (isSelected) {
+                                    nextIds = currentIds.filter((id) => id !== article.id);
+                                  } else if (currentIds.length < 3) {
+                                    nextIds = [...currentIds, article.id];
+                                  } else {
+                                    alert("เลือกบทความได้สูงสุด 3 รายการ");
+                                    return;
+                                  }
+                                  const nextItems = nextIds
+                                    .map((id) => (data.articles || []).find((entry) => entry.id === id))
+                                    .filter(Boolean)
+                                    .map((entry) => ({
+                                      id: entry.id,
+                                      image: {
+                                        url: entry.heroImage || "",
+                                        alt: entry.title || ""
+                                      },
+                                      categoryLabel:
+                                        entry.category ||
+                                        (entry.categories || [])[0] ||
+                                        "บทความ",
+                                      title: entry.title || "",
+                                      href: `/articles/${entry.slug || entry.id}`
+                                    }));
+                                  updateServiceContent((draft) => {
+                                    draft.articles.items = nextItems;
+                                  });
+                                }}
+                              />
+                              <div className="w-14 h-14 rounded-lg overflow-hidden border border-gray-200 bg-gray-50">
+                                {article.heroImage ? (
+                                  <img
+                                    src={article.heroImage}
+                                    alt={article.title || "article"}
+                                    className="w-full h-full object-cover"
+                                  />
+                                ) : null}
+                              </div>
+                              <div>
+                                <p className="text-sm font-semibold">{article.title || "ไม่มีชื่อ"}</p>
+                                <p className="text-xs text-[#897261]">
+                                  {article.category || (article.categories || [])[0] || "บทความ"}
+                                </p>
+                              </div>
+                            </label>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ) : null}
+
+                  {serviceEditorTab === "faq" ? (
+                    <div className="rounded-2xl border border-gray-100 p-4 space-y-4">
+                      <h4 className="text-sm font-bold">คำถามที่พบบ่อย (FAQ)</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <label className="flex flex-col gap-2 text-sm font-semibold md:order-1">
+                          หัวข้อหลัก
+                          <input
+                            className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                            value={serviceContent.faq.title}
+                            onChange={(event) =>
+                              updateServiceContent((draft) => {
+                                draft.faq.title = event.target.value;
+                              })
+                            }
+                          />
+                        </label>
+                        <label className="flex flex-col gap-2 text-sm font-semibold md:order-2">
+                          หัวข้อเล็ก (eyebrow)
+                          <input
+                            className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                            value={serviceContent.faq.eyebrow}
+                            onChange={(event) =>
+                              updateServiceContent((draft) => {
+                                draft.faq.eyebrow = event.target.value;
+                              })
+                            }
+                          />
+                        </label>
+                      </div>
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <p className="text-xs font-semibold text-[#897261]">รายการคำถาม</p>
+                          <button
+                            type="button"
+                            className="text-xs font-semibold text-[#d32f2f]"
+                            onClick={() =>
+                              updateServiceContent((draft) => {
+                                draft.faq.items.push({ question: "", answer: "" });
+                              })
+                            }
+                          >
+                            เพิ่มคำถาม
+                          </button>
+                        </div>
+                        {serviceContent.faq.items.map((item, index) => (
+                          <div
+                            key={`faq-${index}`}
+                            className="rounded-xl border border-gray-200 p-3 space-y-2"
+                          >
+                            <div className="flex items-center justify-between">
+                              <p className="text-xs font-semibold">คำถาม #{index + 1}</p>
+                              <button
+                                type="button"
+                                className="text-xs text-red-500"
+                                onClick={() =>
+                                  updateServiceContent((draft) => {
+                                    draft.faq.items.splice(index, 1);
+                                  })
+                                }
+                              >
+                                ลบ
+                              </button>
+                            </div>
+                            <input
+                              className="rounded-lg border border-gray-200 px-3 py-2 text-sm w-full"
+                              value={item.question}
+                              onChange={(event) =>
+                                updateServiceContent((draft) => {
+                                  draft.faq.items[index].question = event.target.value;
+                                })
+                              }
+                              placeholder="คำถาม"
+                            />
+                            <textarea
+                              className="rounded-lg border border-gray-200 px-3 py-2 text-sm min-h-[70px] w-full"
+                              value={item.answer}
+                              onChange={(event) =>
+                                updateServiceContent((draft) => {
+                                  draft.faq.items[index].answer = event.target.value;
+                                })
+                              }
+                              placeholder="คำตอบ"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ) : null}
+
                 </div>
               ) : null}
 
-              <label className="flex flex-col gap-2 text-sm font-semibold">
-                คำโปรย
-                <textarea
-                  className="rounded-lg border border-gray-200 px-3 py-2 text-sm min-h-[90px]"
-                  value={activeItem.summary}
-                  onChange={(event) => handleChange("summary", event.target.value)}
-                  placeholder="สรุปสั้นๆ ให้ลูกค้าเข้าใจบริการ/บทความนี้"
-                />
-              </label>
-
               {isArticle ? (
-                <>
+                articleEditorTab === "content" ? (
+                  <>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <label className="flex flex-col gap-2 text-sm font-semibold">
                       หมวดหมู่ (สูงสุด 3)
@@ -969,7 +2017,7 @@ export default function MockCmsApp() {
                           <span
                             key={`${cat}-${index}`}
                             className="inline-flex items-center gap-2 text-xs font-bold px-3 py-1 rounded-full text-white"
-                            style={{ backgroundColor: activeItem.categoryColors?.[index] || "#d46211" }}
+                            style={{ backgroundColor: activeItem.categoryColors?.[index] || "#d32f2f" }}
                           >
                             {cat}
                             <button
@@ -1007,7 +2055,7 @@ export default function MockCmsApp() {
                                     return;
                                   }
                                   handleChange("categories", [...currentCategories, option.name]);
-                                  handleChange("categoryColors", [...currentColors, option.color || "#d46211"]);
+                                  handleChange("categoryColors", [...currentColors, option.color || "#d32f2f"]);
                                 }}
                               >
                                 {option.name}
@@ -1053,7 +2101,7 @@ export default function MockCmsApp() {
                   </div>
                   <label className="flex flex-col gap-2 text-sm font-semibold">
                     เนื้อหา (Rich Text)
-                    <QuillEditor
+                    <WysiwygEditor
                       value={activeItem.contentHtml}
                       onChange={(next) => handleChange("contentHtml", next)}
                     />
@@ -1097,7 +2145,8 @@ export default function MockCmsApp() {
                     </label>
                   </div>
                 </>
-              ) : (
+                ) : null
+              ) : serviceContent ? null : (
                 <label className="flex flex-col gap-2 text-sm font-semibold">
                   เนื้อหา (ย่อหน้า/หัวข้อ)
                   <textarea

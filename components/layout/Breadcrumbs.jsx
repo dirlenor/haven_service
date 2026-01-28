@@ -15,12 +15,18 @@ const formatSegmentLabel = (segment) => {
   if (!segment) {
     return "";
   }
-  if (STATIC_LABELS[segment]) {
-    return STATIC_LABELS[segment];
+  let decoded = segment;
+  try {
+    decoded = decodeURIComponent(segment);
+  } catch {
+    decoded = segment;
   }
-  const parts = segment.split("-").filter(Boolean);
+  if (STATIC_LABELS[decoded]) {
+    return STATIC_LABELS[decoded];
+  }
+  const parts = decoded.split("-").filter(Boolean);
   if (!parts.length) {
-    return segment;
+    return decoded;
   }
   return parts
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
@@ -67,7 +73,7 @@ export default function Breadcrumbs() {
               {isLast ? (
                 <span className="text-[#181411] font-semibold">{item.label}</span>
               ) : (
-                <Link href={item.href} className="hover:text-[#d46211]">
+                <Link href={item.href} className="hover:text-[#d32f2f]">
                   {item.label}
                 </Link>
               )}

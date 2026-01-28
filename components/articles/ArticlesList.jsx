@@ -16,7 +16,7 @@ const formatDate = (value) => {
 };
 
 const badgeData = (article) => {
-  const fallbackColor = "#d46211";
+  const fallbackColor = "#d32f2f";
   const labels = Array.isArray(article.categories) && article.categories.length
     ? article.categories
     : article.category
@@ -92,7 +92,7 @@ export default function ArticlesList({ articles = [] }) {
                 {article.summary || "อ่านบทความฉบับเต็มเพื่อรายละเอียดเพิ่มเติม"}
               </p>
               <span
-                className="inline-flex items-center gap-1 font-bold text-[#d46211] hover:gap-2 transition-all"
+                className="inline-flex items-center gap-1 font-bold text-[#d32f2f] hover:gap-2 transition-all"
               >
                 อ่านเพิ่มเติม
                 <span className="material-symbols-outlined text-sm">arrow_forward</span>
