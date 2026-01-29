@@ -241,6 +241,8 @@ export default function MockCmsApp() {
     body_scripts: ""
   });
   const [scriptsDirty, setScriptsDirty] = useState(false);
+  const [orderNotice, setOrderNotice] = useState("");
+  const [refreshing, setRefreshing] = useState(false);
 
   const items = data[activeTab] || [];
   const isScriptsTab = activeTab === "scripts";
@@ -598,8 +600,14 @@ export default function MockCmsApp() {
       .upsert(updates, { onConflict: "id" });
     if (updateError) {
       setError(updateError.message);
+      setOrderNotice("");
     }
     setSaving(false);
+    if (!updateError) {
+      setLastSavedAt(new Date().toLocaleString("th-TH"));
+      setOrderNotice("บันทึกลำดับแล้ว");
+      setTimeout(() => setOrderNotice(""), 3000);
+    }
   };
 
   const reorderServices = (fromId, toId) => {
@@ -621,6 +629,36 @@ export default function MockCmsApp() {
     }));
     setData((prev) => ({ ...prev, services: normalized }));
     saveServiceOrder(normalized);
+  };
+
+  const handleRefreshSite = async () => {
+    const secret = process.env.NEXT_PUBLIC_REVALIDATE_SECRET;
+    if (!secret) {
+      setError("ยังไม่ได้ตั้งค่า NEXT_PUBLIC_REVALIDATE_SECRET");
+      return;
+    }
+    setRefreshing(true);
+    setError("");
+    try {
+      const res = await fetch("/api/revalidate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          secret,
+          paths: ["/", "/services"]
+        })
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data?.message || "รีเฟรชไม่สำเร็จ");
+      }
+      setOrderNotice("รีเฟรชหน้าเว็บแล้ว");
+      setTimeout(() => setOrderNotice(""), 3000);
+    } catch (err) {
+      setError(err.message || "รีเฟรชไม่สำเร็จ");
+    } finally {
+      setRefreshing(false);
+    }
   };
 
   const updateServiceContent = (updater) => {
@@ -971,15 +1009,29 @@ export default function MockCmsApp() {
                 </div>
               ) : null}
             </div>
-            {!isScriptsTab ? (
-              <button
-                type="button"
-                className="px-5 py-2 rounded-full text-sm font-bold bg-[#d32f2f] text-white"
-                onClick={handleNew}
-              >
-                เพิ่มรายการ
-              </button>
-            ) : null}
+            <div className="flex items-center gap-3">
+              {activeTab === "services" ? (
+                <button
+                  type="button"
+                  className={`px-5 py-2 rounded-full text-sm font-bold border ${
+                    refreshing ? "border-gray-200 text-gray-400" : "border-[#181411] text-[#181411]"
+                  }`}
+                  onClick={handleRefreshSite}
+                  disabled={refreshing}
+                >
+                  {refreshing ? "กำลังรีเฟรช..." : "รีเฟรชหน้าเว็บ"}
+                </button>
+              ) : null}
+              {!isScriptsTab ? (
+                <button
+                  type="button"
+                  className="px-5 py-2 rounded-full text-sm font-bold bg-[#d32f2f] text-white"
+                  onClick={handleNew}
+                >
+                  เพิ่มรายการ
+                </button>
+              ) : null}
+            </div>
           </div>
 
           {loading ? (
@@ -987,6 +1039,9 @@ export default function MockCmsApp() {
           ) : null}
           {error ? (
             <div className="mt-4 text-xs text-red-500">{error}</div>
+          ) : null}
+          {orderNotice ? (
+            <div className="mt-3 text-xs text-[#2e7d32]">{orderNotice}</div>
           ) : null}
 
           {isScriptsTab ? (

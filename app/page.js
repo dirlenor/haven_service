@@ -29,9 +29,8 @@ const loadCmsData = async () => {
       .order("created_at", { ascending: false }),
     supabaseServer
       .from("articles")
-    .select("id, slug, title, summary, hero_image, category, category_color, categories, category_colors, date")
+      .select("id, slug, title, summary, hero_image, category, category_color, categories, category_colors, date")
       .eq("status", "published")
-      .order("date", { ascending: false })
       .order("created_at", { ascending: false })
   ]);
 

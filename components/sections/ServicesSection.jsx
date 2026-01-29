@@ -65,7 +65,7 @@ export default function ServicesSection({ services = [] }) {
                 <a
                   key={service.id}
                   href={`/services/${service.slug || service.id}`}
-                  className="ds-card ds-card-hover group relative flex h-[400px] overflow-hidden"
+                  className="ds-card ds-card-hover group relative flex h-[320px] overflow-hidden"
                 >
                   <div
                     className="absolute inset-0 bg-[#f4f2ee] bg-cover bg-center"
@@ -77,14 +77,11 @@ export default function ServicesSection({ services = [] }) {
                     role="img"
                     aria-label={service.title || "บริการ"}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/35 to-transparent" />
                   <div className="relative z-10 mt-auto w-full p-6 text-white">
                     <h3 className="text-xl font-bold">
                       {service.title || "บริการ"}
                     </h3>
-                    <p className="mt-2 text-sm text-white/90 line-clamp-2">
-                      {service.summary || "รายละเอียดบริการจะมาเร็วๆ นี้"}
-                    </p>
                     <span className="mt-4 inline-flex items-center gap-2 text-sm font-bold text-white">
                       ดูรายละเอียด
                       <span className="material-symbols-outlined text-base">arrow_forward</span>
@@ -99,21 +96,18 @@ export default function ServicesSection({ services = [] }) {
                 <a
                   key={service.title}
                   href="/services"
-                  className="ds-card ds-card-hover group relative flex h-[400px] overflow-hidden"
+                  className="ds-card ds-card-hover group relative flex h-[320px] overflow-hidden"
                 >
                   <div
                     className="absolute inset-0 bg-[#f4f2ee] bg-cover bg-center"
                     role="img"
                     aria-label={service.title}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/20 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/35 to-transparent" />
                   <div className="relative z-10 mt-auto w-full p-6 text-white">
                     <h3 className="text-xl font-bold">
                       {service.title}
                     </h3>
-                    <p className="mt-2 text-sm text-white/90 line-clamp-2">
-                      {service.summary}
-                    </p>
                     <span className="mt-4 inline-flex items-center gap-2 text-sm font-bold text-white">
                       ดูรายละเอียด
                       <span className="material-symbols-outlined text-base">arrow_forward</span>
