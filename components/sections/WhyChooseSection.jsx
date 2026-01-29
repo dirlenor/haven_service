@@ -9,7 +9,7 @@ export default function WhyChooseSection() {
             </div>
             <h2 className="ds-title text-4xl lg:text-5xl mb-6">คุณภาพและฝีมือระดับมืออาชีพ</h2>
             <p className="ds-body text-lg leading-relaxed max-w-2xl mx-auto">
-              มากกว่า 10 ปีที่เรามุ่งมั่นสร้างสรรค์ผลงานคุณภาพ ด้วยทีมงานมืออาชีพและวัสดุชั้นเลิศ
+            มากกว่า 10 ปีที่เรามุ่งมั่นสร้างสรรค์ผลงานคุณภาพ ด้วยทีมงานมืออาชีพและวัสดุที่ดีที่สุด รับประกันความพึ่งพอใจ มีบริการหลังการขายที่พร้อมดูแลคุณ
             </p>
           </div>
 
@@ -32,8 +32,7 @@ export default function WhyChooseSection() {
               ติดตั้งโดยผู้เชี่ยวชาญ
             </h3>
               <p className="ds-body text-lg leading-relaxed">
-                ทีมช่างของเราผ่านการฝึกอบรมเฉพาะทางและมีประสบการณ์ยาวนาน
-                มั่นใจได้ในความประณีตของการติดตั้งทุกจุด เก็บงานเรียบร้อย ไม่ทิ้งร่องรอยความเสียหาย
+              ทีมช่างของเราผ่านการฝึกอบรมเฉพาะทางและมีประสบการณ์ยาวนาน มั่นใจได้ในความประณีตของการติดตั้งทุกจุด เก็บงานเรียบร้อย ไม่ทิ้งร่องรอยความเสียหาย
               </p>
               <ul className="flex flex-col gap-3 mt-2">
                 <li className="flex items-center gap-3 ds-muted">
@@ -67,18 +66,16 @@ export default function WhyChooseSection() {
               วัสดุเกรดพรีเมียม
             </h3>
             <p className="ds-body text-lg leading-relaxed">
-              เราคัดสรรเฉพาะวัสดุคุณภาพสูงจากแหล่งผลิตชั้นนำ
-              เพื่อให้ได้ความสวยงาม ทนทาน และอายุการใช้งานที่ยาวนาน
-              สัมผัสถึงความแตกต่างได้จริง
+            เราคัดสรรเฉพาะวัสดุคุณภาพสูงจากแหล่งผลิตชั้นนำ เพื่อให้ได้ความสวยงาม ทนทาน และอายุการใช้งานที่ยาวนาน เพื่อให้งานออกมาคุณภาพดีที่สุด
             </p>
             <ul className="flex flex-col gap-3 mt-2 lg:items-end">
               <li className="flex items-center gap-3 ds-muted flex-row-reverse">
                 <span className="material-symbols-outlined text-blue-500">check_circle</span>
-                <span>เนื้อผ้าและวัสดุเกรด A</span>
+                <span>หลากหลายดีไซน์ให้เลือกสรรค์</span>
               </li>
               <li className="flex items-center gap-3 ds-muted flex-row-reverse">
                 <span className="material-symbols-outlined text-blue-500">check_circle</span>
-                <span>หลากหลายดีไซน์ให้เลือกสรร</span>
+                <span>วัสดุคุณภาพสูง</span>
               </li>
             </ul>
           </div>
@@ -100,20 +97,19 @@ export default function WhyChooseSection() {
               <span className="material-symbols-outlined text-4xl">fact_check</span>
             </div>
             <h3 className="text-3xl lg:text-4xl font-bold" style={{ color: "var(--ds-color-text)" }}>
-              ตรวจสอบคุณภาพมาตรฐานสากล
+            ราคาโปร่งใส
             </h3>
             <p className="ds-body text-lg leading-relaxed">
-              ทุกขั้นตอนการทำงานมีการควบคุมและตรวจสอบคุณภาพอย่างเคร่งครัด
-              ตั้งแต่ก่อนส่งมอบงาน เพื่อให้มั่นใจว่าคุณจะได้รับสิ่งที่ดีที่สุด
+            มีตัวอย่างให้คุณเลือกมากมาย มีบริการวัดพื้นที่หน้างาน  เพื่อให้คุณทราบงบประมาณก่อนตัดสินใจ
             </p>
             <ul className="flex flex-col gap-3 mt-2">
               <li className="flex items-center gap-3 ds-muted">
                 <span className="material-symbols-outlined text-purple-500">check_circle</span>
-                <span>Double Check ทุกจุด</span>
+                <span>ประเมินราคาก่อนเริ่มงาน </span>
               </li>
               <li className="flex items-center gap-3 ds-muted">
                 <span className="material-symbols-outlined text-purple-500">check_circle</span>
-                <span>รับประกันความพึงพอใจ</span>
+                <span>ไม่มีค่าธรรมเนียมแอบแฝง</span>
               </li>
             </ul>
           </div>
@@ -135,20 +131,19 @@ export default function WhyChooseSection() {
               <span className="material-symbols-outlined text-4xl">schedule</span>
             </div>
             <h3 className="text-3xl lg:text-4xl font-bold" style={{ color: "var(--ds-color-text)" }}>
-              ส่งมอบงานตรงเวลา
+            รับประกันงาน
             </h3>
             <p className="ds-body text-lg leading-relaxed">
-              เราให้ความสำคัญกับเวลาของคุณ ดำเนินงานรวดเร็วตามแผนที่วางไว้
-              และส่งมอบงานตรงตามกำหนด นัดหมายแม่นยำ ไม่ล่าช้า
+            ทุกขั้นตอนการทำงานมีการควบคุมและตรวจสอบคุณภาพ ตั้งแต่ก่อนส่งมอบงาน เพื่อให้มั่นใจว่าคุณจะได้รับสิ่งที่ดีที่สุด
             </p>
             <ul className="flex flex-col gap-3 mt-2 lg:items-end">
               <li className="flex items-center gap-3 ds-muted flex-row-reverse">
                 <span className="material-symbols-outlined text-orange-500">check_circle</span>
-                <span>วางแผนงานชัดเจน</span>
+                <span>Double Check ทุกจุด</span>
               </li>
               <li className="flex items-center gap-3 ds-muted flex-row-reverse">
                 <span className="material-symbols-outlined text-orange-500">check_circle</span>
-                <span>อัพเดทสถานะสม่ำเสมอ</span>
+                <span>รับประกันความพึงพอใจ</span>
               </li>
             </ul>
           </div>

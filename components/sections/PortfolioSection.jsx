@@ -5,7 +5,7 @@ export default function PortfolioSection() {
         <div className="flex flex-col md:flex-row justify-between items-end mb-10 gap-4">
           <div>
             <h2 className="ds-title text-3xl mb-2">แรงบันดาลใจ</h2>
-            <p className="ds-muted">Inspiration</p>
+            <p className="ds-muted">"เราพร้อมสร้างพื้นที่ที่ใช้งานได้ดี อยู่สบาย และตอบโจทย์ของคุณ”</p>
           </div>
         </div>
         <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">

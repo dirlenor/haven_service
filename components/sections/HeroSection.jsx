@@ -87,7 +87,7 @@ export default function HeroSection() {
             พร้อมตกแต่งพื้นที่ในฝันของคุณแล้วหรือยัง
           </span>
           <h1 className="ds-title text-4xl lg:text-6xl tracking-[-0.033em]">
-            HavenWorks พร้อมให้บริการ ออกแบบติดตั้ง ฉากกั้นห้อง ผ้าม่านและบริการต่อเติมแบบครบวงจร
+            HavenWorks บริการติดตั้ง ฉากกั้นห้อง ผ้าม่านและต่อเติมแบบครบวงจร
           </h1>
           <p className="ds-body text-lg leading-relaxed">
             ทีมงานประสบการณ์สูง การันตีผลงาน พร้อมให้คำแนะนำ เพื่อสร้างสถานที่ ที่ใช่สำหรับคุณ
