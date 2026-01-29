@@ -43,100 +43,12 @@ partitionTemplate.types.items = [
     }
   }
 ];
-partitionTemplate.specs.cards = [
-  {
-    title: "วัสดุ",
-    items: [
-      {
-        text: "กระจกใส / กระจกฝ้า",
-        image: {
-          url: "https://images.unsplash.com/photo-1503602642458-232111445657?auto=format&fit=crop&w=200&q=80",
-          alt: "กระจกใส"
-        }
-      },
-      {
-        text: "อะลูมิเนียม",
-        image: {
-          url: "https://images.unsplash.com/photo-1503602642458-232111445657?auto=format&fit=crop&w=200&q=80",
-          alt: "อลูมิเนียม"
-        }
-      },
-      {
-        text: "PVC",
-        image: {
-          url: "https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=200&q=80",
-          alt: "PVC"
-        }
-      },
-      {
-        text: "ไม้หรือไม้เทียม",
-        image: {
-          url: "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=200&q=80",
-          alt: "ไม้หรือไม้เทียม"
-        }
-      },
-      {
-        text: "ผ้า หรือวัสดุผสม",
-        image: {
-          url: "https://images.unsplash.com/photo-1519710164239-da123dc03ef4?auto=format&fit=crop&w=200&q=80",
-          alt: "ผ้า หรือวัสดุผสม"
-        }
-      }
-    ]
-  },
-  {
-    title: "สี",
-    items: [
-      {
-        text: "โทนใสหรือโปร่ง เพิ่มความโล่ง",
-        image: {
-          url: "https://images.unsplash.com/photo-1493666438817-866a91353ca9?auto=format&fit=crop&w=200&q=80",
-          alt: "โทนใสโปร่ง"
-        }
-      },
-      {
-        text: "โทนขาว เทา ดำ ให้ความเรียบ ทันสมัย",
-        image: {
-          url: "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=200&q=80",
-          alt: "โทนขาวเทาดำ"
-        }
-      },
-      {
-        text: "โทนไม้ เพิ่มความอบอุ่น",
-        image: {
-          url: "https://images.unsplash.com/photo-1503264116251-35a269479413?auto=format&fit=crop&w=200&q=80",
-          alt: "โทนไม้"
-        }
-      },
-      {
-        text: "เลือกสีให้เข้ากับสไตล์พื้นที่",
-        image: {
-          url: "https://images.unsplash.com/photo-1505691723518-36a5b1f6df81?auto=format&fit=crop&w=200&q=80",
-          alt: "เลือกสี"
-        }
-      }
-    ]
-  },
-  {
-    title: "ขนาด",
-    items: [
-      {
-        text: "ผลิตและติดตั้งตามขนาดพื้นที่จริง",
-        image: {
-          url: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?auto=format&fit=crop&w=200&q=80",
-          alt: "ขนาดพื้นที่จริง"
-        }
-      },
-      {
-        text: "ใช้ได้ทั้งพื้นที่เล็กและพื้นที่ขนาดใหญ่",
-        image: {
-          url: "https://images.unsplash.com/photo-1505685711294-3008a0c9ff55?auto=format&fit=crop&w=200&q=80",
-          alt: "พื้นที่เล็กใหญ่"
-        }
-      }
-    ]
-  }
-];
+partitionTemplate.specs.materials = ["กระจกใส", "อะลูมิเนียม"];
+partitionTemplate.specs.colors = ["ขาว", "เทา"];
+partitionTemplate.specs.image = {
+  url: "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=1400&q=80",
+  alt: "ตัวอย่างวัสดุและโทนสี"
+};
 partitionTemplate.gallery.images = [
   {
     url: "https://images.unsplash.com/photo-1505692794400-787b69cae2a6?auto=format&fit=crop&w=1200&q=80",

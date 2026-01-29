@@ -86,7 +86,7 @@ export default function Navbar() {
   return (
     <header
       data-react-navbar
-      className="sticky top-0 z-50 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md"
+      className="sticky top-0 z-50 bg-white/80  backdrop-blur-md"
     >
       <div className="ds-container flex items-center justify-between h-16">
         <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity cursor-pointer">
@@ -119,14 +119,14 @@ export default function Navbar() {
                 expand_more
               </span>
             </Link>
-            <div className="absolute top-full left-0 mt-2 w-64 bg-white dark:bg-black rounded-lg shadow-xl border border-gray-100 dark:border-gray-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+            <div className="absolute top-full left-0 mt-2 w-64 bg-white  rounded-lg shadow-xl border border-gray-100  opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
               <div className="py-2">
                 {services.length ? (
                   services.map((service) => (
                     <Link
                       key={service.id}
                       href={`/services/${service.slug || service.id}`}
-                      className="block px-4 py-3 text-sm text-[#181411] dark:text-white hover:bg-[#d32f2f] hover:text-white transition-colors"
+                      className="block px-4 py-3 text-sm text-[#181411]  hover:bg-[#d32f2f] hover:text-white transition-colors"
                     >
                       <div className="font-medium">{service.title || "บริการ"}</div>
                     </Link>
@@ -134,7 +134,7 @@ export default function Navbar() {
                 ) : (
                   <div className="px-4 py-3 text-xs text-[#897261]">ยังไม่มีบริการที่เผยแพร่</div>
                 )}
-                <div className="border-t border-gray-100 dark:border-gray-700 mt-1"></div>
+                <div className="border-t border-gray-100  mt-1"></div>
                 <Link
                   href="/services"
                   className="block px-4 py-3 text-sm text-primary font-medium hover:bg-[#d32f2f] hover:text-white transition-colors"
@@ -201,7 +201,7 @@ export default function Navbar() {
                 expand_more
               </span>
             </summary>
-            <div className="pl-4 mt-2 flex flex-col gap-0.5 border-l-2 border-gray-200 dark:border-gray-700 ml-2">
+            <div className="pl-4 mt-2 flex flex-col gap-0.5 border-l-2 border-gray-200  ml-2">
               {services.length ? (
                 services.map((service) => {
                   const href = `/services/${service.slug || service.id}`;
@@ -256,7 +256,7 @@ export default function Navbar() {
           >
             ติดต่อเรา
           </Link>
-          <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+          <div className="mt-4 pt-4 border-t border-gray-200 ">
             <LineCTA className="w-full justify-center h-11 px-5 text-sm" />
           </div>
         </div>

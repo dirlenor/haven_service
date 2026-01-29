@@ -22,14 +22,6 @@
   --ds-shadow-strong: 0 20px 60px rgba(0, 0, 0, 0.18);
 }
 
-.dark {
-  --ds-color-bg: var(--ds-color-dark-bg);
-  --ds-color-surface: var(--ds-color-dark-surface);
-  --ds-color-text: var(--ds-color-dark-text);
-  --ds-color-muted: var(--ds-color-dark-muted);
-  --ds-color-border: #3d2b1d;
-}
-
 *,
 *::before,
 *::after {
@@ -41,6 +33,7 @@ body {
   font-family: "Anuphan", sans-serif;
   color: var(--ds-color-text);
   background-color: var(--ds-color-bg);
+  color-scheme: light;
 }
 
 html:not(.tw-ready) body {
@@ -67,10 +60,6 @@ img {
 .legacy-contact .border-\[\#e6e0db\] {
   border-color: #e6e0db !important;
 }
-.legacy-contact .dark .bg-\[\#2d2118\] {
-  background-color: #2d2118 !important;
-}
-
 .legacy-contact .text-primary {
   color: #d32f2f !important;
 }

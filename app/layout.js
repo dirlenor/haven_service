@@ -13,12 +13,11 @@ export const viewport = {
 };
 
 const legacyContactSafelist =
-  "bg-background-light dark:bg-background-dark font-display text-[#181411] dark:text-[#f8f7f6] relative flex min-h-screen w-full flex-col overflow-x-hidden flex-1 max-w-[1280px] mx-auto px-6 lg:px-10 py-10 mb-10 dark:text-white text-4xl md:text-5xl font-black leading-tight tracking-tight mb-4 text-[#897261] dark:text-[#b09e90] text-lg max-w-2xl font-normal grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12 items-stretch h-full bg-center bg-no-repeat bg-cover rounded-xl object-cover shadow-lg border border-[#e6e0db] dark:border-[#3d2e23] overflow-hidden bg-white dark:bg-[#2d2118] p-8 justify-center text-2xl font-bold mb-6 items-center gap-2 material-symbols-outlined text-primary text-3xl space-y-6 pb-6 border-b font-medium leading-relaxed items-start gap-4 bg-primary/10 p-3 rounded-lg flex-shrink-0 text-xl text-sm uppercase tracking-wider mb-2 text-base rounded-2xl mb-8 space-y-5 md:grid-cols-2 gap-5 dark:bg-[#221810] h-12 focus:ring-primary focus:border-primary bg-primary hover:bg-opacity-90 text-white py-4 shadow-md transition-all text-xs text-center mt-4 italic border-t border-gray-100 dark:border-gray-800 mt-20 py-16 md:grid-cols-4 gap-12 gap-6 gap-3 size-8 dark:text-gray-400 size-10 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-primary hover:text-white hover:text-primary transition-colors mt-16 pt-8 md:flex-row justify-between dark:text-gray-500 hover:underline fixed bottom-8 right-8 z-[100] items-end px-4 py-2 shadow-xl border-[#f4f2f0] dark:border-[#3a2d23] hidden md:block bg-[#00B900] hover:scale-110 active:scale-95 w-14 h-14 md:w-16 md:h-16 shadow-2xl duration-300 group w-8 h-8 md:w-10 md:h-10 fill-current absolute right-full mr-4 py-1 px-3 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap";
+  "bg-background-light  font-display text-[#181411]  relative flex min-h-screen w-full flex-col overflow-x-hidden flex-1 max-w-[1280px] mx-auto px-6 lg:px-10 py-10 mb-10  text-4xl md:text-5xl font-black leading-tight tracking-tight mb-4 text-[#897261]  text-lg max-w-2xl font-normal grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12 items-stretch h-full bg-center bg-no-repeat bg-cover rounded-xl object-cover shadow-lg border border-[#e6e0db]  overflow-hidden bg-white  p-8 justify-center text-2xl font-bold mb-6 items-center gap-2 material-symbols-outlined text-primary text-3xl space-y-6 pb-6 border-b font-medium leading-relaxed items-start gap-4 bg-primary/10 p-3 rounded-lg flex-shrink-0 text-xl text-sm uppercase tracking-wider mb-2 text-base rounded-2xl mb-8 space-y-5 md:grid-cols-2 gap-5  h-12 focus:ring-primary focus:border-primary bg-primary hover:bg-opacity-90 text-white py-4 shadow-md transition-all text-xs text-center mt-4 italic border-t border-gray-100  mt-20 py-16 md:grid-cols-4 gap-12 gap-6 gap-3 size-8  size-10 rounded-full bg-gray-100  text-gray-600  hover:bg-primary hover:text-white hover:text-primary transition-colors mt-16 pt-8 md:flex-row justify-between  hover:underline fixed bottom-8 right-8 z-[100] items-end px-4 py-2 shadow-xl border-[#f4f2f0]  hidden md:block bg-[#00B900] hover:scale-110 active:scale-95 w-14 h-14 md:w-16 md:h-16 shadow-2xl duration-300 group w-8 h-8 md:w-10 md:h-10 fill-current absolute right-full mr-4 py-1 px-3 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap";
 
 const tailwindConfig = `
 window.tailwind = window.tailwind || {};
 window.tailwind.config = {
-  darkMode: "class",
   theme: {
     extend: {
       colors: {
@@ -55,7 +54,7 @@ window.tailwind.config = {
           "@apply border-2 border-primary text-primary hover:bg-primary/5": {}
         },
         ".card": {
-          "@apply bg-white dark:bg-[#251c16] rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-[#3d2b1d]": {}
+          "@apply bg-white  rounded-2xl overflow-hidden shadow-sm border border-gray-100 ": {}
         },
         ".card-hover": {
           "@apply hover:shadow-xl transition-all duration-300": {}
@@ -81,7 +80,7 @@ if (document.readyState === "complete") {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="th" className="light" suppressHydrationWarning>
+    <html lang="th" suppressHydrationWarning>
       <head>
         <link rel="stylesheet" href="/assets/css/style.css" />
         <Script
@@ -106,7 +105,7 @@ export default function RootLayout({ children }) {
           }}
         />
       </head>
-      <body className="bg-background-light dark:bg-background-dark font-display text-[#181411] dark:text-white">
+      <body className="bg-background-light  font-display text-[#181411] ">
         <div
           className={legacyContactSafelist}
           style={{ display: "none" }}

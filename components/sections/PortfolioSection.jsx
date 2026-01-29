@@ -22,7 +22,7 @@ export default function PortfolioSection() {
               </div>
             </div>
           </div>
-          <div className="break-inside-avoid bg-primary/5 dark:bg-white/5 p-8 rounded-2xl flex flex-col justify-center items-center text-center">
+          <div className="break-inside-avoid bg-primary/5  p-8 rounded-2xl flex flex-col justify-center items-center text-center">
             <span className="material-symbols-outlined text-primary text-5xl mb-4">format_quote</span>
             <p className="text-lg italic ds-muted mb-6">
               "ประทับใจการทำงานของทีมงานมากค่ะ ติดตั้งรวดเร็ว งานเรียบร้อย แนะนำเลยค่ะ"

@@ -37,7 +37,11 @@ export default function ServiceTemplate({ service, content }) {
   const hasIntro =
     introTitle || normalized.intro.items.length || normalized.intro.image.url;
   const hasTypes = normalized.types.items.length;
-  const hasSpecs = normalized.specs.cards.length;
+  const hasSpecs =
+    normalized.specs.title ||
+    normalized.specs.eyebrow ||
+    normalized.specs.materials.length ||
+    normalized.specs.colors.length;
   const hasGallery = normalized.gallery.images.length;
   const hasArticles = normalized.articles.items.length;
   const hasFaq = normalized.faq.items.length;
@@ -88,15 +92,23 @@ export default function ServiceTemplate({ service, content }) {
   const galleryImages = normalized.gallery.images;
   const carouselImages = hasGallery ? [...galleryImages, ...galleryImages] : [];
   const slideCount = galleryImages.length || 1;
-  const slideWidth = "100vw";
+  const slideWidth = "clamp(220px, 26vw, 320px)";
+  const slideGap = "24px";
   const slideDuration = "90s";
+  const specsMaterials = normalized.specs.materials.length
+    ? normalized.specs.materials
+    : ["ผ้า", "PVC"];
+  const specsColors = normalized.specs.colors.length
+    ? normalized.specs.colors
+    : ["ขาว", "เทา"];
+  const formatSpecsList = (items) => items.filter(Boolean).join(" / ");
 
   return (
-    <div className="legacy-page min-h-screen w-full bg-background-light dark:bg-background-dark font-display text-[#181411] dark:text-white">
+    <div className="legacy-page min-h-screen w-full bg-background-light  font-display text-[#181411] ">
       <main className="w-full">
         <section className="relative w-full py-8 lg:py-12 bg-white">
           <div className="w-full">
-            <div className="relative min-h-[420px] lg:min-h-[520px] flex items-end">
+            <div className="relative min-h-[350px] lg:min-h-[350px] flex items-end">
               {heroImage ? (
                 <img
                   alt={heroAlt}
@@ -120,14 +132,14 @@ export default function ServiceTemplate({ service, content }) {
         </section>
 
         {hasIntro ? (
-          <section className="py-12 lg:py-20 bg-white dark:bg-background-dark">
+          <section className="py-12 lg:py-20 bg-white ">
             <div className="mx-auto w-full max-w-[1280px] px-6 lg:px-10">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                 <div>
                   {introTitle ? (
                     <h2 className="text-3xl lg:text-4xl font-bold mb-6">{introTitle}</h2>
                   ) : null}
-                  <div className="space-y-6 text-sm text-[#4c3f35] dark:text-[#d8c5b7]">
+                  <div className="space-y-6 text-sm text-[#4c3f35] ">
                     {normalized.intro.items.map((item, index) => (
                       <div key={`${item.heading}-${index}`}>
                         {item.heading ? (
@@ -144,7 +156,7 @@ export default function ServiceTemplate({ service, content }) {
                   <div>
                     <img
                       alt={normalized.intro.image.alt || heroAlt}
-                      className="w-full rounded-[32px] object-cover shadow-xl"
+                      className="w-full max-h-[500px] rounded-[32px] object-cover shadow-xl"
                       src={normalized.intro.image.url}
                     />
                   </div>
@@ -164,7 +176,7 @@ export default function ServiceTemplate({ service, content }) {
                   </p>
                 ) : null}
                 {typesTitle ? (
-                  <h2 className="text-3xl lg:text-4xl font-bold text-[#18120c] dark:text-white">
+                  <h2 className="text-3xl lg:text-4xl font-bold text-[#18120c] ">
                     {typesTitle}
                   </h2>
                 ) : null}
@@ -240,175 +252,30 @@ export default function ServiceTemplate({ service, content }) {
                   </p>
                 ) : null}
                 {specsTitle ? (
-                  <h2 className="text-3xl lg:text-4xl font-bold text-[#18120c] dark:text-white">
+                  <h2 className="text-3xl lg:text-4xl font-bold text-[#18120c] ">
                     {specsTitle}
                   </h2>
                 ) : null}
               </div>
-              <div className="grid gap-6 lg:grid-cols-3">
-                {normalized.specs.cards.map((card, cardIndex) => (
-                  <article
-                    key={`${card.title}-${cardIndex}`}
-                    className="bg-white rounded-3xl border border-[#f0ebe4] p-8 text-[#4c3f35]"
-                  >
-                    <h3 className="text-xl font-bold mb-4 text-[#18120c]">{card.title}</h3>
-                    <ul className="space-y-3 text-sm leading-relaxed">
-                      {card.items.map((item, itemIndex) => (
-                        <li key={`${item.text}-${itemIndex}`} className="flex items-start gap-3">
-                          {item.image.url ? (
-                            <img
-                              src={item.image.url}
-                              alt={item.image.alt || item.text}
-                              className="w-12 h-12 rounded-xl object-cover border border-[#d32f2f]"
-                            />
-                          ) : (
-                            <span className="text-[#d32f2f] mt-1">{renderIcon("check")}</span>
-                          )}
-                          <span>{item.text}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </article>
-                ))}
+              <div className="flex flex-wrap items-center justify-center gap-10 text-lg">
+                <div className="flex items-center gap-2">
+                  <span className="font-semibold text-[#d32f2f]">วัสดุ :</span>
+                  <span className="text-[#4c3f35]">{formatSpecsList(specsMaterials)}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="font-semibold text-[#d32f2f]">สี :</span>
+                  <span className="text-[#4c3f35]">{formatSpecsList(specsColors)}</span>
+                </div>
               </div>
-            </div>
-          </section>
-        ) : null}
-
-        <section className="py-16" style={{ backgroundColor: "var(--ds-color-cream)" }}>
-          <div className="mx-auto w-full max-w-3xl px-6 text-center space-y-6">
-            <p className="text-xs uppercase tracking-[0.5em] text-[#897261]">
-              {staticCta.eyebrow}
-            </p>
-            <h2 className="text-3xl lg:text-4xl font-bold text-[#18120c]">
-              {staticCta.title}
-            </h2>
-            <p className="text-sm text-[#4c3f35] leading-relaxed">{staticCta.body}</p>
-            <a
-              href={staticCta.button.href}
-              className="inline-flex items-center justify-center gap-3 px-10 py-4 rounded-full bg-[#00c300] text-white text-base font-bold hover:bg-[#00a500] transition"
-            >
-              <span className="text-lg">LINE</span>
-              <span>{staticCta.button.label}</span>
-            </a>
-          </div>
-        </section>
-
-        {hasGallery ? (
-          <section className="py-16 bg-white">
-            <div className="mx-auto w-full max-w-6xl px-6 space-y-6">
-              <div className="text-center space-y-3">
-                {normalized.gallery.eyebrow ? (
-                  <p className="text-xs uppercase tracking-[0.5em] text-[#897261]">
-                    {normalized.gallery.eyebrow}
-                  </p>
-                ) : null}
-                {galleryTitle ? (
-                  <h2 className="text-3xl lg:text-4xl font-bold text-[#18120c]">
-                    {galleryTitle}
-                  </h2>
-                ) : null}
-                {normalized.gallery.subtitle ? (
-                  <p className="text-sm text-[#4c3f35]">{normalized.gallery.subtitle}</p>
-                ) : null}
-              </div>
-            </div>
-            <div className="relative overflow-hidden w-full mt-16">
-              <div
-                className="flex carousel-track"
-                  style={{
-                    "--slide-width": slideWidth,
-                    "--slide-count": slideCount,
-                    "--animation-duration": slideDuration
-                  }}
-              >
-                {carouselImages.map((image, index) => (
-                  <figure
-                    key={`${image.url}-${index}`}
-                    className="flex-shrink-0"
-                    style={{ width: slideWidth, minWidth: slideWidth, maxWidth: slideWidth }}
-                  >
-                    <img
-                      src={image.url}
-                      alt={image.alt || `ภาพ${serviceLabel} ${index + 1}`}
-                      className="w-full h-[420px] object-cover"
-                    />
-                  </figure>
-                ))}
-              </div>
-            </div>
-          </section>
-        ) : null}
-
-        <section className="py-12" id="process-section" style={{ backgroundColor: "#ffffff" }}>
-          <div className="mx-auto w-full max-w-6xl px-6 space-y-10 text-center">
-            <div className="space-y-3">
-              <p className="text-xs uppercase tracking-[0.5em] text-[#897261]">
-                {staticProcess.eyebrow}
-              </p>
-              <h2 className="text-3xl lg:text-4xl font-bold text-[#18120c]">
-                {staticProcess.title}
-              </h2>
-              <p className="text-sm text-[#4c3f35] max-w-3xl mx-auto">{staticProcess.subtitle}</p>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {staticProcess.steps.map((step, index) => (
-                <article key={`${step.title}-${index}`} className="rounded-[2rem] p-5 shadow-lg">
-                  <div className="flex items-center justify-center font-black text-4xl mb-4 text-[#18120c]">
-                    {step.number || String(index + 1).padStart(2, "0")}
-                  </div>
-                  <h3 className="text-xl font-bold mb-2 text-[#18120c] flex items-center justify-center gap-2">
-                    {renderIcon(step.icon)}
-                    {step.title}
-                  </h3>
-                  <p className="text-[#4c3f35] text-sm">{step.body}</p>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {hasArticles ? (
-          <section className="py-16 bg-[#f8f7f6]">
-            <div className="mx-auto w-full max-w-6xl px-6 space-y-10">
-              <div className="text-center max-w-3xl mx-auto space-y-3">
-                <p className="text-xs uppercase tracking-[0.5em] text-[#897261]">
-                  {staticArticles.eyebrow}
-                </p>
-                <h2 className="text-3xl lg:text-4xl font-bold text-[#18120c]">
-                  {staticArticles.title}
-                </h2>
-                <p className="text-sm text-[#4c3f35]">{staticArticles.subtitle}</p>
-              </div>
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {normalized.articles.items.map((item, index) => (
-                  <article
-                    key={`${item.title}-${index}`}
-                    className="bg-white rounded-3xl border border-[#ebe5dc] overflow-hidden shadow-sm flex flex-col"
-                  >
-                    {item.image.url ? (
-                      <img
-                        src={item.image.url}
-                        alt={item.image.alt || item.title}
-                        className="w-full h-48 object-cover"
-                      />
-                    ) : null}
-                    <div className="p-6 space-y-3 flex-1 flex flex-col">
-                      {item.categoryLabel ? (
-                        <p className="text-xs uppercase tracking-[0.5em] text-[#d32f2f]">
-                          {item.categoryLabel}
-                        </p>
-                      ) : null}
-                      <h3 className="text-xl font-bold text-[#18120c] flex-1">{item.title}</h3>
-                      {item.href ? (
-                        <a href={item.href} className="text-sm font-semibold text-[#d32f2f] hover:underline">
-                          อ่านบทความ
-                        </a>
-                      ) : null}
-                    </div>
-                  </article>
-                ))}
-              </div>
+              {normalized.specs.image.url ? (
+                <div className="mt-8">
+                  <img
+                    src={normalized.specs.image.url}
+                    alt={normalized.specs.image.alt || specsTitle || heroAlt}
+                    className="w-full h-[260px] sm:h-[300px] lg:h-[350px] object-cover rounded-[32px]"
+                  />
+                </div>
+              ) : null}
             </div>
           </section>
         ) : null}
@@ -469,10 +336,158 @@ export default function ServiceTemplate({ service, content }) {
             </a>
           </div>
         </section>
+
+        {hasGallery ? (
+          <section className="py-16 bg-white">
+            <div className="mx-auto w-full max-w-6xl px-6 space-y-6">
+              <div className="text-center space-y-3">
+                {normalized.gallery.eyebrow ? (
+                  <p className="text-xs uppercase tracking-[0.5em] text-[#897261]">
+                    {normalized.gallery.eyebrow}
+                  </p>
+                ) : null}
+                {galleryTitle ? (
+                  <h2 className="text-3xl lg:text-4xl font-bold text-[#18120c]">
+                    {galleryTitle}
+                  </h2>
+                ) : null}
+                {normalized.gallery.subtitle ? (
+                  <p className="text-sm text-[#4c3f35]">{normalized.gallery.subtitle}</p>
+                ) : null}
+              </div>
+            </div>
+            <div className="relative overflow-hidden w-full mt-16">
+              <div
+                className="flex carousel-track"
+                style={{
+                  "--slide-width": slideWidth,
+                  "--slide-gap": slideGap,
+                  "--slide-count": slideCount,
+                  "--animation-duration": slideDuration
+                }}
+              >
+                {carouselImages.map((image, index) => (
+                  <figure
+                    key={`${image.url}-${index}`}
+                    className="flex-shrink-0"
+                    style={{ width: slideWidth, minWidth: slideWidth, maxWidth: slideWidth }}
+                  >
+                    <div className="bg-white rounded-3xl border border-[#ebe5dc] shadow-sm">
+                      <img
+                        src={image.url}
+                        alt={image.alt || `ภาพ${serviceLabel} ${index + 1}`}
+                        className="w-full h-[250px] object-cover rounded-3xl"
+                      />
+                    </div>
+                  </figure>
+                ))}
+              </div>
+            </div>
+          </section>
+        ) : null}
+
+        <section className="py-12" id="process-section" style={{ backgroundColor: "#ffffff" }}>
+          <div className="mx-auto w-full max-w-6xl px-6 space-y-10 text-center">
+            <div className="space-y-3">
+              <p className="text-xs uppercase tracking-[0.5em] text-[#897261]">
+                {staticProcess.eyebrow}
+              </p>
+              <h2 className="text-3xl lg:text-4xl font-bold text-[#18120c]">
+                {staticProcess.title}
+              </h2>
+              <p className="text-sm text-[#4c3f35] max-w-3xl mx-auto">{staticProcess.subtitle}</p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {staticProcess.steps.map((step, index) => {
+                const isHighlighted = index === 1 || index === 3;
+                return (
+                  <article
+                    key={`${step.title}-${index}`}
+                    className={`rounded-[2rem] p-5 shadow-lg${isHighlighted ? " bg-[#d32f2f0a]" : ""}`}
+                  >
+                  <div className="flex items-center justify-center font-black text-4xl mb-4 text-[#18120c]">
+                    {step.number || String(index + 1).padStart(2, "0")}
+                  </div>
+                  <h3 className="text-xl font-bold mb-2 text-[#18120c] flex items-center justify-center gap-2">
+                    {renderIcon(step.icon)}
+                    {step.title}
+                  </h3>
+                  <p className="text-[#4c3f35] text-sm">{step.body}</p>
+                  </article>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        {hasArticles ? (
+          <section className="py-16 bg-[#f8f7f6]">
+            <div className="mx-auto w-full max-w-6xl px-6 space-y-10">
+              <div className="text-center max-w-3xl mx-auto space-y-3">
+                <p className="text-xs uppercase tracking-[0.5em] text-[#897261]">
+                  {staticArticles.eyebrow}
+                </p>
+                <h2 className="text-3xl lg:text-4xl font-bold text-[#18120c]">
+                  {staticArticles.title}
+                </h2>
+                <p className="text-sm text-[#4c3f35]">{staticArticles.subtitle}</p>
+              </div>
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {normalized.articles.items.map((item, index) => (
+                  <article
+                    key={`${item.title}-${index}`}
+                    className="bg-white rounded-3xl border border-[#ebe5dc] overflow-hidden shadow-sm flex flex-col"
+                  >
+                    {item.image.url ? (
+                      <img
+                        src={item.image.url}
+                        alt={item.image.alt || item.title}
+                        className="w-full h-48 object-cover"
+                      />
+                    ) : null}
+                    <div className="p-6 space-y-3 flex-1 flex flex-col">
+                      {item.categoryLabel ? (
+                        <p className="text-xs uppercase tracking-[0.5em] text-[#d32f2f]">
+                          {item.categoryLabel}
+                        </p>
+                      ) : null}
+                      <h3 className="text-xl font-bold text-[#18120c] flex-1">{item.title}</h3>
+                      {item.href ? (
+                        <a href={item.href} className="text-sm font-semibold text-[#d32f2f] hover:underline">
+                          อ่านบทความ
+                        </a>
+                      ) : null}
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </section>
+        ) : null}
+
+        <section className="py-16" style={{ backgroundColor: "var(--ds-color-cream)" }}>
+          <div className="mx-auto w-full max-w-3xl px-6 text-center space-y-6">
+            <p className="text-xs uppercase tracking-[0.5em] text-[#897261]">
+              {staticCta.eyebrow}
+            </p>
+            <h2 className="text-3xl lg:text-4xl font-bold text-[#18120c]">
+              {staticCta.title}
+            </h2>
+            <p className="text-sm text-[#4c3f35] leading-relaxed">{staticCta.body}</p>
+            <a
+              href={staticCta.button.href}
+              className="inline-flex items-center justify-center gap-3 px-10 py-4 rounded-full bg-[#00c300] text-white text-base font-bold hover:bg-[#00a500] transition"
+            >
+              <span className="text-lg">LINE</span>
+              <span>{staticCta.button.label}</span>
+            </a>
+          </div>
+        </section>
       </main>
       <style>{`
         .carousel-track {
           animation: carousel-scroll var(--animation-duration) linear infinite;
+          gap: var(--slide-gap);
         }
 
         .carousel-track figure {
@@ -484,7 +499,7 @@ export default function ServiceTemplate({ service, content }) {
             transform: translateX(0);
           }
           to {
-            transform: translateX(calc(-1 * var(--slide-width) * var(--slide-count)));
+            transform: translateX(calc(-1 * (var(--slide-width) + var(--slide-gap)) * var(--slide-count)));
           }
         }
       `}</style>

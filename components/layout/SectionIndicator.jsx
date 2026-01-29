@@ -136,9 +136,9 @@ export default function SectionIndicator() {
       className="fixed z-[70] hidden lg:block"
       style={{ left: position.x, top: position.y }}
     >
-      <div className="rounded-2xl border border-gray-100 dark:border-[#3d2b1d] bg-white/65 dark:bg-[#1f1610]/70 backdrop-blur-md shadow-lg min-w-[220px]">
+      <div className="rounded-2xl border border-gray-100  bg-white/65  backdrop-blur-md shadow-lg min-w-[220px]">
         <div
-          className="flex items-center justify-between gap-2 px-3 py-2 cursor-move select-none border-b border-gray-100 dark:border-[#3d2b1d]"
+          className="flex items-center justify-between gap-2 px-3 py-2 cursor-move select-none border-b border-gray-100 "
           onMouseDown={handleDragStart}
         >
           <div className="text-xs uppercase tracking-[0.2em] font-bold text-primary">Sections</div>
@@ -214,7 +214,7 @@ export default function SectionIndicator() {
                 );
               })}
             </ul>
-            <div className="mt-3 pt-3 border-t border-gray-100 dark:border-[#3d2b1d]">
+            <div className="mt-3 pt-3 border-t border-gray-100 ">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] uppercase tracking-[0.2em] font-bold text-primary">
                   Color
@@ -231,17 +231,17 @@ export default function SectionIndicator() {
               </div>
               <div className="mt-2 flex items-center gap-2">
                 <span
-                  className="h-7 w-7 rounded-lg border border-gray-200 dark:border-[#3d2b1d]"
+                  className="h-7 w-7 rounded-lg border border-gray-200 "
                   style={{ backgroundColor: pickedColor || "#ffffff" }}
                 />
                 <input
                   type="color"
-                  className="h-7 w-10 cursor-pointer rounded border border-gray-200 dark:border-[#3d2b1d] bg-transparent"
+                  className="h-7 w-10 cursor-pointer rounded border border-gray-200  bg-transparent"
                   value={pickedColor || "#ffffff"}
                   onChange={(event) => setPickedColor(event.target.value)}
                   aria-label="Pick color"
                 />
-                <span className="text-xs font-semibold text-[#181411] dark:text-white">
+                <span className="text-xs font-semibold text-[#181411] ">
                   {pickedColor || "#FFFFFF"}
                 </span>
                 <button

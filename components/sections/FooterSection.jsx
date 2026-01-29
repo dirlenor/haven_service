@@ -2,7 +2,7 @@ export default function FooterSection() {
   return (
     <footer
       id="site-footer"
-      className="bg-white dark:bg-background-dark mt-0"
+      className="bg-white  mt-0"
     >
       <div className="ds-container py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12">

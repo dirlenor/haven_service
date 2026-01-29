@@ -631,6 +631,31 @@ export default function MockCmsApp() {
     setUploading(false);
   };
 
+  const handleContentUpload = async (file, onUploaded) => {
+    if (!supabase || !activeItem?.id) {
+      return;
+    }
+    setUploading(true);
+    setError("");
+    const compressedFile = await compressImage(file);
+    const sanitizedName = compressedFile.name.replace(/[^a-zA-Z0-9._-]/g, "-");
+    const path = `${activeTab}/${activeItem.id}/content-${Date.now()}-${sanitizedName}`;
+    const { error: uploadError } = await supabase
+      .storage
+      .from("cms-public")
+      .upload(path, compressedFile, { upsert: true });
+    if (uploadError) {
+      setError(uploadError.message);
+      setUploading(false);
+      return;
+    }
+    const { data: urlData } = supabase.storage.from("cms-public").getPublicUrl(path);
+    if (urlData?.publicUrl && typeof onUploaded === "function") {
+      onUploaded(urlData.publicUrl);
+    }
+    setUploading(false);
+  };
+
   const handleToggleStatus = (event, item) => {
     event.stopPropagation();
     const nextStatus = item.status === "published" ? "draft" : "published";
@@ -1580,126 +1605,92 @@ export default function MockCmsApp() {
                           />
                         </label>
                       </div>
-                      <div className="space-y-3">
-                        <div className="flex items-center justify-between">
-                          <p className="text-xs font-semibold text-[#897261]">การ์ดข้อมูล</p>
-                          <button
-                            type="button"
-                            className="text-xs font-semibold text-[#d32f2f]"
-                            onClick={() =>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <label className="flex flex-col gap-2 text-sm font-semibold">
+                          รูปภาพ (URL)
+                          <input
+                            className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                            value={serviceContent.specs.image?.url || ""}
+                            onChange={(event) =>
                               updateServiceContent((draft) => {
-                                draft.specs.cards.push({ title: "", items: [] });
+                                draft.specs.image = draft.specs.image || { url: "", alt: "" };
+                                draft.specs.image.url = event.target.value;
                               })
                             }
-                          >
-                            เพิ่มการ์ด
-                          </button>
+                          />
+                        </label>
+                        <label className="flex flex-col gap-2 text-sm font-semibold">
+                          รูปภาพ (alt)
+                          <input
+                            className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                            value={serviceContent.specs.image?.alt || ""}
+                            onChange={(event) =>
+                              updateServiceContent((draft) => {
+                                draft.specs.image = draft.specs.image || { url: "", alt: "" };
+                                draft.specs.image.alt = event.target.value;
+                              })
+                            }
+                          />
+                        </label>
+                      </div>
+                      <label className="flex flex-col gap-2 text-sm font-semibold">
+                        รูปภาพ (อัปโหลด) <span className="text-xs font-normal text-[#897261]">แนะนำสูง 350px (ปรับตามหน้าจอ)</span>
+                        <input
+                          className="rounded-lg border border-gray-200 px-3 py-2 text-sm bg-white"
+                          type="file"
+                          accept="image/*"
+                          disabled={uploading}
+                          onChange={(event) => {
+                            const file = event.target.files?.[0];
+                            if (!file) {
+                              return;
+                            }
+                            handleContentUpload(file, (url) =>
+                              updateServiceContent((draft) => {
+                                draft.specs.image = draft.specs.image || { url: "", alt: "" };
+                                draft.specs.image.url = url;
+                              })
+                            );
+                          }}
+                        />
+                      </label>
+                      {uploading ? (
+                        <div className="text-xs text-[#897261]">กำลังอัปโหลดรูป...</div>
+                      ) : null}
+                      {serviceContent.specs.image?.url ? (
+                        <div className="rounded-2xl overflow-hidden border border-gray-100">
+                          <img
+                            src={serviceContent.specs.image.url}
+                            alt={serviceContent.specs.image.alt || "preview"}
+                            className="w-full h-32 object-cover"
+                          />
                         </div>
-                        {serviceContent.specs.cards.map((card, cardIndex) => (
-                          <div
-                            key={`specs-card-${cardIndex}`}
-                            className="rounded-xl border border-gray-200 p-3 space-y-3"
-                          >
-                            <div className="flex items-center justify-between">
-                              <p className="text-xs font-semibold">การ์ด #{cardIndex + 1}</p>
-                              <button
-                                type="button"
-                                className="text-xs text-red-500"
-                                onClick={() =>
-                                  updateServiceContent((draft) => {
-                                    draft.specs.cards.splice(cardIndex, 1);
-                                  })
-                                }
-                              >
-                                ลบ
-                              </button>
-                            </div>
-                            <input
-                              className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
-                              value={card.title}
-                              onChange={(event) =>
-                                updateServiceContent((draft) => {
-                                  draft.specs.cards[cardIndex].title = event.target.value;
-                                })
-                              }
-                              placeholder="ชื่อการ์ด"
-                            />
-                            <div className="space-y-2">
-                              <div className="flex items-center justify-between">
-                                <p className="text-xs font-semibold text-[#897261]">รายการในการ์ด</p>
-                                <button
-                                  type="button"
-                                  className="text-xs font-semibold text-[#d32f2f]"
-                                  onClick={() =>
-                                    updateServiceContent((draft) => {
-                                      draft.specs.cards[cardIndex].items.push({
-                                        text: "",
-                                        image: { url: "", alt: "" }
-                                      });
-                                    })
-                                  }
-                                >
-                                  เพิ่มรายการ
-                                </button>
-                              </div>
-                              {card.items.map((item, itemIndex) => (
-                                <div
-                                  key={`specs-item-${cardIndex}-${itemIndex}`}
-                                  className="rounded-lg border border-gray-200 p-2 space-y-2"
-                                >
-                                  <div className="flex items-center justify-between">
-                                    <p className="text-xs font-semibold">รายการ #{itemIndex + 1}</p>
-                                    <button
-                                      type="button"
-                                      className="text-xs text-red-500"
-                                      onClick={() =>
-                                        updateServiceContent((draft) => {
-                                          draft.specs.cards[cardIndex].items.splice(itemIndex, 1);
-                                        })
-                                      }
-                                    >
-                                      ลบ
-                                    </button>
-                                  </div>
-                                  <input
-                                    className="rounded-lg border border-gray-200 px-3 py-2 text-sm w-full"
-                                    value={item.text}
-                                    onChange={(event) =>
-                                      updateServiceContent((draft) => {
-                                        draft.specs.cards[cardIndex].items[itemIndex].text = event.target.value;
-                                      })
-                                    }
-                                    placeholder="ข้อความ"
-                                  />
-                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                                    <input
-                                      className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
-                                      value={item.image.url}
-                                      onChange={(event) =>
-                                        updateServiceContent((draft) => {
-                                          draft.specs.cards[cardIndex].items[itemIndex].image.url =
-                                            event.target.value;
-                                        })
-                                      }
-                                      placeholder="รูป (URL)"
-                                    />
-                                    <input
-                                      className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
-                                      value={item.image.alt}
-                                      onChange={(event) =>
-                                        updateServiceContent((draft) => {
-                                          draft.specs.cards[cardIndex].items[itemIndex].image.alt =
-                                            event.target.value;
-                                        })
-                                      }
-                                      placeholder="รูป (alt)"
-                                    />
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        ))}
+                      ) : null}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <label className="flex flex-col gap-2 text-xs font-semibold">
+                          วัสดุ (ใส่ทีละบรรทัด)
+                          <textarea
+                            className="rounded-lg border border-gray-200 px-3 py-2 text-sm min-h-[120px]"
+                            value={(serviceContent.specs.materials || []).join("\n")}
+                            onChange={(event) =>
+                              updateServiceContent((draft) => {
+                                draft.specs.materials = readLines(event.target.value);
+                              })
+                            }
+                          />
+                        </label>
+                        <label className="flex flex-col gap-2 text-xs font-semibold">
+                          สี (ใส่ทีละบรรทัด)
+                          <textarea
+                            className="rounded-lg border border-gray-200 px-3 py-2 text-sm min-h-[120px]"
+                            value={(serviceContent.specs.colors || []).join("\n")}
+                            onChange={(event) =>
+                              updateServiceContent((draft) => {
+                                draft.specs.colors = readLines(event.target.value);
+                              })
+                            }
+                          />
+                        </label>
                       </div>
                     </div>
                   ) : null}

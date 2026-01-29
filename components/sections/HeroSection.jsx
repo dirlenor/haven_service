@@ -3,7 +3,7 @@ export default function HeroSection() {
     <section
       id="hero-section"
       data-nav-label="หน้าแรก"
-      className="relative w-full h-auto lg:h-[calc(100vh-4rem)] flex flex-col lg:flex-row overflow-hidden bg-background-light dark:bg-background-dark mt-0 pt-0"
+      className="relative w-full h-auto lg:h-[calc(100vh-4rem)] flex flex-col lg:flex-row overflow-hidden bg-background-light  mt-0 pt-0"
     >
       <div
         id="hero-image-container"

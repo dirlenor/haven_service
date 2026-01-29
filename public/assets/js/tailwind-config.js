@@ -1,6 +1,5 @@
 
 tailwind.config = {
-    darkMode: "class",
     theme: {
         extend: {
             colors: {
@@ -32,7 +31,7 @@ tailwind.config = {
                     '@apply border-2 border-primary text-primary hover:bg-primary/5': {},
                 },
                 '.card': {
-                    '@apply bg-white dark:bg-[#251c16] rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-[#3d2b1d]': {},
+                    '@apply bg-white  rounded-2xl overflow-hidden shadow-sm border border-gray-100 ': {},
                 },
                 '.card-hover': {
                     '@apply hover:shadow-xl transition-all duration-300': {},

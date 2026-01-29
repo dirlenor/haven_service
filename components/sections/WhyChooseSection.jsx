@@ -48,7 +48,7 @@ export default function WhyChooseSection() {
             </div>
           </div>
 
-          <div className="flex flex-col lg:flex-row-reverse items-center gap-10 lg:gap-20 bg-white/5 dark:bg-[#1f1610]/5 rounded-[2rem] p-6">
+          <div className="flex flex-col lg:flex-row-reverse items-center gap-10 lg:gap-20 bg-[#d32f2f0a] rounded-[2rem] p-6">
           <div className="w-full lg:w-1/2 relative group">
             <div className="aspect-[4/3] rounded-[2rem] overflow-hidden shadow-2xl relative z-10">
               <img
@@ -119,7 +119,7 @@ export default function WhyChooseSection() {
           </div>
         </div>
 
-          <div className="flex flex-col lg:flex-row-reverse items-center gap-10 lg:gap-20 bg-white/5 dark:bg-[#1f1610]/5 rounded-[2rem] p-6">
+          <div className="flex flex-col lg:flex-row-reverse items-center gap-10 lg:gap-20 bg-[#d32f2f0a] rounded-[2rem] p-6">
           <div className="w-full lg:w-1/2 relative group">
             <div className="aspect-[4/3] rounded-[2rem] overflow-hidden shadow-2xl relative z-10">
               <img

@@ -25,7 +25,7 @@ export default function FacebookSection() {
         <div className="ds-grid ds-grid-3">
           <div className="ds-card p-4 shadow-sm hover:shadow-md transition-shadow">
             <div className="flex items-center gap-3 mb-4">
-              <div className="size-10 rounded-full overflow-hidden border border-gray-200 dark:border-gray-700">
+              <div className="size-10 rounded-full overflow-hidden border border-gray-200 ">
                 <img
                   alt="Profile"
                   className="w-full h-full object-cover"
@@ -54,7 +54,7 @@ export default function FacebookSection() {
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuDl5uTFJaAojEA8fxgh559xVltb6aWPnEg6OvkJDK7-9sRTM70LD9sOz070MLsUJGT5v_kXW75_V9AAGSB9jOrgfiEJWUMtoXcvfIZ30RicCC_vIXGwxmDhFNPlvCLYgXedy-C4poXFFvCqd20gsaQGzexl6NEIbm1m3xN16F0Iz0bOXboxFqY4W8w9u8g0VpvkRRmtTcjB5LRPpHrxjrllCa8eqvcqVakCDAzdvV0XWrGOkqxWrXF7hGAOl1reAoTDuh1bWtxUIKFg"
               />
             </div>
-            <div className="flex items-center justify-between pt-3 border-t border-gray-200 dark:border-gray-700/50">
+            <div className="flex items-center justify-between pt-3 border-t border-gray-200 ">
               <div className="flex items-center gap-1 text-xs text-gray-500">
                 <div className="flex -space-x-1">
                   <div className="size-4 rounded-full bg-[#1877F2] flex items-center justify-center border border-white">
@@ -72,7 +72,7 @@ export default function FacebookSection() {
 
           <div className="ds-card p-4 shadow-sm hover:shadow-md transition-shadow">
             <div className="flex items-center gap-3 mb-4">
-              <div className="size-10 rounded-full overflow-hidden border border-gray-200 dark:border-gray-700">
+              <div className="size-10 rounded-full overflow-hidden border border-gray-200 ">
                 <img
                   alt="Profile"
                   className="w-full h-full object-cover"
@@ -106,7 +106,7 @@ export default function FacebookSection() {
                 alt="งานติดตั้ง"
               />
             </div>
-            <div className="flex items-center justify-between pt-3 border-t border-gray-200 dark:border-gray-700/50">
+            <div className="flex items-center justify-between pt-3 border-t border-gray-200 ">
               <div className="flex items-center gap-1 text-xs text-gray-500">
                 <div className="flex -space-x-1">
                   <div className="size-4 rounded-full bg-[#1877F2] flex items-center justify-center border border-white">
@@ -121,7 +121,7 @@ export default function FacebookSection() {
 
           <div className="ds-card p-4 shadow-sm hover:shadow-md transition-shadow md:hidden lg:block">
             <div className="flex items-center gap-3 mb-4">
-              <div className="size-10 rounded-full overflow-hidden border border-gray-200 dark:border-gray-700">
+              <div className="size-10 rounded-full overflow-hidden border border-gray-200 ">
                 <img
                   alt="Profile"
                   className="w-full h-full object-cover"
@@ -149,7 +149,7 @@ export default function FacebookSection() {
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuCwwZQANjYHsqsNGZvUPPUmZL0Sw7BXmvXS7J28Klxyt1jk8Y_lIkNXrjlx74iLjQAdgnD1gxGqzxT_NyIdtLYUBKvnXb3-wvnxRSx2kJAAKarik2cRfFhIg4XYVejP8bdGpX3dshPRoKMbzEX06NTBLF3SMFNICVvOCISABvMsGWiH4ZJt5mGuoHWATaDwBys5qLFyCxNiesph0j3f1zS23HvaCc45zudSf99vCnqHqRe8rUSH_p6vY3DzthgVMgrNxxHIeGd8SQDd"
               />
             </div>
-            <div className="flex items-center justify-between pt-3 border-t border-gray-200 dark:border-gray-700/50">
+            <div className="flex items-center justify-between pt-3 border-t border-gray-200 ">
               <div className="flex items-center gap-1 text-xs text-gray-500">
                 <div className="flex -space-x-1">
                   <div className="size-4 rounded-full bg-[#1877F2] flex items-center justify-center border border-white">

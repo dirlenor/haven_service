@@ -42,7 +42,7 @@ export default function ProcessSection() {
 
           <div
             id="process-step-2"
-            className="rounded-[2rem] p-5 shadow-lg flex flex-col gap-5 bg-white/5 dark:bg-[#1f1610]/5"
+            className="rounded-[2rem] p-5 shadow-lg flex flex-col gap-5 bg-[#d32f2f0a]"
           >
             <div className="flex items-center justify-center font-black text-4xl flex-shrink-0" style={{ color: "var(--ds-color-text)" }}>
               02
@@ -88,7 +88,7 @@ export default function ProcessSection() {
 
           <div
             id="process-step-4"
-            className="rounded-[2rem] p-5 shadow-lg flex flex-col gap-5 bg-white/5 dark:bg-[#1f1610]/5"
+            className="rounded-[2rem] p-5 shadow-lg flex flex-col gap-5 bg-[#d32f2f0a]"
           >
             <div className="flex items-center justify-center font-black text-4xl flex-shrink-0" style={{ color: "var(--ds-color-text)" }}>
               04
