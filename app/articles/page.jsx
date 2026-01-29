@@ -124,93 +124,120 @@ export default async function ArticlesPage({ searchParams }) {
       color: option.color || "#d32f2f"
     }))
   ];
+  const activeFilterTitle =
+    categoryFilters.find((filter) => filter.value === activeCategory)?.title ||
+    "ทั้งหมด";
   return (
-    <main className="max-w-[1280px] mx-auto px-6 lg:px-10 py-8">
-      <section className="mb-12">
-        <h1 className="text-[#181411] text-4xl md:text-5xl font-black mb-4 tracking-tight">
-          บทความและรีวิว
-        </h1>
-        <p className="text-[#897261] text-lg max-w-2xl font-normal">
-          รวมเคล็ดลับการแต่งบ้านจากผู้เชี่ยวชาญ
-          และเสียงตอบรับจากลูกค้าตัวจริงเพื่อความมั่นใจในคุณภาพบริการของเรา
-        </p>
-      </section>
-
-      {categoryFilters.length ? (
-        <section className="mb-8 border-b border-[#e6e0db]">
-          <div className="flex gap-10 overflow-x-auto no-scrollbar">
-            {categoryFilters.map((filter) => {
-              const isActive = filter.value === activeCategory;
-              return (
-                <Link
-                  key={`${filter.value || "all"}-filter`}
-                  href={buildArticlesHref(1, filter.value)}
-                  className={`flex flex-col items-center border-b-[3px] pb-3 px-2 ${
-                    isActive ? "border-[#d32f2f]" : "border-transparent hover:border-[#e6e0db]"
-                  }`}
-                >
-                  <span
-                    className={`text-sm font-bold ${isActive ? "text-[#d32f2f]" : "text-[#897261]"}`}
-                    style={isActive && filter.color ? { color: filter.color } : undefined}
+    <section className="ds-section">
+      <div className="ds-container">
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-4 md:mb-10">
+          <div>
+            <p className="ds-eyebrow text-sm">บทความทั้งหมด</p>
+            <h1 className="ds-title text-4xl lg:text-5xl mt-2">แรงบันดาลใจแต่งบ้าน</h1>
+            <p className="ds-muted mt-3 max-w-2xl">
+              รวมบทความและเคล็ดลับสำหรับคนรักบ้าน อัปเดตจากทีม Thai Haven Service
+            </p>
+          </div>
+        </div>
+        {categoryFilters.length ? (
+          <>
+            <div className="mb-6 md:hidden">
+              <details className="group rounded-2xl border border-gray-200 bg-white">
+                <summary className="flex items-center justify-between px-4 py-3 text-sm font-semibold text-[#181411] cursor-pointer">
+                  หมวดหมู่: {activeFilterTitle}
+                  <span className="material-symbols-outlined text-base transition-transform group-open:rotate-180">
+                    expand_more
+                  </span>
+                </summary>
+                <div className="flex flex-col border-t border-gray-100">
+                  {categoryFilters.map((filter) => {
+                    const isActive = filter.value === activeCategory;
+                    return (
+                      <Link
+                        key={`${filter.value || "all"}-filter-mobile`}
+                        href={buildArticlesHref(1, filter.value)}
+                        className={`px-4 py-3 text-sm font-semibold transition ${
+                          isActive
+                            ? "text-white bg-[#d32f2f]"
+                            : "text-[#181411] hover:bg-[#d32f2f] hover:text-white"
+                        }`}
+                        style={isActive && filter.color ? { backgroundColor: filter.color } : undefined}
+                      >
+                        {filter.title}
+                      </Link>
+                    );
+                  })}
+                </div>
+              </details>
+            </div>
+            <div className="mb-8 hidden md:flex flex-wrap gap-3">
+              {categoryFilters.map((filter) => {
+                const isActive = filter.value === activeCategory;
+                return (
+                  <Link
+                    key={`${filter.value || "all"}-filter`}
+                    href={buildArticlesHref(1, filter.value)}
+                    className={`inline-flex items-center rounded-full border px-4 py-2 text-sm font-semibold transition ${
+                      isActive
+                        ? "border-[#d32f2f] bg-[#d32f2f] text-white"
+                        : "border-gray-200 text-[#181411] hover:border-[#d32f2f] hover:text-[#d32f2f]"
+                    }`}
+                    style={isActive && filter.color ? { backgroundColor: filter.color, borderColor: filter.color } : undefined}
                   >
                     {filter.title}
-                  </span>
-                </Link>
-              );
-            })}
-          </div>
-        </section>
-      ) : null}
-
-      <section className="mb-12">
+                  </Link>
+                );
+              })}
+            </div>
+          </>
+        ) : null}
         <ArticlesList articles={articles} />
-      </section>
-
-      {totalPages > 1 ? (
-        <nav className="flex items-center justify-center gap-2 pb-16">
-          {safePage > 1 ? (
-            <Link
-              href={buildArticlesHref(safePage - 1)}
-              className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors"
-            >
-              <span className="material-symbols-outlined text-[#181411]">chevron_left</span>
-            </Link>
-          ) : (
-            <span className="w-10 h-10 flex items-center justify-center rounded-lg text-[#b9a99e]">
-              <span className="material-symbols-outlined">chevron_left</span>
-            </span>
-          )}
-          {Array.from({ length: endPage - startPage + 1 }, (_, index) => {
-            const pageNumber = startPage + index;
-            const isActive = pageNumber === safePage;
-            return (
-              <Link
-                key={pageNumber}
-                href={buildArticlesHref(pageNumber)}
-                className={`w-10 h-10 flex items-center justify-center text-sm ${
-                  isActive
-                    ? "font-bold bg-[#d32f2f] text-white rounded-lg"
-                    : "font-normal text-[#181411] hover:bg-gray-100 rounded-lg"
-                }`}
-              >
-                {pageNumber}
-              </Link>
-            );
-          })}
-          {safePage < totalPages ? (
-            <Link
-              href={buildArticlesHref(safePage + 1)}
-              className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors"
-            >
-              <span className="material-symbols-outlined text-[#181411]">chevron_right</span>
-            </Link>
-          ) : (
-            <span className="w-10 h-10 flex items-center justify-center rounded-lg text-[#b9a99e]">
-              <span className="material-symbols-outlined">chevron_right</span>
-            </span>
-          )}
-        </nav>
-      ) : null}
-    </main>
+        {totalPages > 1 ? (
+          <div className="mt-10 flex flex-wrap items-center gap-3 text-sm text-gray-500">
+            <span>หน้า {safePage} / {totalPages}</span>
+            <div className="flex flex-wrap items-center gap-2">
+              {startPage > 1 && (
+                <>
+                  <Link
+                    href={buildArticlesHref(1)}
+                    className="inline-flex items-center justify-center rounded-full border border-[#d32f2f] px-4 py-2 font-semibold text-[#d32f2f] transition hover:bg-[#d32f2f] hover:text-white"
+                  >
+                    1
+                  </Link>
+                  {startPage > 2 && <span className="text-[#897261]">…</span>}
+                </>
+              )}
+              {Array.from({ length: endPage - startPage + 1 }, (_, index) => {
+                const pageNumber = startPage + index;
+                return (
+                  <Link
+                    key={pageNumber}
+                    href={buildArticlesHref(pageNumber)}
+                    className={`inline-flex items-center justify-center rounded-full border px-4 py-2 font-semibold transition ${
+                      pageNumber === safePage
+                        ? "border-[#d32f2f] bg-[#d32f2f] text-white"
+                        : "border-[#d32f2f] text-[#d32f2f] hover:bg-[#d32f2f] hover:text-white"
+                    }`}
+                  >
+                    {pageNumber}
+                  </Link>
+                );
+              })}
+              {endPage < totalPages && (
+                <>
+                  {endPage < totalPages - 1 && <span className="text-[#897261]">…</span>}
+                  <Link
+                    href={buildArticlesHref(totalPages)}
+                    className="inline-flex items-center justify-center rounded-full border border-[#d32f2f] px-4 py-2 font-semibold text-[#d32f2f] transition hover:bg-[#d32f2f] hover:text-white"
+                  >
+                    {totalPages}
+                  </Link>
+                </>
+              )}
+            </div>
+          </div>
+        ) : null}
+      </div>
+    </section>
   );
 }
