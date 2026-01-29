@@ -117,7 +117,8 @@ const mapServiceFromRow = (row) => ({
   summary: row.summary || "",
   heroImage: row.hero_image || "",
   content: row.content || "",
-  status: row.status || "draft"
+  status: row.status || "draft",
+  sortOrder: typeof row.sort_order === "number" ? row.sort_order : null
 });
 
 const buildArticleRow = (item) => {
@@ -164,7 +165,8 @@ const buildServiceRow = (item) => {
     summary: item.summary || summaryFromContent || "",
     hero_image: item.heroImage || heroFromContent || "",
     content: item.content || "",
-    status: item.status || "draft"
+    status: item.status || "draft",
+    sort_order: typeof item.sortOrder === "number" ? item.sortOrder : null
   };
   if (!item.id) {
     delete row.id;
@@ -232,6 +234,7 @@ export default function MockCmsApp() {
   const [serviceEditorTab, setServiceEditorTab] = useState("hero");
   const [articleEditorTab, setArticleEditorTab] = useState("content");
   const [articleSearch, setArticleSearch] = useState("");
+  const [draggingServiceId, setDraggingServiceId] = useState("");
 
   const items = data[activeTab] || [];
   const activeItem = items.find((item) => item.id === activeId);
@@ -517,6 +520,46 @@ export default function MockCmsApp() {
     if (activeId) {
       setDirtyById((prev) => ({ ...prev, [activeId]: true }));
     }
+  };
+
+  const saveServiceOrder = async (list) => {
+    if (!supabase || !list.length) {
+      return;
+    }
+    setSaving(true);
+    setError("");
+    const updates = list.map((item, index) => ({
+      id: item.id,
+      sort_order: index + 1
+    }));
+    const { error: updateError } = await supabase
+      .from("services")
+      .upsert(updates, { onConflict: "id" });
+    if (updateError) {
+      setError(updateError.message);
+    }
+    setSaving(false);
+  };
+
+  const reorderServices = (fromId, toId) => {
+    if (!fromId || !toId || fromId === toId) {
+      return;
+    }
+    const current = data.services || [];
+    const fromIndex = current.findIndex((item) => item.id === fromId);
+    const toIndex = current.findIndex((item) => item.id === toId);
+    if (fromIndex < 0 || toIndex < 0) {
+      return;
+    }
+    const next = [...current];
+    const [moved] = next.splice(fromIndex, 1);
+    next.splice(toIndex, 0, moved);
+    const normalized = next.map((item, index) => ({
+      ...item,
+      sortOrder: index + 1
+    }));
+    setData((prev) => ({ ...prev, services: normalized }));
+    saveServiceOrder(normalized);
   };
 
   const updateServiceContent = (updater) => {
@@ -864,8 +907,14 @@ export default function MockCmsApp() {
           ) : null}
 
           <div className="mt-6 bg-white rounded-2xl border border-gray-100 overflow-hidden">
-            <div className="hidden md:grid grid-cols-[88px_minmax(0,1fr)_140px_160px_120px] gap-3 px-5 py-3 text-xs uppercase tracking-[0.2em] text-[#897261] border-b border-gray-100">
-              <span>รูป</span>
+            <div
+              className={`hidden md:grid gap-3 px-5 py-3 text-xs uppercase tracking-[0.2em] text-[#897261] border-b border-gray-100 ${
+                activeTab === "services"
+                  ? "grid-cols-[140px_minmax(0,1fr)_140px_160px_120px]"
+                  : "grid-cols-[88px_minmax(0,1fr)_140px_160px_120px]"
+              }`}
+            >
+              <span>{activeTab === "services" ? "เรียงลำดับ" : "รูป"}</span>
               <span>ชื่อ</span>
               <span>หมวดหมู่</span>
               <span>วันที่</span>
@@ -887,8 +936,12 @@ export default function MockCmsApp() {
                   key={item.id}
                   role="button"
                   tabIndex={0}
-                  className={`w-full text-left px-5 py-4 grid grid-cols-1 md:grid-cols-[88px_minmax(0,1fr)_140px_160px_120px] gap-3 items-center transition-colors ${
-                    item.id === activeId ? "bg-[#f4f2f0]" : "hover:bg-[#f8f7f6]"
+                  className={`w-full text-left px-5 py-4 grid grid-cols-1 gap-3 items-center transition-colors ${
+                    activeTab === "services"
+                      ? "md:grid-cols-[140px_minmax(0,1fr)_140px_160px_120px]"
+                      : "md:grid-cols-[88px_minmax(0,1fr)_140px_160px_120px]"
+                  } ${item.id === activeId ? "bg-[#f4f2f0]" : "hover:bg-[#f8f7f6]"} ${
+                    draggingServiceId === item.id ? "ring-2 ring-[#d32f2f] ring-inset" : ""
                   }`}
                   onClick={() => handleSelect(item.id)}
                   onKeyDown={(event) => {
@@ -897,17 +950,60 @@ export default function MockCmsApp() {
                       handleSelect(item.id);
                     }
                   }}
+                  onDragOver={(event) => {
+                    if (activeTab === "services" && draggingServiceId) {
+                      event.preventDefault();
+                    }
+                  }}
+                  onDrop={(event) => {
+                    if (activeTab !== "services") {
+                      return;
+                    }
+                    event.preventDefault();
+                    const sourceId = event.dataTransfer.getData("text/plain");
+                    reorderServices(sourceId, item.id);
+                    setDraggingServiceId("");
+                  }}
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-16 h-12 rounded-lg overflow-hidden bg-gray-100 border border-gray-200 flex-shrink-0">
-                      {heroImage ? (
-                        <img
-                          src={heroImage}
-                          alt={item.title || "thumbnail"}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : null}
-                    </div>
+                    {activeTab === "services" ? (
+                      <button
+                        type="button"
+                        className="inline-flex items-center justify-center w-10 h-10 rounded-lg border border-gray-200 text-[#897261] hover:bg-[#f8f7f6] cursor-grab"
+                        draggable
+                        onDragStart={(event) => {
+                          event.dataTransfer.setData("text/plain", item.id);
+                          event.dataTransfer.effectAllowed = "move";
+                          setDraggingServiceId(item.id);
+                        }}
+                        onDragEnd={() => setDraggingServiceId("")}
+                        onClick={(event) => event.stopPropagation()}
+                        title="ลากเพื่อเรียงลำดับ"
+                      >
+                        <span className="material-symbols-outlined text-[20px]">drag_indicator</span>
+                      </button>
+                    ) : (
+                      <div className="w-16 h-12 rounded-lg overflow-hidden bg-gray-100 border border-gray-200 flex-shrink-0">
+                        {heroImage ? (
+                          <img
+                            src={heroImage}
+                            alt={item.title || "thumbnail"}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : null}
+                      </div>
+                    )}
+                    {activeTab === "services" ? (
+                      <div className="w-16 h-12 rounded-lg overflow-hidden bg-gray-100 border border-gray-200 flex-shrink-0">
+                        {heroImage ? (
+                          <img
+                            src={heroImage}
+                            alt={item.title || "thumbnail"}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : null}
+                      </div>
+                    ) : null}
                     <span className="md:hidden text-xs text-[#897261]">
                       {item.status || "draft"}
                     </span>
