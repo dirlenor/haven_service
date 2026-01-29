@@ -46,16 +46,16 @@ export default function ArticlesList({ articles = [] }) {
   }
 
   return (
-    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
       {articles.map((article) => {
         const slug = article.slug || article.id;
         return (
           <Link
             key={article.id || slug}
             href={`/articles/${slug}`}
-            className="ds-card ds-card-hover group flex flex-col overflow-hidden"
+            className="card hover:shadow-md transition-shadow cursor-pointer group flex flex-col overflow-hidden"
           >
-            <div className="aspect-[16/10] relative overflow-hidden">
+            <div className="aspect-video relative overflow-hidden">
               <img
                 src={
                   article.hero_image ||
@@ -68,7 +68,7 @@ export default function ArticlesList({ articles = [] }) {
                 {badgeData(article).map((badge) => (
                   <span
                     key={`${badge.label}-${badge.color}`}
-                    className="text-white text-[11px] font-bold px-3 py-1 rounded-full backdrop-blur-sm"
+                    className="text-white text-[10px] uppercase font-bold px-2 py-0.5 rounded"
                     style={{ backgroundColor: badge.color }}
                   >
                     {badge.label}
@@ -76,8 +76,8 @@ export default function ArticlesList({ articles = [] }) {
                 ))}
               </div>
             </div>
-            <div className="p-6 flex flex-col flex-1">
-              <div className="text-xs text-gray-500 mb-2 flex flex-wrap items-center gap-3">
+            <div className="p-5 flex flex-col flex-1">
+              <div className="text-xs text-[#897261] mb-3 flex flex-wrap items-center gap-2">
                 {article.date ? (
                   <span className="inline-flex items-center gap-1">
                     <span className="material-symbols-outlined text-[14px]">calendar_today</span>
@@ -85,18 +85,12 @@ export default function ArticlesList({ articles = [] }) {
                   </span>
                 ) : null}
               </div>
-              <h3 className="text-xl font-bold leading-snug mb-3 transition-colors group-hover:text-primary text-[#181411]">
+              <h3 className="text-[#181411] text-lg font-bold leading-snug group-hover:text-primary transition-colors mb-2">
                 {article.title || "บทความ"}
               </h3>
-              <p className="text-sm ds-muted line-clamp-3 mb-6 flex-1">
+              <p className="text-[#897261] text-sm line-clamp-2 flex-1">
                 {article.summary || "อ่านบทความฉบับเต็มเพื่อรายละเอียดเพิ่มเติม"}
               </p>
-              <span
-                className="inline-flex items-center gap-1 font-bold text-[#d32f2f] hover:gap-2 transition-all"
-              >
-                อ่านเพิ่มเติม
-                <span className="material-symbols-outlined text-sm">arrow_forward</span>
-              </span>
             </div>
           </Link>
         );

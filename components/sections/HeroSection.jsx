@@ -84,21 +84,17 @@ export default function HeroSection() {
       >
         <div id="hero-text-content" className="flex flex-col gap-6 max-w-xl">
           <span className="ds-eyebrow">
-            เริ่มต้นค้นหาสไตล์ของคุณ
+            พร้อมตกแต่งพื้นที่ในฝันของคุณแล้วหรือยัง
           </span>
           <h1 className="ds-title text-4xl lg:text-6xl tracking-[-0.033em]">
-            สไตล์การตกแต่งภายในแบบไหน ที่ใช่สำหรับคุณ?
+            HavenWorks พร้อมให้บริการ ออกแบบติดตั้ง ฉากกั้นห้อง ผ้าม่านและบริการต่อเติมแบบครบวงจร
           </h1>
           <p className="ds-body text-lg leading-relaxed">
-            ตอบคำถามง่ายๆ เพื่อค้นพบไอเดียและแรงบันดาลใจที่ตรงกับรสนิยมของคุณ
-            ทีมงานมืออาชีพพร้อมเปลี่ยนบ้านในฝันให้เป็นจริง
+            ทีมงานประสบการณ์สูง การันตีผลงาน พร้อมให้คำแนะนำ เพื่อสร้างสถานที่ ที่ใช่สำหรับคุณ
           </p>
           <div className="flex flex-wrap gap-4 pt-4">
             <button className="ds-btn ds-btn-primary w-full sm:w-auto h-14 px-8 text-base shadow-xl shadow-primary/20">
-              เริ่มสำรวจสไตล์
-            </button>
-            <button className="ds-btn ds-btn-outline w-full sm:w-auto h-14 px-8 text-base">
-              ดูผลงานของเรา
+              ขอคำปรึกษาฟรี
             </button>
           </div>
         </div>
