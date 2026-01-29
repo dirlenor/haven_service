@@ -100,6 +100,7 @@ export default async function RootLayout({ children }) {
   return (
     <html lang="th" suppressHydrationWarning>
       <head>
+        <link rel="icon" href="/favicon.png" type="image/png" />
         <link rel="stylesheet" href="/assets/css/style.css" />
         <Script
           id="tailwind-config"

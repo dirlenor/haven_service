@@ -90,16 +90,14 @@ export default function Navbar() {
     >
       <div className="ds-container flex items-center justify-between h-16">
         <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity cursor-pointer">
-          <div className="size-8 text-primary" style={{ color: "var(--ds-color-primary)" }}>
-            <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-              <path d="M4 4H17.3334V17.3334H30.6666V30.6666H44V44H4V4Z" fill="currentColor"></path>
-            </svg>
+          <div className="size-8">
+            <img src="/assets/images/logo.png" alt="Havenworksthailand" className="w-full h-full object-contain" />
           </div>
           <h2
             className="text-xl font-bold leading-tight tracking-tight"
             style={{ color: "var(--ds-color-text)" }}
           >
-            Thai Haven Service
+            Haven<span className="text-[#d32f2f]">works</span>thailand
           </h2>
         </Link>
         <nav className="hidden md:flex items-center gap-8">

@@ -8,16 +8,11 @@ export default function FooterSection() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
           <div className="flex flex-col gap-6">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8" style={{ color: "var(--ds-color-primary)" }}>
-                <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                  <path
-                    d="M4 4H17.3334V17.3334H30.6666V30.6666H44V44H4V4Z"
-                    fill="currentColor"
-                  ></path>
-                </svg>
+              <div className="w-6 h-6">
+                <img src="/assets/images/logo.png" alt="Havenworksthailand" className="w-full h-full object-contain" />
               </div>
               <h2 className="text-xl font-bold" style={{ color: "var(--ds-color-text)" }}>
-                Thai Haven Service
+                Haven<span className="text-[#d32f2f]">works</span>thailand
               </h2>
             </div>
             <p className="ds-muted text-sm leading-relaxed">
@@ -124,7 +119,7 @@ export default function FooterSection() {
       </div>
       <div style={{ backgroundColor: "#d32f2f" }}>
         <div className="ds-container py-6 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-white">
-          <p>© 2026 Thai Haven Service. สงวนลิขสิทธิ์</p>
+          <p>© 2026 Havenworksthailand. สงวนลิขสิทธิ์</p>
           <div className="flex gap-6">
             <a className="hover:underline" href="#">
               นโยบายความเป็นส่วนตัว
