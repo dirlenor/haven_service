@@ -2,6 +2,7 @@ import Script from "next/script";
 import MainLayout from "../components/layout/MainLayout";
 import "../styles/globals.css";
 import "react-quill/dist/quill.snow.css";
+import { supabaseServer } from "../lib/supabaseServer";
 
 export const metadata = {
   title: "Thai Haven Service"
@@ -78,7 +79,24 @@ if (document.readyState === "complete") {
 }
 `;
 
-export default function RootLayout({ children }) {
+const loadSiteScripts = async () => {
+  if (!supabaseServer) {
+    return { head_scripts: "", body_scripts: "" };
+  }
+  const { data, error } = await supabaseServer
+    .from("site_scripts")
+    .select("head_scripts, body_scripts, updated_at")
+    .order("updated_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (error) {
+    console.warn("Failed to load site scripts:", error.message);
+  }
+  return data || { head_scripts: "", body_scripts: "" };
+};
+
+export default async function RootLayout({ children }) {
+  const siteScripts = await loadSiteScripts();
   return (
     <html lang="th" suppressHydrationWarning>
       <head>
@@ -97,6 +115,13 @@ export default function RootLayout({ children }) {
           strategy="afterInteractive"
           dangerouslySetInnerHTML={{ __html: tailwindReady }}
         />
+        {siteScripts?.head_scripts ? (
+          <script
+            id="site-head-scripts"
+            // Advanced use only: raw tags/snippets injected into <head> (no escaping).
+            dangerouslySetInnerHTML={{ __html: siteScripts.head_scripts }}
+          />
+        ) : null}
         <Script
           id="scroll-restoration"
           strategy="beforeInteractive"
@@ -106,6 +131,13 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body className="bg-background-light  font-display text-[#181411] ">
+        {siteScripts?.body_scripts ? (
+          <div
+            id="site-body-scripts"
+            // Advanced use only: raw tags/snippets injected right after <body> (no escaping).
+            dangerouslySetInnerHTML={{ __html: siteScripts.body_scripts }}
+          />
+        ) : null}
         <div
           className={legacyContactSafelist}
           style={{ display: "none" }}

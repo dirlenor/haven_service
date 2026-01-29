@@ -235,10 +235,18 @@ export default function MockCmsApp() {
   const [articleEditorTab, setArticleEditorTab] = useState("content");
   const [articleSearch, setArticleSearch] = useState("");
   const [draggingServiceId, setDraggingServiceId] = useState("");
+  const [siteScripts, setSiteScripts] = useState({
+    id: "",
+    head_scripts: "",
+    body_scripts: ""
+  });
+  const [scriptsDirty, setScriptsDirty] = useState(false);
 
   const items = data[activeTab] || [];
+  const isScriptsTab = activeTab === "scripts";
   const activeItem = items.find((item) => item.id === activeId);
   const isArticle = activeTab === "articles";
+  const isAdmin = Boolean(session?.user);
   const serviceContent = useMemo(() => {
     if (isArticle || !activeItem) {
       return null;
@@ -307,7 +315,8 @@ export default function MockCmsApp() {
       const [
         { data: articleRows, error: articleError },
         { data: serviceRows, error: serviceError },
-        { data: categoryRows, error: categoryError }
+        { data: categoryRows, error: categoryError },
+        { data: scriptsRow, error: scriptsError }
       ] = await Promise.all([
         supabase
           .from("articles")
@@ -321,14 +330,21 @@ export default function MockCmsApp() {
         supabase
           .from("article_categories")
           .select("*")
-          .order("name", { ascending: true })
+          .order("name", { ascending: true }),
+        supabase
+          .from("site_scripts")
+          .select("id, head_scripts, body_scripts, updated_at")
+          .order("updated_at", { ascending: false })
+          .limit(1)
+          .maybeSingle()
       ]);
 
-      if (articleError || serviceError || categoryError) {
+      if (articleError || serviceError || categoryError || scriptsError) {
         setError(
           articleError?.message ||
             serviceError?.message ||
             categoryError?.message ||
+            scriptsError?.message ||
             "โหลดข้อมูลไม่สำเร็จ"
         );
       }
@@ -355,6 +371,14 @@ export default function MockCmsApp() {
       setCategoryOptions(
         mappedOptions.length ? mappedOptions : fallbackOptions
       );
+      if (scriptsRow) {
+        setSiteScripts({
+          id: scriptsRow.id || "",
+          head_scripts: scriptsRow.head_scripts || "",
+          body_scripts: scriptsRow.body_scripts || ""
+        });
+      }
+      setScriptsDirty(false);
       setLoading(false);
       setDirtyById({});
     };
@@ -520,6 +544,43 @@ export default function MockCmsApp() {
     if (activeId) {
       setDirtyById((prev) => ({ ...prev, [activeId]: true }));
     }
+  };
+
+  const handleScriptsChange = (field, value) => {
+    setSiteScripts((prev) => ({ ...prev, [field]: value }));
+    setScriptsDirty(true);
+  };
+
+  const saveSiteScripts = async () => {
+    if (!supabase || !isAdmin) {
+      return;
+    }
+    setSaving(true);
+    setError("");
+    const payload = {
+      id: siteScripts.id || undefined,
+      head_scripts: siteScripts.head_scripts || null,
+      body_scripts: siteScripts.body_scripts || null,
+      updated_at: new Date().toISOString()
+    };
+    const { data: saved, error: saveError } = await supabase
+      .from("site_scripts")
+      .upsert(payload, { onConflict: "id" })
+      .select("id, head_scripts, body_scripts")
+      .single();
+    if (saveError) {
+      setError(saveError.message);
+    } else if (saved) {
+      setSiteScripts({
+        id: saved.id,
+        head_scripts: saved.head_scripts || "",
+        body_scripts: saved.body_scripts || ""
+      });
+      setScriptsDirty(false);
+      setLastSavedAt(new Date().toLocaleString("th-TH"));
+      alert("บันทึกเรียบร้อย");
+    }
+    setSaving(false);
   };
 
   const saveServiceOrder = async (list) => {
@@ -847,6 +908,20 @@ export default function MockCmsApp() {
             >
               บริการ
             </button>
+            <button
+              type="button"
+              className={`w-full text-left px-4 py-3 rounded-xl text-sm font-bold transition-colors ${
+                activeTab === "scripts"
+                  ? "bg-[#d32f2f] text-white"
+                  : "bg-transparent text-[#181411] hover:bg-[#f8f7f6]"
+              }`}
+              onClick={() => {
+                setActiveTab("scripts");
+                setIsEditorOpen(false);
+              }}
+            >
+              สคริปต์ไซต์
+            </button>
           </div>
           <div className="mt-auto pt-6">
             <button
@@ -863,15 +938,21 @@ export default function MockCmsApp() {
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
             <div>
               <p className="text-xs uppercase tracking-[0.3em] text-[#897261] font-semibold">
-                {activeTab === "articles" ? "Articles" : "Services"}
+                {activeTab === "articles" ? "Articles" : activeTab === "services" ? "Services" : "Site Scripts"}
               </p>
               <h2 className="text-3xl font-black mt-2">
-                {activeTab === "articles" ? "รายการบทความ" : "รายการบริการ"}
+                {activeTab === "articles"
+                  ? "รายการบทความ"
+                  : activeTab === "services"
+                  ? "รายการบริการ"
+                  : "สคริปต์ของเว็บไซต์"}
               </h2>
               <p className="text-xs text-[#897261] mt-2">
                 {activeTab === "articles"
                   ? "คลิกบทความเพื่อแก้ไขในหน้าต่างแบบป๊อปอัป"
-                  : "คลิกบริการเพื่อแก้ไขในหน้าต่างแบบป๊อปอัป"}
+                  : activeTab === "services"
+                  ? "คลิกบริการเพื่อแก้ไขในหน้าต่างแบบป๊อปอัป"
+                  : "ใช้สำหรับใส่สคริปต์/แท็กที่ต้องแทรกใน <head> และ <body>"}
               </p>
               {activeTab === "articles" ? (
                 <div className="mt-3 flex flex-wrap gap-3 text-xs text-[#897261]">
@@ -890,13 +971,15 @@ export default function MockCmsApp() {
                 </div>
               ) : null}
             </div>
-            <button
-              type="button"
-              className="px-5 py-2 rounded-full text-sm font-bold bg-[#d32f2f] text-white"
-              onClick={handleNew}
-            >
-              เพิ่มรายการ
-            </button>
+            {!isScriptsTab ? (
+              <button
+                type="button"
+                className="px-5 py-2 rounded-full text-sm font-bold bg-[#d32f2f] text-white"
+                onClick={handleNew}
+              >
+                เพิ่มรายการ
+              </button>
+            ) : null}
           </div>
 
           {loading ? (
@@ -906,6 +989,52 @@ export default function MockCmsApp() {
             <div className="mt-4 text-xs text-red-500">{error}</div>
           ) : null}
 
+          {isScriptsTab ? (
+            <div className="mt-6 bg-white rounded-2xl border border-gray-100 p-6 space-y-5">
+              <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-900">
+                <strong>สำหรับผู้ดูแลเท่านั้น:</strong> ช่องนี้รองรับโค้ด HTML/สคริปต์แบบ raw
+                ระบบจะไม่ทำการ escape กรุณาตรวจสอบความถูกต้องก่อนบันทึก
+              </div>
+              {!isAdmin ? (
+                <div className="text-xs text-red-500">
+                  บัญชีนี้ไม่ได้รับสิทธิ์ admin จึงไม่สามารถแก้ไขสคริปต์ได้
+                </div>
+              ) : null}
+              <label className="flex flex-col gap-2 text-sm font-semibold">
+                Head Scripts (ก่อนปิด &lt;/head&gt;)
+                <textarea
+                  className="rounded-lg border border-gray-200 px-3 py-2 text-sm min-h-[160px]"
+                  value={siteScripts.head_scripts}
+                  onChange={(event) => handleScriptsChange("head_scripts", event.target.value)}
+                  disabled={!isAdmin}
+                  placeholder="<script>...</script>"
+                />
+              </label>
+              <label className="flex flex-col gap-2 text-sm font-semibold">
+                Body Scripts (หลังเปิด &lt;body&gt;)
+                <textarea
+                  className="rounded-lg border border-gray-200 px-3 py-2 text-sm min-h-[160px]"
+                  value={siteScripts.body_scripts}
+                  onChange={(event) => handleScriptsChange("body_scripts", event.target.value)}
+                  disabled={!isAdmin}
+                  placeholder="<noscript>...</noscript>"
+                />
+              </label>
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  className={`px-5 py-2 rounded-full text-sm font-bold border ${
+                    scriptsDirty && isAdmin ? "border-[#181411] text-[#181411]" : "border-gray-200 text-gray-400"
+                  }`}
+                  disabled={!scriptsDirty || !isAdmin || saving}
+                  onClick={saveSiteScripts}
+                >
+                  บันทึกสคริปต์
+                </button>
+                {saving ? <span className="text-xs text-[#897261]">กำลังบันทึก...</span> : null}
+              </div>
+            </div>
+          ) : (
           <div className="mt-6 bg-white rounded-2xl border border-gray-100 overflow-hidden">
             <div
               className={`hidden md:grid gap-3 px-5 py-3 text-xs uppercase tracking-[0.2em] text-[#897261] border-b border-gray-100 ${
@@ -1066,6 +1195,7 @@ export default function MockCmsApp() {
               ) : null}
             </div>
           </div>
+          )}
         </main>
       </div>
 
