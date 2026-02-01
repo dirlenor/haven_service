@@ -97,7 +97,7 @@ export default function Navbar() {
             className="text-xl font-bold leading-tight tracking-tight"
             style={{ color: "var(--ds-color-text)" }}
           >
-            Havenwork
+            Haven<span className="text-[#d32f2f]">work</span>
           </h2>
         </Link>
         <nav className="hidden md:flex items-center gap-8">
