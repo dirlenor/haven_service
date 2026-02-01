@@ -70,6 +70,26 @@ export default async function ServicesPage() {
           </div>
         )}
       </div>
+      <section className="py-16" style={{ backgroundColor: "var(--ds-color-cream)" }}>
+        <div className="mx-auto w-full max-w-3xl px-6 text-center space-y-6">
+          <p className="text-xs uppercase tracking-[0.5em] text-[#897261]">
+            สนใจบริการ
+          </p>
+          <h2 className="text-3xl lg:text-4xl font-bold text-[#18120c]">
+            ปรึกษาฟรีกับทีมงานมืออาชีพ
+          </h2>
+          <p className="text-sm text-[#4c3f35] leading-relaxed">
+            ติดต่อเราเพื่อรับคำแนะนำที่เหมาะสมกับพื้นที่ของคุณ พร้อมประเมินราคาเบื้องต้น
+          </p>
+          <a
+            href="https://line.me/R/ti/p/%40tha"
+            className="inline-flex items-center justify-center gap-3 px-10 py-4 rounded-full bg-[#00c300] text-white text-base font-bold hover:bg-[#00a500] transition"
+          >
+            <span className="text-lg">LINE</span>
+            <span>ทักไลน์ปรึกษาฟรี</span>
+          </a>
+        </div>
+      </section>
     </section>
   );
 }
