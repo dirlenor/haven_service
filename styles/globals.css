@@ -36,6 +36,10 @@ body {
   color-scheme: light;
 }
 
+html[lang="th"] * {
+  letter-spacing: 0 !important;
+}
+
 html:not(.tw-ready) body {
   visibility: hidden;
 }
