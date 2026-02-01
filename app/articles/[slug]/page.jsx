@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import ReadyCtaSection from "../../../components/sections/ReadyCtaSection";
+import ShareButton from "../../../components/ui/ShareButton";
 import { supabaseServer } from "../../../lib/supabaseServer";
 
 export const revalidate = 60;
@@ -111,35 +113,45 @@ export default async function ArticleDetailPage({ params }) {
   return (
     <section className="ds-section">
       <div className="ds-container">
-        <div className="mb-10 max-w-3xl">
-          <div className="flex flex-wrap gap-2">
-            {(categories.length ? categories : ["บทความ"]).slice(0, 3).map((label, index) => (
-              <span
-                key={`${label}-${index}`}
-                className="inline-flex text-white text-xs font-bold px-3 py-1 rounded-full"
-                style={{ backgroundColor: colors[index] || fallbackBadgeColor }}
-              >
-                {label}
-              </span>
-            ))}
-          </div>
-          <h1 className="ds-title text-4xl lg:text-5xl mt-4">{article.title}</h1>
-          {article.summary ? (
-            <p className="ds-muted text-lg mt-4">{article.summary}</p>
-          ) : null}
-          <div className="text-xs text-gray-500 mt-4 flex flex-wrap items-center gap-3">
-            {article.date ? (
-              <>
-                <span className="material-symbols-outlined text-[14px]">calendar_today</span>{" "}
-                {article.date}
-              </>
-            ) : null}
-            {article.category ? (
-              <span className="inline-flex items-center gap-1">
-                <span className="material-symbols-outlined text-[14px]">label</span>
-                {article.category}
-              </span>
-            ) : null}
+        <div className="mb-10">
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-wrap gap-2">
+              {(categories.length ? categories : ["บทความ"]).slice(0, 3).map((label, index) => (
+                <span
+                  key={`${label}-${index}`}
+                  className="inline-flex text-white text-xs font-bold px-3 py-1 rounded-full"
+                  style={{ backgroundColor: colors[index] || fallbackBadgeColor }}
+                >
+                  {label}
+                </span>
+              ))}
+            </div>
+            <div className="flex flex-wrap items-start justify-between gap-6">
+              <h1 className="ds-title text-4xl lg:text-5xl">{article.title}</h1>
+              <div className="flex flex-col items-start md:items-end gap-3">
+                {article.date ? (
+                <div className="inline-flex items-center gap-2 text-sm text-gray-500">
+                  <span className="material-symbols-outlined text-[16px]">calendar_today</span>
+                  <span>{article.date}</span>
+                </div>
+                ) : null}
+                <ShareButton
+                  title={article.title || ""}
+                  className="inline-flex items-center gap-2 rounded-full border border-[#d32f2f] px-4 py-2 text-xs font-semibold text-[#d32f2f] transition hover:bg-[#d32f2f] hover:text-white"
+                />
+              </div>
+            </div>
+            <div className="max-w-3xl">
+              {article.summary ? (
+                <p className="ds-muted text-lg -mt-1">{article.summary}</p>
+              ) : null}
+              {article.category ? (
+                <div className="text-xs text-gray-500 mt-4 flex items-center gap-2">
+                  <span className="material-symbols-outlined text-[14px]">label</span>
+                  <span>{article.category}</span>
+                </div>
+              ) : null}
+            </div>
           </div>
           {keywords.length ? (
             <div className="mt-4 flex flex-wrap gap-2">
@@ -167,26 +179,18 @@ export default async function ArticleDetailPage({ params }) {
           className="cms-content max-w-none text-[#4c3f35]"
           dangerouslySetInnerHTML={{ __html: article.content_html || "" }}
         />
-        {(article.cta_title || article.cta_body) ? (
-          <div className="mt-12 bg-[#d32f2f]/10 p-6 rounded-2xl border border-[#d32f2f]/20 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div>
-              <h3 className="text-lg font-bold text-[#181411]">
-                {article.cta_title || "สนใจปรับโฉมบ้านกับเรา?"}
-              </h3>
-              {article.cta_body ? (
-                <p className="text-sm text-[#897261] mt-1">{article.cta_body}</p>
-              ) : null}
-            </div>
-            {article.cta_button_label ? (
-              <a
-                href={article.cta_button_href || "/contact"}
-                className="btn btn-primary px-5 py-2 text-sm w-fit"
-              >
-                {article.cta_button_label}
-              </a>
-            ) : null}
-          </div>
-        ) : null}
+      </div>
+      {(article.cta_title || article.cta_body || article.cta_button_label) ? (
+        <div className="mt-12">
+          <ReadyCtaSection
+            title={article.cta_title || undefined}
+            body={article.cta_body || undefined}
+            buttonLabel={article.cta_button_label || undefined}
+            href={article.cta_button_href || undefined}
+          />
+        </div>
+      ) : null}
+      <div className="ds-container">
         {relatedArticles.length ? (
           <div className="mt-16">
             <h2 className="text-2xl font-semibold text-[#181411] mb-6">

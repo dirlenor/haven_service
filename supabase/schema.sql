@@ -54,6 +54,14 @@ create table if not exists public.article_categories (
   created_at timestamptz not null default now()
 );
 
+create table if not exists public.site_settings (
+  id uuid primary key default gen_random_uuid(),
+  contact_form_endpoint text default '',
+  contact_form_success_message text default '',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
 create or replace function public.set_updated_at()
 returns trigger
 language plpgsql
@@ -76,6 +84,12 @@ before update on public.services
 for each row
 execute function public.set_updated_at();
 
+drop trigger if exists set_site_settings_updated_at on public.site_settings;
+create trigger set_site_settings_updated_at
+before update on public.site_settings
+for each row
+execute function public.set_updated_at();
+
 create or replace function public.is_admin()
 returns boolean
 language sql
@@ -94,12 +108,15 @@ alter table public.admin_users enable row level security;
 alter table public.articles enable row level security;
 alter table public.services enable row level security;
 alter table public.article_categories enable row level security;
+alter table public.site_settings enable row level security;
 
 drop policy if exists "Admins can manage admin_users" on public.admin_users;
 drop policy if exists "Admins can manage articles" on public.articles;
 drop policy if exists "Public can read published articles" on public.articles;
 drop policy if exists "Admins can manage services" on public.services;
 drop policy if exists "Public can read published services" on public.services;
+drop policy if exists "Admins can manage site settings" on public.site_settings;
+drop policy if exists "Public can read site settings" on public.site_settings;
 
 create policy "Admins can manage admin_users"
   on public.admin_users
@@ -137,6 +154,17 @@ create policy "Admins can manage article categories"
 
 create policy "Public can read article categories"
   on public.article_categories
+  for select
+  using (true);
+
+create policy "Admins can manage site settings"
+  on public.site_settings
+  for all
+  using (public.is_admin())
+  with check (public.is_admin());
+
+create policy "Public can read site settings"
+  on public.site_settings
   for select
   using (true);
 

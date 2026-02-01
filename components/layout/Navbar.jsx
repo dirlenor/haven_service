@@ -91,18 +91,18 @@ export default function Navbar() {
       <div className="ds-container flex items-center justify-between h-16">
         <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity cursor-pointer">
           <div className="size-8">
-            <img src="/assets/images/logo.png" alt="Havenworksthailand" className="w-full h-full object-contain" />
+            <img src="/assets/images/logo.png" alt="Havenwork" className="w-full h-full object-contain" />
           </div>
           <h2
             className="text-xl font-bold leading-tight tracking-tight"
             style={{ color: "var(--ds-color-text)" }}
           >
-            Haven<span className="text-[#d32f2f]">works</span>thailand
+            Havenwork
           </h2>
         </Link>
         <nav className="hidden md:flex items-center gap-8">
           <Link href="/" className={navLinkClass("home")} style={activeKey === "home" ? activeStyle : undefined}>
-            หน้าหลัก
+            หน้าแรก
           </Link>
           <div className="relative group">
             <Link
@@ -187,7 +187,7 @@ export default function Navbar() {
             style={activeKey === "home" ? activeStyle : undefined}
             onClick={() => setMobileOpen(false)}
           >
-            หน้าหลัก
+            หน้าแรก
           </Link>
           <details className="mt-2 mb-1 group">
             <summary

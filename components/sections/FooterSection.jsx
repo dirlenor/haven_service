@@ -1,4 +1,42 @@
-export default function FooterSection() {
+import { supabaseServer } from "../../lib/supabaseServer";
+
+const pickRandomServices = (list, count) => {
+  const pool = [...list];
+  for (let i = pool.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+  return pool.slice(0, Math.min(count, pool.length));
+};
+
+const loadFooterServices = async () => {
+  if (!supabaseServer) {
+    return [];
+  }
+  const { data, error } = await supabaseServer
+    .from("services")
+    .select("id, slug, title")
+    .in("status", ["published", "Published"])
+    .order("sort_order", { ascending: true })
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.warn("Footer services load failed:", error.message);
+  }
+
+  return data || [];
+};
+
+export default async function FooterSection() {
+  const services = await loadFooterServices();
+  const serviceLinks = services.length
+    ? pickRandomServices(services, 4)
+    : [
+        { title: "ผ้าม่านและมู่ลี่", href: "/services" },
+        { title: "ติดตั้งวอลเปเปอร์", href: "/services" },
+        { title: "โซลูชันพื้น", href: "/services" },
+        { title: "เฟอร์นิเจอร์บิวท์อิน", href: "/services" }
+      ];
   return (
     <footer
       id="site-footer"
@@ -9,10 +47,10 @@ export default function FooterSection() {
           <div className="flex flex-col gap-6">
             <div className="flex items-center gap-3">
               <div className="w-6 h-6">
-                <img src="/assets/images/logo.png" alt="Havenworksthailand" className="w-full h-full object-contain" />
+                <img src="/assets/images/logo.png" alt="Havenwork" className="w-full h-full object-contain" />
               </div>
               <h2 className="text-xl font-bold" style={{ color: "var(--ds-color-text)" }}>
-                Haven<span className="text-[#d32f2f]">works</span>thailand
+                Havenwork
               </h2>
             </div>
             <p className="ds-muted text-sm leading-relaxed">
@@ -31,30 +69,15 @@ export default function FooterSection() {
               บริการ
             </h4>
             <nav className="flex flex-col gap-2">
-              <a
-                className="text-sm ds-muted hover:text-primary transition-colors"
-                href="/services"
-              >
-                ผ้าม่านและมู่ลี่
-              </a>
-              <a
-                className="text-sm ds-muted hover:text-primary transition-colors"
-                href="/services"
-              >
-                ติดตั้งวอลเปเปอร์
-              </a>
-              <a
-                className="text-sm ds-muted hover:text-primary transition-colors"
-                href="/services"
-              >
-                โซลูชันพื้น
-              </a>
-              <a
-                className="text-sm ds-muted hover:text-primary transition-colors"
-                href="/services"
-              >
-                เฟอร์นิเจอร์บิวท์อิน
-              </a>
+              {serviceLinks.map((service) => (
+                <a
+                  key={service.id || service.title}
+                  className="text-sm ds-muted hover:text-primary transition-colors"
+                  href={service.href || `/services/${service.slug || service.id}`}
+                >
+                  {service.title || "บริการ"}
+                </a>
+              ))}
             </nav>
           </div>
           <div className="flex flex-col gap-4">
@@ -70,9 +93,9 @@ export default function FooterSection() {
               </a>
               <a
                 className="text-sm ds-muted hover:text-primary transition-colors"
-                href="/#portfolio"
+                href="/services"
               >
-                ผลงาน
+                บริการทั้งหมด
               </a>
               <a
                 className="text-sm ds-muted hover:text-primary transition-colors"
@@ -84,7 +107,7 @@ export default function FooterSection() {
                 className="text-sm ds-muted hover:text-primary transition-colors"
                 href="/contact"
               >
-                ติดต่อ
+                ติดต่อเรา
               </a>
             </nav>
           </div>
@@ -114,12 +137,36 @@ export default function FooterSection() {
                 <p className="text-sm ds-muted">02-123-4567</p>
               </div>
             </div>
+            <div className="flex items-center gap-3">
+              <a
+                href="#"
+                aria-label="Facebook"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#f4f2ee] transition hover:bg-[#e9e4df]"
+              >
+                <img
+                  src="https://api.iconify.design/simple-icons/facebook.svg?color=%231877F2"
+                  alt="Facebook"
+                  className="h-5 w-5 object-contain"
+                />
+              </a>
+              <a
+                href="#"
+                aria-label="YouTube"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#f4f2ee] transition hover:bg-[#e9e4df]"
+              >
+                <img
+                  src="https://api.iconify.design/simple-icons/youtube.svg?color=%23FF0000"
+                  alt="YouTube"
+                  className="h-5 w-5 object-contain"
+                />
+              </a>
+            </div>
           </div>
         </div>
       </div>
       <div style={{ backgroundColor: "#d32f2f" }}>
         <div className="ds-container py-6 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-white">
-          <p>© 2026 Havenworksthailand. สงวนลิขสิทธิ์</p>
+          <p>© 2026 Havenwork. สงวนลิขสิทธิ์</p>
           <div className="flex gap-6">
             <a className="hover:underline" href="#">
               นโยบายความเป็นส่วนตัว

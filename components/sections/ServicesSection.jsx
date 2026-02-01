@@ -1,6 +1,7 @@
 export default function ServicesSection({ services = [] }) {
   const hasServices = services.length > 0;
-  const renderServices = hasServices ? services.slice(0, 16) : [];
+  const maxCards = 8;
+  const serviceItems = (hasServices ? services : []).slice(0, maxCards - 1);
   const fallbackServices = [
     {
       title: "ม่านจีบ",
@@ -60,7 +61,7 @@ export default function ServicesSection({ services = [] }) {
       <div className="ds-container">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {hasServices
-            ? renderServices.map((service) => (
+            ? serviceItems.map((service) => (
                 <a
                   key={service.id}
                   href={`/services/${service.slug || service.id}`}
@@ -89,9 +90,8 @@ export default function ServicesSection({ services = [] }) {
                 </a>
               ))
             : null}
-          {!hasServices ? (
-            <>
-              {fallbackServices.map((service) => (
+          {!hasServices
+            ? fallbackServices.slice(0, maxCards - 1).map((service) => (
                 <a
                   key={service.title}
                   href="/services"
@@ -104,18 +104,34 @@ export default function ServicesSection({ services = [] }) {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/35 to-transparent" />
                   <div className="relative z-10 mt-auto w-full p-6 text-white">
-                    <h3 className="text-xl font-bold">
-                      {service.title}
-                    </h3>
+                    <h3 className="text-xl font-bold">{service.title}</h3>
                     <span className="mt-4 inline-flex items-center gap-2 text-sm font-bold text-white">
                       ดูรายละเอียด
                       <span className="material-symbols-outlined text-base">arrow_forward</span>
                     </span>
                   </div>
                 </a>
-              ))}
-            </>
-          ) : null}
+              ))
+            : null}
+          <a
+            href="/services"
+            className="ds-card ds-card-hover group relative flex h-[320px] overflow-hidden"
+          >
+            <div className="absolute inset-0 bg-[#d32f2f]" />
+            <div className="absolute inset-0 bg-gradient-to-br from-[#d32f2f] via-[#b71c1c] to-[#7f1414]" />
+            <div className="relative z-10 mt-auto w-full p-6 text-white">
+              <h3 className="text-2xl font-bold">
+                ไปหน้ารวมบริการ
+              </h3>
+              <p className="mt-2 text-sm text-white/80">
+                ดูบริการทั้งหมดและรายละเอียดเพิ่มเติม
+              </p>
+              <span className="mt-4 inline-flex items-center gap-2 text-sm font-bold text-white">
+                ดูทั้งหมด
+                <span className="material-symbols-outlined text-base">arrow_forward</span>
+              </span>
+            </div>
+          </a>
         </div>
       </div>
     </section>

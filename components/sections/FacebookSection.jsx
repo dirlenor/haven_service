@@ -27,7 +27,7 @@ export default function FacebookSection() {
         <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm w-full md:max-w-[50%] md:mx-auto">
           <div className="w-full overflow-hidden rounded-xl">
             <iframe
-              title="Havenworks Thailand Facebook Page"
+              title="Havenwork Facebook Page"
               src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fhaven86%2F&tabs=timeline&width=500&height=500&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true"
               width="100%"
               height="500"

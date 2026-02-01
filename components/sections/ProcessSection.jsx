@@ -7,7 +7,7 @@ export default function ProcessSection() {
     >
       <div className="ds-container">
         <div id="process-header" className="ds-stack gap-8 mb-16 text-center">
-          <h2 className="ds-title text-4xl lg:text-5xl">ขั้นตอนการทำงานของเรา</h2>
+          <h2 className="ds-title text-3xl lg:text-4xl">ขั้นตอนการทำงานของเรา</h2>
           <p className="ds-body text-lg max-w-2xl mx-auto">
             ประสบการณ์การตกแต่งบ้านที่ราบรื่น เป็นขั้นตอน ง่ายและชัดเจน
           </p>
@@ -29,7 +29,7 @@ export default function ProcessSection() {
                 className="text-xl font-bold mb-1 flex items-center gap-2"
                 style={{ color: "var(--ds-color-text)" }}
               >
-                <span className="material-symbols-outlined" style={{ color: "var(--ds-color-text)" }}>
+                <span className="material-symbols-outlined" style={{ color: "#d32f2f" }}>
                   chat_bubble
                 </span>
                 ปรึกษาและประเมินงาน
@@ -52,7 +52,7 @@ export default function ProcessSection() {
                 className="text-xl font-bold mb-1 flex items-center gap-2"
                 style={{ color: "var(--ds-color-text)" }}
               >
-                <span className="material-symbols-outlined" style={{ color: "var(--ds-color-text)" }}>
+                <span className="material-symbols-outlined" style={{ color: "#d32f2f" }}>
                   straighten
                 </span>
                 วัดพื้นที่จริง
@@ -75,7 +75,7 @@ export default function ProcessSection() {
                 className="text-xl font-bold mb-1 flex items-center gap-2"
                 style={{ color: "var(--ds-color-text)" }}
               >
-                <span className="material-symbols-outlined" style={{ color: "var(--ds-color-text)" }}>
+                <span className="material-symbols-outlined" style={{ color: "#d32f2f" }}>
                   palette
                 </span>
                 เลือกวัสดุและสรุปแบบ
@@ -98,7 +98,7 @@ export default function ProcessSection() {
                 className="text-xl font-bold mb-1 flex items-center gap-2"
                 style={{ color: "var(--ds-color-text)" }}
               >
-                <span className="material-symbols-outlined" style={{ color: "var(--ds-color-text)" }}>
+                <span className="material-symbols-outlined" style={{ color: "#d32f2f" }}>
                   home_work
                 </span>
                 ติดตั้งและส่งมอบงาน

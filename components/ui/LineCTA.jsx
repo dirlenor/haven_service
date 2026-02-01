@@ -8,9 +8,9 @@ export default function LineCTA({ href = "/contact", label = "ติดต่อ
       style={{ backgroundColor: "#3ace00" }}
     >
       <img
-        src="/assets/images/—Pngtree—%20chat%20icon_3584855.png"
+        src="https://api.iconify.design/simple-icons/line.svg?color=%23ffffff"
         alt="Line"
-        className="h-8 w-8 object-contain"
+        className="h-5 w-5 object-contain"
       />
       {label}
     </Link>

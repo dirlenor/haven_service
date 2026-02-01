@@ -1,6 +1,9 @@
 
 // Hero Slider Logic
 const initHeroSlider = () => {
+    if (document.querySelector('[data-hero-react="true"]')) {
+        return;
+    }
     const heroImages = [
         document.getElementById('hero-image-1'),
         document.getElementById('hero-image-2'),

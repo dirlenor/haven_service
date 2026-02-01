@@ -240,12 +240,20 @@ export default function MockCmsApp() {
     head_scripts: "",
     body_scripts: ""
   });
+  const [siteSettings, setSiteSettings] = useState({
+    id: "",
+    contact_form_endpoint: "",
+    contact_form_success_message: ""
+  });
   const [scriptsDirty, setScriptsDirty] = useState(false);
+  const [settingsDirty, setSettingsDirty] = useState(false);
+  const [showFormGuide, setShowFormGuide] = useState(false);
   const [orderNotice, setOrderNotice] = useState("");
   const [refreshing, setRefreshing] = useState(false);
 
   const items = data[activeTab] || [];
   const isScriptsTab = activeTab === "scripts";
+  const isSettingsTab = activeTab === "settings";
   const activeItem = items.find((item) => item.id === activeId);
   const isArticle = activeTab === "articles";
   const isAdmin = Boolean(session?.user);
@@ -318,7 +326,8 @@ export default function MockCmsApp() {
         { data: articleRows, error: articleError },
         { data: serviceRows, error: serviceError },
         { data: categoryRows, error: categoryError },
-        { data: scriptsRow, error: scriptsError }
+        { data: scriptsRow, error: scriptsError },
+        { data: settingsRow, error: settingsError }
       ] = await Promise.all([
         supabase
           .from("articles")
@@ -338,15 +347,22 @@ export default function MockCmsApp() {
           .select("id, head_scripts, body_scripts, updated_at")
           .order("updated_at", { ascending: false })
           .limit(1)
+          .maybeSingle(),
+        supabase
+          .from("site_settings")
+          .select("id, contact_form_endpoint, contact_form_success_message, updated_at")
+          .order("updated_at", { ascending: false })
+          .limit(1)
           .maybeSingle()
       ]);
 
-      if (articleError || serviceError || categoryError || scriptsError) {
+      if (articleError || serviceError || categoryError || scriptsError || settingsError) {
         setError(
           articleError?.message ||
             serviceError?.message ||
             categoryError?.message ||
             scriptsError?.message ||
+            settingsError?.message ||
             "โหลดข้อมูลไม่สำเร็จ"
         );
       }
@@ -380,7 +396,15 @@ export default function MockCmsApp() {
           body_scripts: scriptsRow.body_scripts || ""
         });
       }
+      if (settingsRow) {
+        setSiteSettings({
+          id: settingsRow.id || "",
+          contact_form_endpoint: settingsRow.contact_form_endpoint || "",
+          contact_form_success_message: settingsRow.contact_form_success_message || ""
+        });
+      }
       setScriptsDirty(false);
+      setSettingsDirty(false);
       setLoading(false);
       setDirtyById({});
     };
@@ -553,6 +577,11 @@ export default function MockCmsApp() {
     setScriptsDirty(true);
   };
 
+  const handleSettingsChange = (field, value) => {
+    setSiteSettings((prev) => ({ ...prev, [field]: value }));
+    setSettingsDirty(true);
+  };
+
   const saveSiteScripts = async () => {
     if (!supabase || !isAdmin) {
       return;
@@ -579,6 +608,38 @@ export default function MockCmsApp() {
         body_scripts: saved.body_scripts || ""
       });
       setScriptsDirty(false);
+      setLastSavedAt(new Date().toLocaleString("th-TH"));
+      alert("บันทึกเรียบร้อย");
+    }
+    setSaving(false);
+  };
+
+  const saveSiteSettings = async () => {
+    if (!supabase || !isAdmin) {
+      return;
+    }
+    setSaving(true);
+    setError("");
+    const payload = {
+      id: siteSettings.id || undefined,
+      contact_form_endpoint: siteSettings.contact_form_endpoint || null,
+      contact_form_success_message: siteSettings.contact_form_success_message || null,
+      updated_at: new Date().toISOString()
+    };
+    const { data: saved, error: saveError } = await supabase
+      .from("site_settings")
+      .upsert(payload, { onConflict: "id" })
+      .select("id, contact_form_endpoint, contact_form_success_message")
+      .single();
+    if (saveError) {
+      setError(saveError.message);
+    } else if (saved) {
+      setSiteSettings({
+        id: saved.id,
+        contact_form_endpoint: saved.contact_form_endpoint || "",
+        contact_form_success_message: saved.contact_form_success_message || ""
+      });
+      setSettingsDirty(false);
       setLastSavedAt(new Date().toLocaleString("th-TH"));
       alert("บันทึกเรียบร้อย");
     }
@@ -960,6 +1021,20 @@ export default function MockCmsApp() {
             >
               สคริปต์ไซต์
             </button>
+            <button
+              type="button"
+              className={`w-full text-left px-4 py-3 rounded-xl text-sm font-bold transition-colors ${
+                activeTab === "settings"
+                  ? "bg-[#d32f2f] text-white"
+                  : "bg-transparent text-[#181411] hover:bg-[#f8f7f6]"
+              }`}
+              onClick={() => {
+                setActiveTab("settings");
+                setIsEditorOpen(false);
+              }}
+            >
+              ตั้งค่าแบบฟอร์ม
+            </button>
           </div>
           <div className="mt-auto pt-6">
             <button
@@ -976,21 +1051,31 @@ export default function MockCmsApp() {
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
             <div>
               <p className="text-xs uppercase tracking-[0.3em] text-[#897261] font-semibold">
-                {activeTab === "articles" ? "Articles" : activeTab === "services" ? "Services" : "Site Scripts"}
+                {activeTab === "articles"
+                  ? "Articles"
+                  : activeTab === "services"
+                  ? "Services"
+                  : activeTab === "scripts"
+                  ? "Site Scripts"
+                  : "Form Settings"}
               </p>
               <h2 className="text-3xl font-black mt-2">
                 {activeTab === "articles"
                   ? "รายการบทความ"
                   : activeTab === "services"
                   ? "รายการบริการ"
-                  : "สคริปต์ของเว็บไซต์"}
+                  : activeTab === "scripts"
+                  ? "สคริปต์ของเว็บไซต์"
+                  : "ตั้งค่าแบบฟอร์มติดต่อ"}
               </h2>
               <p className="text-xs text-[#897261] mt-2">
                 {activeTab === "articles"
                   ? "คลิกบทความเพื่อแก้ไขในหน้าต่างแบบป๊อปอัป"
                   : activeTab === "services"
                   ? "คลิกบริการเพื่อแก้ไขในหน้าต่างแบบป๊อปอัป"
-                  : "ใช้สำหรับใส่สคริปต์/แท็กที่ต้องแทรกใน <head> และ <body>"}
+                  : activeTab === "scripts"
+                  ? "ใช้สำหรับใส่สคริปต์/แท็กที่ต้องแทรกใน <head> และ <body>"
+                  : "ตั้งค่า Apps Script เพื่อบันทึกข้อมูลฟอร์มลง Google Sheet"}
               </p>
               {activeTab === "articles" ? (
                 <div className="mt-3 flex flex-wrap gap-3 text-xs text-[#897261]">
@@ -1022,7 +1107,7 @@ export default function MockCmsApp() {
                   {refreshing ? "กำลังรีเฟรช..." : "รีเฟรชหน้าเว็บ"}
                 </button>
               ) : null}
-              {!isScriptsTab ? (
+              {!isScriptsTab && !isSettingsTab ? (
                 <button
                   type="button"
                   className="px-5 py-2 rounded-full text-sm font-bold bg-[#d32f2f] text-white"
@@ -1085,6 +1170,87 @@ export default function MockCmsApp() {
                   onClick={saveSiteScripts}
                 >
                   บันทึกสคริปต์
+                </button>
+                {saving ? <span className="text-xs text-[#897261]">กำลังบันทึก...</span> : null}
+              </div>
+            </div>
+          ) : isSettingsTab ? (
+            <div className="mt-6 bg-white rounded-2xl border border-gray-100 p-6 space-y-5">
+              <div className="rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-xs text-blue-900">
+                ตั้งค่า URL ของ Apps Script Web App เพื่อรับข้อมูลจากฟอร์มติดต่อและบันทึกลง Google Sheet
+              </div>
+              <button
+                type="button"
+                className="w-fit px-4 py-2 rounded-full text-xs font-bold border border-[#d32f2f] text-[#d32f2f] hover:bg-[#d32f2f] hover:text-white transition-colors"
+                onClick={() => setShowFormGuide((prev) => !prev)}
+              >
+                วิธีใช้งานโดยละเอียด
+              </button>
+              {showFormGuide ? (
+                <div className="rounded-2xl border border-gray-200 bg-white p-4 text-xs text-[#4c3f35] space-y-3">
+                  <ol className="list-decimal list-inside space-y-2">
+                    <li>สร้าง Google Sheet ใหม่ แล้วเปิด Apps Script (Extensions → Apps Script)</li>
+                    <li>วางโค้ดด้านล่างลงในไฟล์ `Code.gs` แล้วกด Save</li>
+                    <li>กด Deploy → New deployment → Web app</li>
+                    <li>ตั้งค่า Execute as: Me และ Who has access: Anyone</li>
+                    <li>คัดลอก URL ที่ได้ แล้ววางในช่อง Apps Script Web App URL ด้านล่าง</li>
+                  </ol>
+                  <div className="rounded-xl border border-gray-200 bg-[#f8f7f6] p-3 font-mono text-[11px] leading-relaxed whitespace-pre-wrap">
+{`function doPost(e) {
+  const sheet = SpreadsheetApp.getActiveSheet();
+  const data = e.parameter || {};
+  const row = [
+    new Date(),
+    data.name || "",
+    data.email || "",
+    data.phone || "",
+    data.service_type || "",
+    data.message || ""
+  ];
+  sheet.appendRow(row);
+  return ContentService.createTextOutput("OK");
+}`}
+                  </div>
+                  <p className="text-[11px] text-[#897261]">
+                    หมายเหตุ: คอลัมน์จะเรียงตามลำดับ วันเวลา, ชื่อ, อีเมล, โทร, ประเภทบริการ, ข้อความ
+                  </p>
+                </div>
+              ) : null}
+              {!isAdmin ? (
+                <div className="text-xs text-red-500">
+                  บัญชีนี้ไม่ได้รับสิทธิ์ admin จึงไม่สามารถแก้ไขการตั้งค่าได้
+                </div>
+              ) : null}
+              <label className="flex flex-col gap-2 text-sm font-semibold">
+                Apps Script Web App URL
+                <input
+                  className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                  value={siteSettings.contact_form_endpoint}
+                  onChange={(event) => handleSettingsChange("contact_form_endpoint", event.target.value)}
+                  disabled={!isAdmin}
+                  placeholder="https://script.google.com/macros/s/...../exec"
+                />
+              </label>
+              <label className="flex flex-col gap-2 text-sm font-semibold">
+                ข้อความหลังส่งสำเร็จ
+                <input
+                  className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
+                  value={siteSettings.contact_form_success_message}
+                  onChange={(event) => handleSettingsChange("contact_form_success_message", event.target.value)}
+                  disabled={!isAdmin}
+                  placeholder="ส่งข้อมูลเรียบร้อยแล้ว"
+                />
+              </label>
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  className={`px-5 py-2 rounded-full text-sm font-bold border ${
+                    settingsDirty && isAdmin ? "border-[#181411] text-[#181411]" : "border-gray-200 text-gray-400"
+                  }`}
+                  disabled={!settingsDirty || !isAdmin || saving}
+                  onClick={saveSiteSettings}
+                >
+                  บันทึกการตั้งค่า
                 </button>
                 {saving ? <span className="text-xs text-[#897261]">กำลังบันทึก...</span> : null}
               </div>
