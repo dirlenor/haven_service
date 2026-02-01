@@ -386,34 +386,43 @@ export default function ServiceTemplate({ service, content }) {
           </section>
         ) : null}
 
-        <section className="py-12" id="process-section" style={{ backgroundColor: "#ffffff" }}>
-          <div className="mx-auto w-full max-w-6xl px-6 space-y-10 text-center">
-            <div className="space-y-3">
-              <p className="text-xs uppercase tracking-[0.5em] text-[#897261]">
-                {staticProcess.eyebrow}
+        <section id="process-section" data-nav-label="ขั้นตอนการทำงาน" className="ds-section">
+          <div className="ds-container">
+            <div id="process-header" className="ds-stack gap-8 mb-16 text-center">
+              <h2 className="ds-title text-3xl lg:text-4xl">{staticProcess.title}</h2>
+              <p className="ds-body text-lg max-w-2xl mx-auto">
+                {staticProcess.subtitle}
               </p>
-              <h2 className="text-3xl lg:text-4xl font-bold text-[#18120c]">
-                {staticProcess.title}
-              </h2>
-              <p className="text-sm text-[#4c3f35] max-w-3xl mx-auto">{staticProcess.subtitle}</p>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
+            <div
+              id="process-cards"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-7xl mx-auto"
+            >
               {staticProcess.steps.map((step, index) => {
                 const isHighlighted = index === 1 || index === 3;
                 return (
-                  <article
+                  <div
                     key={`${step.title}-${index}`}
-                    className={`rounded-[2rem] p-5 shadow-lg${isHighlighted ? " bg-[#d32f2f0a]" : ""}`}
+                    className={`rounded-[2rem] p-5 shadow-lg flex flex-col gap-5${
+                      isHighlighted ? " bg-[#d32f2f0a]" : ""
+                    }`}
                   >
-                  <div className="flex items-center justify-center font-black text-4xl mb-4 text-[#18120c]">
-                    {step.number || String(index + 1).padStart(2, "0")}
+                    <div className="flex items-center justify-center font-black text-4xl flex-shrink-0">
+                      {step.number || String(index + 1).padStart(2, "0")}
+                    </div>
+                    <div className="flex flex-col justify-center">
+                      <h3 className="text-xl font-bold mb-1 flex items-center gap-2">
+                        <span className="material-symbols-outlined" style={{ color: "#d32f2f" }}>
+                          {step.icon || "check_circle"}
+                        </span>
+                        {step.title}
+                      </h3>
+                      <p className="ds-muted text-sm line-clamp-2">
+                        {step.body}
+                      </p>
+                    </div>
                   </div>
-                  <h3 className="text-xl font-bold mb-2 text-[#18120c] flex items-center justify-center gap-2">
-                    {renderIcon(step.icon)}
-                    {step.title}
-                  </h3>
-                  <p className="text-[#4c3f35] text-sm">{step.body}</p>
-                  </article>
                 );
               })}
             </div>
