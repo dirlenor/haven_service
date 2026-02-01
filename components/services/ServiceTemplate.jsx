@@ -442,33 +442,38 @@ export default function ServiceTemplate({ service, content }) {
                 <p className="text-sm text-[#4c3f35]">{staticArticles.subtitle}</p>
               </div>
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {normalized.articles.items.map((item, index) => (
-                  <article
-                    key={`${item.title}-${index}`}
-                    className="bg-white rounded-3xl border border-[#ebe5dc] overflow-hidden shadow-sm flex flex-col"
-                  >
-                    {item.image.url ? (
-                      <img
-                        src={item.image.url}
-                        alt={item.image.alt || item.title}
-                        className="w-full h-48 object-cover"
-                      />
-                    ) : null}
-                    <div className="p-6 space-y-3 flex-1 flex flex-col">
-                      {item.categoryLabel ? (
-                        <p className="text-xs uppercase tracking-[0.5em] text-[#d32f2f]">
-                          {item.categoryLabel}
-                        </p>
+                {normalized.articles.items.map((item, index) => {
+                  const CardTag = item.href ? "a" : "div";
+                  const cardProps = item.href ? { href: item.href } : {};
+                  return (
+                    <CardTag
+                      key={`${item.title}-${index}`}
+                      {...cardProps}
+                      className="group bg-white rounded-3xl border border-[#ebe5dc] overflow-hidden shadow-sm flex flex-col transition hover:shadow-lg"
+                    >
+                      {item.image.url ? (
+                        <img
+                          src={item.image.url}
+                          alt={item.image.alt || item.title}
+                          className="w-full h-48 object-cover"
+                        />
                       ) : null}
-                      <h3 className="text-xl font-bold text-[#18120c] flex-1">{item.title}</h3>
-                      {item.href ? (
-                        <a href={item.href} className="text-sm font-semibold text-[#d32f2f] hover:underline">
-                          อ่านบทความ
-                        </a>
-                      ) : null}
-                    </div>
-                  </article>
-                ))}
+                      <div className="p-6 space-y-3 flex-1 flex flex-col">
+                        {item.categoryLabel ? (
+                          <p className="text-xs uppercase tracking-[0.5em] text-[#d32f2f]">
+                            {item.categoryLabel}
+                          </p>
+                        ) : null}
+                        <h3 className="text-xl font-bold text-[#18120c] flex-1">{item.title}</h3>
+                        {item.href ? (
+                          <span className="text-sm font-semibold text-[#d32f2f] group-hover:underline">
+                            อ่านบทความ
+                          </span>
+                        ) : null}
+                      </div>
+                    </CardTag>
+                  );
+                })}
               </div>
             </div>
           </section>
