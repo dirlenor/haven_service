@@ -2,7 +2,7 @@ import ContactForm from "../../components/ui/ContactForm";
 import { supabaseServer } from "../../lib/supabaseServer";
 
 export const metadata = {
-  title: "Thai Haven Service - Contact Us"
+  title: "Havenworks - Contact Us"
 };
 
 const loadContactSettings = async () => {
@@ -34,7 +34,7 @@ export default async function ContactPage() {
             ติดต่อเรา
           </p>
           <p className="text-[#897261] text-lg max-w-2xl font-normal">
-            เปลี่ยนพื้นที่ของคุณให้สวยงามด้วยผู้เชี่ยวชาญ ติดต่อ Thai Haven Service
+            เปลี่ยนพื้นที่ของคุณให้สวยงามด้วยผู้เชี่ยวชาญ ติดต่อ Havenworks
             เพื่อรับคำปรึกษาด้านการปรับปรุงบ้าน
             ออกแบบภายใน และรีโนเวท
           </p>
@@ -43,7 +43,7 @@ export default async function ContactPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12 items-stretch">
           <div
             className="w-full h-full min-h-[260px] sm:min-h-[320px] bg-center bg-no-repeat bg-cover rounded-xl object-cover shadow-lg border border-[#e6e0db] overflow-hidden"
-            data-alt="Google Map showing Thai Haven Service office location in Bangkok"
+            data-alt="Google Map showing Havenworks office location in Bangkok"
             data-location="Bangkok, Thailand"
             style={{
               backgroundImage:
@@ -71,8 +71,7 @@ export default async function ContactPage() {
                   </div>
                   <div>
                     <p className="text-sm font-bold text-[#897261] uppercase tracking-wider mb-2">โทรหาเรา</p>
-                    <p className="text-base font-medium text-[#181411]">+66 (0) 2 123 4567</p>
-                    <p className="text-base font-medium text-[#181411]">+66 (0) 81 234 5678</p>
+                    <p className="text-base font-medium text-[#181411]">+66 (0) 95-771-8825</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
@@ -83,7 +82,7 @@ export default async function ContactPage() {
                     <p className="text-sm font-bold text-[#897261] uppercase tracking-wider mb-2">ช่องทางโซเชียล</p>
                     <div className="flex flex-wrap gap-3">
                       <a
-                        href="https://line.me/R/ti/p/%40tha"
+                        href="https://lin.ee/BCoNWSL"
                         className="inline-flex h-[50px] w-[120px] items-center justify-center gap-2 rounded-xl font-semibold text-white shadow-sm transition hover:opacity-90"
                         style={{ backgroundColor: "#00C300" }}
                       >
@@ -107,16 +106,16 @@ export default async function ContactPage() {
                         Facebook
                       </a>
                       <a
-                        href="#"
+                        href="https://www.youtube.com/@HavenService-m1i"
                         className="inline-flex h-[50px] w-[120px] items-center justify-center gap-2 rounded-xl font-semibold text-white shadow-sm transition hover:opacity-90"
-                        style={{ backgroundColor: "#d32f2f" }}
+                        style={{ backgroundColor: "#FF0000" }}
                       >
                         <img
-                          src="https://api.iconify.design/simple-icons/instagram.svg?color=%23ffffff"
-                          alt="Instagram"
+                          src="https://api.iconify.design/simple-icons/youtube.svg?color=%23ffffff"
+                          alt="YouTube"
                           className="h-5 w-5 object-contain"
                         />
-                        Instagram
+                        YouTube
                       </a>
                     </div>
                   </div>

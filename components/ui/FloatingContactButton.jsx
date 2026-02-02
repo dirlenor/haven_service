@@ -41,7 +41,7 @@ export default function FloatingContactButton() {
         }`}
       >
         <a
-          href="https://www.facebook.com"
+          href="https://www.facebook.com/haven86/"
           className={`floating-action inline-flex h-12 w-12 items-center justify-center rounded-full text-white shadow-lg hover:scale-105 ${
             animateIn ? "floating-action--in" : closing ? "floating-action--out" : "floating-action--hidden"
           }`}
@@ -53,7 +53,7 @@ export default function FloatingContactButton() {
           </svg>
         </a>
         <a
-          href="https://line.me/R/ti/p/%40tha"
+          href="https://lin.ee/BCoNWSL"
           className={`floating-action inline-flex h-12 w-12 items-center justify-center rounded-full text-white shadow-lg hover:scale-105 ${
             animateIn ? "floating-action--in" : closing ? "floating-action--out" : "floating-action--hidden"
           }`}
@@ -68,7 +68,7 @@ export default function FloatingContactButton() {
           />
         </a>
         <a
-          href="tel:021234567"
+          href="tel:+66957718825"
           className={`floating-action inline-flex h-12 w-12 items-center justify-center rounded-full text-white shadow-lg hover:scale-105 ${
             animateIn ? "floating-action--in" : closing ? "floating-action--out" : "floating-action--hidden"
           }`}

@@ -82,7 +82,7 @@ export default async function ServicesPage() {
             ติดต่อเราเพื่อรับคำแนะนำที่เหมาะสมกับพื้นที่ของคุณ พร้อมประเมินราคาเบื้องต้น
           </p>
           <a
-            href="https://line.me/R/ti/p/%40tha"
+            href="https://lin.ee/BCoNWSL"
             className="inline-flex items-center justify-center gap-3 px-10 py-4 rounded-full bg-[#00c300] text-white text-base font-bold hover:bg-[#00a500] transition"
           >
             <span className="text-lg">LINE</span>

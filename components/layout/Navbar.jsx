@@ -91,13 +91,13 @@ export default function Navbar() {
       <div className="ds-container flex items-center justify-between h-16">
         <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity cursor-pointer">
           <div className="size-8">
-            <img src="/assets/images/logo.png" alt="Havenwork" className="w-full h-full object-contain" />
+            <img src="/assets/images/logo.png" alt="Havenworks" className="w-full h-full object-contain" />
           </div>
           <h2
             className="text-xl font-bold leading-tight tracking-tight"
             style={{ color: "var(--ds-color-text)" }}
           >
-            Haven<span className="text-[#d32f2f]">work</span>
+            Haven<span className="text-[#d32f2f]">works</span>
           </h2>
         </Link>
         <nav className="hidden md:flex items-center gap-8">

@@ -18,7 +18,7 @@ export default function PartnersSection() {
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-4">
             <a
-              href="https://line.me/R/ti/p/%40tha"
+              href="https://lin.ee/BCoNWSL"
               className="inline-flex items-center justify-center gap-2 rounded-full bg-[#00c300] px-8 py-3 text-base font-bold text-white transition hover:bg-[#00a500]"
             >
               <span className="text-lg">LINE</span>

@@ -47,10 +47,10 @@ export default async function FooterSection() {
           <div className="flex flex-col gap-6">
             <div className="flex items-center gap-3">
               <div className="w-6 h-6">
-                <img src="/assets/images/logo.png" alt="Havenwork" className="w-full h-full object-contain" />
+                <img src="/assets/images/logo.png" alt="Havenworks" className="w-full h-full object-contain" />
               </div>
               <h2 className="text-xl font-bold" style={{ color: "var(--ds-color-text)" }}>
-                Havenwork
+                Haven<span className="text-[#d32f2f]">works</span>
               </h2>
             </div>
             <p className="ds-muted text-sm leading-relaxed">
@@ -134,7 +134,7 @@ export default async function FooterSection() {
                 >
                   phone
                 </span>
-                <p className="text-sm ds-muted">02-123-4567</p>
+                <p className="text-sm ds-muted">+66 (0) 95-771-8825</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
@@ -150,7 +150,7 @@ export default async function FooterSection() {
                 />
               </a>
               <a
-                href="#"
+                href="https://www.youtube.com/@HavenService-m1i"
                 aria-label="YouTube"
                 className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#f4f2ee] transition hover:bg-[#e9e4df]"
               >
@@ -166,7 +166,7 @@ export default async function FooterSection() {
       </div>
       <div style={{ backgroundColor: "#d32f2f" }}>
         <div className="ds-container py-6 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-white">
-          <p>© 2026 Havenwork. สงวนลิขสิทธิ์</p>
+          <p>© 2026 Havenworks. สงวนลิขสิทธิ์</p>
           <div className="flex gap-6">
             <a className="hover:underline" href="#">
               นโยบายความเป็นส่วนตัว

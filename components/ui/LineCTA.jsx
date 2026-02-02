@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-export default function LineCTA({ href = "/contact", label = "ติดต่อเรา", className = "" }) {
+export default function LineCTA({ href = "https://lin.ee/BCoNWSL", label = "ติดต่อเรา", className = "" }) {
   return (
     <Link
       href={href}

@@ -85,7 +85,7 @@ export default function ServiceTemplate({ service, content }) {
     body: "ทีมงาน Thai Haven Service พร้อมให้คำปรึกษา ออกแบบ และติดตั้งผลงานที่ตอบโจทย์พื้นที่ของคุณทุกโครงการ",
     button: {
       label: "ติดต่อเราได้ทันที",
-      href: "https://line.me/R/ti/p/%40tha"
+      href: "https://lin.ee/BCoNWSL"
     }
   };
 
