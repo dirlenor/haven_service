@@ -180,16 +180,6 @@ export default async function ArticleDetailPage({ params }) {
           dangerouslySetInnerHTML={{ __html: article.content_html || "" }}
         />
       </div>
-      {(article.cta_title || article.cta_body || article.cta_button_label) ? (
-        <div className="mt-12">
-          <ReadyCtaSection
-            title={article.cta_title || undefined}
-            body={article.cta_body || undefined}
-            buttonLabel={article.cta_button_label || undefined}
-            href={article.cta_button_href || undefined}
-          />
-        </div>
-      ) : null}
       <div className="ds-container">
         {relatedArticles.length ? (
           <div className="mt-16">
@@ -233,6 +223,16 @@ export default async function ArticleDetailPage({ params }) {
           </div>
         ) : null}
       </div>
+      {(article.cta_title || article.cta_body || article.cta_button_label) ? (
+        <div className="mt-16">
+          <ReadyCtaSection
+            title={article.cta_title || undefined}
+            body={article.cta_body || undefined}
+            buttonLabel={article.cta_button_label || undefined}
+            href={article.cta_button_href || undefined}
+          />
+        </div>
+      ) : null}
     </section>
   );
 }
