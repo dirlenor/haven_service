@@ -214,6 +214,7 @@ const compressImage = (file, options = {}) =>
   });
 
 export default function MockCmsApp() {
+  const editorStateKey = "cms_editor_state";
   const [authLoading, setAuthLoading] = useState(true);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -411,6 +412,59 @@ export default function MockCmsApp() {
 
     loadData();
   }, [session]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+    if (!isEditorOpen || !activeId) {
+      window.sessionStorage.removeItem(editorStateKey);
+      return;
+    }
+    const payload = {
+      activeTab,
+      activeId,
+      serviceEditorTab,
+      articleEditorTab
+    };
+    window.sessionStorage.setItem(editorStateKey, JSON.stringify(payload));
+  }, [isEditorOpen, activeId, activeTab, serviceEditorTab, articleEditorTab]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+    if (!session || loading) {
+      return;
+    }
+    if (isEditorOpen) {
+      return;
+    }
+    const raw = window.sessionStorage.getItem(editorStateKey);
+    if (!raw) {
+      return;
+    }
+    try {
+      const saved = JSON.parse(raw);
+      if (!saved?.activeTab || !saved?.activeId) {
+        return;
+      }
+      if (!data[saved.activeTab]?.find((item) => item.id === saved.activeId)) {
+        return;
+      }
+      setActiveTab(saved.activeTab);
+      setActiveId(saved.activeId);
+      if (saved.serviceEditorTab) {
+        setServiceEditorTab(saved.serviceEditorTab);
+      }
+      if (saved.articleEditorTab) {
+        setArticleEditorTab(saved.articleEditorTab);
+      }
+      setIsEditorOpen(true);
+    } catch (error) {
+      window.sessionStorage.removeItem(editorStateKey);
+    }
+  }, [session, loading, data, isEditorOpen]);
 
   useEffect(() => {
     const list = data[activeTab] || [];
