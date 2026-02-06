@@ -187,9 +187,9 @@ export default function ServiceTemplate({ service, content }) {
                     key={`${item.title}-${index}`}
                     className="bg-white rounded-3xl overflow-hidden border border-[#f0ebe4] md:min-h-[280px] md:max-h-[365px]"
                   >
-                    <div className="md:flex md:items-stretch h-full">
+                    <div className="flex flex-col md:flex-row md:items-stretch h-full">
                       {item.image.url ? (
-                        <div className="md:w-[30%] h-full">
+                        <div className="md:w-[30%] h-56 md:h-auto">
                           <img
                             src={item.image.url}
                             alt={item.image.alt || item.title || heroAlt}
@@ -317,25 +317,6 @@ export default function ServiceTemplate({ service, content }) {
             </div>
           </section>
         ) : null}
-
-        <section className="py-16" style={{ backgroundColor: "var(--ds-color-cream)" }}>
-          <div className="mx-auto w-full max-w-3xl px-6 text-center space-y-6">
-            <p className="text-xs uppercase tracking-[0.5em] text-[#897261]">
-              {staticCta.eyebrow}
-            </p>
-            <h2 className="text-3xl lg:text-4xl font-bold text-[#18120c]">
-              {staticCta.title}
-            </h2>
-            <p className="text-sm text-[#4c3f35] leading-relaxed">{staticCta.body}</p>
-            <a
-              href={staticCta.button.href}
-              className="inline-flex items-center justify-center gap-3 px-10 py-4 rounded-full bg-[#00c300] text-white text-base font-bold hover:bg-[#00a500] transition"
-            >
-              <span className="text-lg">LINE</span>
-              <span>{staticCta.button.label}</span>
-            </a>
-          </div>
-        </section>
 
         {hasGallery ? (
           <section className="py-16 bg-white">
