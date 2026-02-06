@@ -23,7 +23,6 @@ export default function ArticlesSection({ articles = [] }) {
       color: colors[index] || fallbackBadgeColor
     }));
   };
-
   return (
     <section
       id="articles-section"
@@ -81,12 +80,6 @@ export default function ArticlesSection({ articles = [] }) {
                           <span className="material-symbols-outlined text-[14px]">calendar_today</span>{" "}
                           {article.date}
                         </>
-                      ) : null}
-                      {article.category ? (
-                        <span className="inline-flex items-center gap-1">
-                          <span className="material-symbols-outlined text-[14px]">label</span>
-                          {article.category}
-                        </span>
                       ) : null}
                     </div>
                     <h3

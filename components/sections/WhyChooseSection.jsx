@@ -17,7 +17,7 @@ export default function WhyChooseSection() {
             <div className="w-full lg:w-1/2 relative group">
               <div className="aspect-[4/3] rounded-[2rem] overflow-hidden shadow-2xl relative z-10">
                 <img
-                  src="/assets/images/why-expert.png"
+                  src="/assets/images/ChatGPT Image Jan 29, 2026, 11_26_18 PM.png"
                   alt="Expert Installation"
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
@@ -85,7 +85,7 @@ export default function WhyChooseSection() {
           <div className="w-full lg:w-1/2 relative group">
             <div className="aspect-[4/3] rounded-[2rem] overflow-hidden shadow-2xl relative z-10">
               <img
-                src="/assets/images/why-quality.png"
+                src="/assets/images/two-people-working.jpg"
                 alt="Quality Checklist"
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
@@ -119,7 +119,7 @@ export default function WhyChooseSection() {
           <div className="w-full lg:w-1/2 relative group">
             <div className="aspect-[4/3] rounded-[2rem] overflow-hidden shadow-2xl relative z-10">
               <img
-                src="/assets/images/why-time.png"
+                src="/assets/images/medium-shot-women-discussing.jpg"
                 alt="On-time Delivery"
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
               />

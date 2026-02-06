@@ -43,11 +43,6 @@ export default function MockCmsPreview({ item, type }) {
           ) : null}
           {isArticle ? (
             <div className="mt-5 flex flex-wrap items-center gap-3 text-sm text-[#897261]">
-              {item?.category ? (
-                <span className="bg-[#d32f2f]/10 text-[#d32f2f] text-xs font-bold px-3 py-1 rounded-full">
-                  {item.category}
-                </span>
-              ) : null}
               {item?.date ? <span>{item.date}</span> : null}
               {item?.readTime ? <span>• {item.readTime}</span> : null}
             </div>

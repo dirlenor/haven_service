@@ -124,7 +124,7 @@ export default async function FooterSection() {
                   location_on
                 </span>
                 <p className="text-sm ds-muted" data-location="Bangkok, Thailand">
-                  123 ถนนตกแต่ง, ห้วยขวาง, กรุงเทพฯ 10310
+                  99/13 อ่อนนุช 74/3-1 ประเวศ เขตประเวศ กรุงเทพมหานคร 10250
                 </p>
               </div>
               <div className="flex items-center gap-3">

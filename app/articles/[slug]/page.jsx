@@ -145,12 +145,6 @@ export default async function ArticleDetailPage({ params }) {
               {article.summary ? (
                 <p className="ds-muted text-lg -mt-1">{article.summary}</p>
               ) : null}
-              {article.category ? (
-                <div className="text-xs text-gray-500 mt-4 flex items-center gap-2">
-                  <span className="material-symbols-outlined text-[14px]">label</span>
-                  <span>{article.category}</span>
-                </div>
-              ) : null}
             </div>
           </div>
           {keywords.length ? (

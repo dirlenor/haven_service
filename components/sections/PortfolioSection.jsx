@@ -5,7 +5,7 @@ export default function PortfolioSection() {
         <div className="flex flex-col md:flex-row justify-between items-end mb-10 gap-4">
           <div>
             <h2 className="ds-title text-3xl mb-2">แรงบันดาลใจ</h2>
-            <p className="ds-muted">"เราพร้อมสร้างพื้นที่ที่ใช้งานได้ดี อยู่สบาย และตอบโจทย์ของคุณ”</p>
+            <p className="ds-muted">"เรามุ่งมั่นที่จะดูแลและออกแบบพื้นที่ของคุณให้สอดประสานกับไลฟ์สไตล์ที่เติมเต็มความสุขและสะดวกสบายกว่าที่เคย"</p>
           </div>
         </div>
         <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
@@ -13,7 +13,7 @@ export default function PortfolioSection() {
             <img
               alt="Cozy corner"
               className="w-full h-auto object-cover transform transition-transform duration-500 group-hover:scale-105"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuD5LbwLJC4JP2_I9XPdytLwy4gUXRd8OjvmHK0MiCPLTx9wIMMyK42a4QDt1TeKkGdFpCTiYCYxnARoi3k34pwtcEV4KYBFN2amkpR1yVUmn8cPaxuIwZvndC5aO0q1GQcWyG0qY9qmthd1x3__UOhKR1YHPJciq-npWbGLRbtgqg-lWTqOMl7SiRpzGJIUlS_NwpCRZ0XwxQDyoNa7j4dN8A_bwI8ZB9FaEbd1MB2YRrpCOkt5ZN8wMQPphDD8F2892Cy5DKsFn635"
+              src="/assets/images/inspire/1A6C1252-5BEF-45EF-A7A0-7A55F981175E.png"
             />
             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-6">
               <div className="text-white">
@@ -45,7 +45,7 @@ export default function PortfolioSection() {
             <img
               alt="Wallpaper texture"
               className="w-full h-auto object-cover transform transition-transform duration-500 group-hover:scale-105"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuBbobEuYerVlSJ-DRDlw597E1iB6a_GD-Ug7pvsNTY8eioDdbdKrt2eAbSiX1xlibMxB6XYcmPVh3aG1L8CdYrssZs9ThI9pQBPvHbqvEvnY95p19qIEmpnoQZQ6q93pXoZAuJqigAxBsQEf9nSPcyzhhlmY-lD4MBoK4NWcYn6e-pSg7_hUQm6rWHzMJNzTB3fwj4IL_wJdXlLR6Zdd8A3c_kq5eQz7CeLjSlQCi-MyhWnLZqTfdHWNxlA1NYJymttb654gOnMTBwf"
+              src="/assets/images/inspire/9DA57E07-160A-434B-B87A-34A078E88335.png"
             />
             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-6">
               <div className="text-white">
@@ -58,7 +58,7 @@ export default function PortfolioSection() {
             <img
               alt="Bedroom curtains"
               className="w-full h-auto object-cover transform transition-transform duration-500 group-hover:scale-105"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuDHCz_FbiYnr9ijyUE_DxBE0MEwAa3eWSbZvNIgrw2TIv3p4kPwCl8_qRNekKYmSaw77Pd0sL1ZnJ6csOsovZw6QYYzy7l9geUUUIl9v00IU23SSwWuvsWCv5ptRj6l0WukSXJPJr3Yglq2wu4GBaipRQQoA4rR2Ll0K0K6iuBOr_cPF4BYJ_bhHmOR-kiSNJP0asQydBYfmfMTVxj04siYh7wYq_wpWA6m9lnFfTrzZ3sEMyAN74wWKKjrNWHyC8mG9Ev4p-OHfRKI"
+              src="/assets/images/inspire/IMG_1311.JPG"
             />
             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-6">
               <div className="text-white">
@@ -71,7 +71,7 @@ export default function PortfolioSection() {
             <img
               alt="Kids room"
               className="w-full h-auto object-cover transform transition-transform duration-500 group-hover:scale-105"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCBlhaSvT3K22sSh3C5iUr570Cf_nFpolu5GhzyxAxEMsC25ucbT661fTh4WU6N6try4R464hylU6a9KU2FuuVwhaUZvJg_3nTq7ivI90Ymm8IoKPdNSOWbD_983-BJZmNj7rXjIVw8PZee6b9YvBIH4uiBNJ410yZGAfdEZEbu92ur85MejHF8TiIUirbnyxte2QdFjSgsHdt14mSnZPq-hh45qel3Waj9gvrApdwpvn-Cxnd9cgTnNdtMigpA2Ph0AsiCN7ynicLv"
+              src="/assets/images/inspire/IMG_1384.JPG"
             />
             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-6">
               <div className="text-white">
@@ -84,7 +84,7 @@ export default function PortfolioSection() {
             <img
               alt="Kitchen details"
               className="w-full h-auto object-cover transform transition-transform duration-500 group-hover:scale-105"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuAcoOOTzcsuunWt-fH0rdP8Zn71NR7G9GO_ooR5T2nbXsehhkOS4PrTSsdvX-ieTozCORcYMi6q904ig_DgL4bucJm04xpfQYWPhjPUqY1V_F4dVsnHKEiv1xY6vJoZdbCbLlW3JTJb4AO9ATCR_GFEdKW_T_9aacqMMvqTRnTFujaGVLZ0VDLozoMAcPOExB37Pu6jzBYhef22hsSNd59jzcRbUgL6zVl5FXl06Va_ej-5Xc4RohB5iTH0pJUWJezM8_pPmX5Cflv7"
+              src="/assets/images/inspire/IMG_1403.JPG"
             />
             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-6">
               <div className="text-white">

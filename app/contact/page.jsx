@@ -61,8 +61,7 @@ export default async function ContactPage() {
               <div className="space-y-6">
                 <div className="pb-6 border-b border-[#e6e0db]">
                   <p className="text-lg font-medium leading-relaxed text-[#181411]">
-                    123 ถนนสุขุมวิท, คลองเตย,<br />
-                    กรุงเทพฯ 10110
+                    99/13 อ่อนนุช 74/3-1 ประเวศ เขตประเวศ กรุงเทพมหานคร 10250
                   </p>
                 </div>
                 <div className="flex items-start gap-4">

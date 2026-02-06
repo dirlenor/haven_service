@@ -1591,16 +1591,6 @@ export default function MockCmsApp() {
                   </label>
 
                   <label className="flex flex-col gap-2 text-sm font-semibold">
-                    รูปหลัก (URL)
-                    <input
-                      className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
-                      value={activeItem.heroImage}
-                      onChange={(event) => handleChange("heroImage", event.target.value)}
-                      placeholder="https://..."
-                    />
-                  </label>
-
-                  <label className="flex flex-col gap-2 text-sm font-semibold">
                     รูปหลัก (อัปโหลด)
                     <input
                       className="rounded-lg border border-gray-200 px-3 py-2 text-sm bg-white"
@@ -1774,18 +1764,6 @@ export default function MockCmsApp() {
                           />
                         </label>
                         <label className="flex flex-col gap-2 text-sm font-semibold">
-                          รูปภาพหลัก (URL)
-                          <input
-                            className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
-                            value={serviceContent.hero.image.url}
-                            onChange={(event) =>
-                              updateServiceContent((draft) => {
-                                draft.hero.image.url = event.target.value;
-                              })
-                            }
-                          />
-                        </label>
-                        <label className="flex flex-col gap-2 text-sm font-semibold">
                           รูปภาพหลัก (alt)
                           <input
                             className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
@@ -1797,6 +1775,38 @@ export default function MockCmsApp() {
                             }
                           />
                         </label>
+                        <label className="flex flex-col gap-2 text-sm font-semibold md:col-span-2">
+                          รูปภาพหลัก (อัปโหลด)
+                          <input
+                            className="rounded-lg border border-gray-200 px-3 py-2 text-sm bg-white"
+                            type="file"
+                            accept="image/*"
+                            disabled={uploading}
+                            onChange={(event) => {
+                              const file = event.target.files?.[0];
+                              if (!file) {
+                                return;
+                              }
+                              handleContentUpload(file, (url) =>
+                                updateServiceContent((draft) => {
+                                  draft.hero.image.url = url;
+                                })
+                              );
+                            }}
+                          />
+                        </label>
+                        {uploading ? (
+                          <div className="text-xs text-[#897261] md:col-span-2">กำลังอัปโหลดรูป...</div>
+                        ) : null}
+                        {serviceContent.hero.image.url ? (
+                          <div className="rounded-2xl overflow-hidden border border-gray-100 md:col-span-2">
+                            <img
+                              src={serviceContent.hero.image.url}
+                              alt={serviceContent.hero.image.alt || "preview"}
+                              className="w-full h-48 object-cover"
+                            />
+                          </div>
+                        ) : null}
                       </div>
                     </div>
                   ) : null}
@@ -1818,18 +1828,6 @@ export default function MockCmsApp() {
                           />
                         </label>
                         <label className="flex flex-col gap-2 text-sm font-semibold">
-                          รูปภาพประกอบ (URL)
-                          <input
-                            className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
-                            value={serviceContent.intro.image.url}
-                            onChange={(event) =>
-                              updateServiceContent((draft) => {
-                                draft.intro.image.url = event.target.value;
-                              })
-                            }
-                          />
-                        </label>
-                        <label className="flex flex-col gap-2 text-sm font-semibold">
                           รูปภาพประกอบ (alt)
                           <input
                             className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
@@ -1841,6 +1839,38 @@ export default function MockCmsApp() {
                             }
                           />
                         </label>
+                        <label className="flex flex-col gap-2 text-sm font-semibold md:col-span-2">
+                          รูปภาพประกอบ (อัปโหลด)
+                          <input
+                            className="rounded-lg border border-gray-200 px-3 py-2 text-sm bg-white"
+                            type="file"
+                            accept="image/*"
+                            disabled={uploading}
+                            onChange={(event) => {
+                              const file = event.target.files?.[0];
+                              if (!file) {
+                                return;
+                              }
+                              handleContentUpload(file, (url) =>
+                                updateServiceContent((draft) => {
+                                  draft.intro.image.url = url;
+                                })
+                              );
+                            }}
+                          />
+                        </label>
+                        {uploading ? (
+                          <div className="text-xs text-[#897261] md:col-span-2">กำลังอัปโหลดรูป...</div>
+                        ) : null}
+                        {serviceContent.intro.image.url ? (
+                          <div className="rounded-2xl overflow-hidden border border-gray-100 md:col-span-2">
+                            <img
+                              src={serviceContent.intro.image.url}
+                              alt={serviceContent.intro.image.alt || "preview"}
+                              className="w-full h-40 object-cover"
+                            />
+                          </div>
+                        ) : null}
                       </div>
                       <div className="space-y-3">
                         <div className="flex items-center justify-between">
@@ -1999,16 +2029,6 @@ export default function MockCmsApp() {
                                   />
                                   <input
                                     className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
-                                    value={item.image.url}
-                                    onChange={(event) =>
-                                      updateServiceContent((draft) => {
-                                        draft.types.items[index].image.url = event.target.value;
-                                      })
-                                    }
-                                    placeholder="รูปภาพ (URL)"
-                                  />
-                                  <input
-                                    className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
                                     value={item.image.alt}
                                     onChange={(event) =>
                                       updateServiceContent((draft) => {
@@ -2017,10 +2037,33 @@ export default function MockCmsApp() {
                                     }
                                     placeholder="รูปภาพ (alt)"
                                   />
+                                  <label className="flex flex-col gap-2 text-xs font-semibold md:col-span-2">
+                                    อัปโหลดรูปภาพ
+                                    <input
+                                      className="rounded-lg border border-gray-200 px-3 py-2 text-sm bg-white"
+                                      type="file"
+                                      accept="image/*"
+                                      disabled={uploading}
+                                      onChange={(event) => {
+                                        const file = event.target.files?.[0];
+                                        if (!file) {
+                                          return;
+                                        }
+                                        handleContentUpload(file, (url) =>
+                                          updateServiceContent((draft) => {
+                                            draft.types.items[index].image.url = url;
+                                          })
+                                        );
+                                      }}
+                                    />
+                                  </label>
                                   <div className="text-xs text-[#897261] self-center">
                                     หัวข้อย่อยใช้ค่าคงที่ในหน้าแสดงผล
                                   </div>
                                 </div>
+                                {uploading ? (
+                                  <div className="text-xs text-[#897261]">กำลังอัปโหลดรูป...</div>
+                                ) : null}
                                 {item.image.url ? (
                                   <div className="flex items-center gap-3">
                                     <div className="w-20 h-20 rounded-xl overflow-hidden border border-gray-200 bg-gray-50">
@@ -2107,19 +2150,6 @@ export default function MockCmsApp() {
                         </label>
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <label className="flex flex-col gap-2 text-sm font-semibold">
-                          รูปภาพ (URL)
-                          <input
-                            className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
-                            value={serviceContent.specs.image?.url || ""}
-                            onChange={(event) =>
-                              updateServiceContent((draft) => {
-                                draft.specs.image = draft.specs.image || { url: "", alt: "" };
-                                draft.specs.image.url = event.target.value;
-                              })
-                            }
-                          />
-                        </label>
                         <label className="flex flex-col gap-2 text-sm font-semibold">
                           รูปภาพ (alt)
                           <input
@@ -2274,16 +2304,6 @@ export default function MockCmsApp() {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                               <input
                                 className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
-                                value={image.url}
-                                onChange={(event) =>
-                                  updateServiceContent((draft) => {
-                                    draft.gallery.images[index].url = event.target.value;
-                                  })
-                                }
-                                placeholder="รูป (URL)"
-                              />
-                              <input
-                                className="rounded-lg border border-gray-200 px-3 py-2 text-sm"
                                 value={image.alt}
                                 onChange={(event) =>
                                   updateServiceContent((draft) => {
@@ -2292,7 +2312,30 @@ export default function MockCmsApp() {
                                 }
                                 placeholder="รูป (alt)"
                               />
+                              <label className="flex flex-col gap-2 text-xs font-semibold md:col-span-2">
+                                อัปโหลดรูปภาพ
+                                <input
+                                  className="rounded-lg border border-gray-200 px-3 py-2 text-sm bg-white"
+                                  type="file"
+                                  accept="image/*"
+                                  disabled={uploading}
+                                  onChange={(event) => {
+                                    const file = event.target.files?.[0];
+                                    if (!file) {
+                                      return;
+                                    }
+                                    handleContentUpload(file, (url) =>
+                                      updateServiceContent((draft) => {
+                                        draft.gallery.images[index].url = url;
+                                      })
+                                    );
+                                  }}
+                                />
+                              </label>
                             </div>
+                            {uploading ? (
+                              <div className="text-xs text-[#897261]">กำลังอัปโหลดรูป...</div>
+                            ) : null}
                             {image.url ? (
                               <div className="flex items-center gap-3">
                                 <div className="w-20 h-20 rounded-xl overflow-hidden border border-gray-200 bg-gray-50">
@@ -2317,6 +2360,25 @@ export default function MockCmsApp() {
                       <p className="text-xs text-[#897261]">
                         เลือกบทความได้สูงสุด 3 รายการ (ข้อมูลส่วนหัวใช้แบบคงที่)
                       </p>
+                      {(() => {
+                        const articleContent =
+                          parseServiceContent(activeItem.content || "") ||
+                          buildServiceContentTemplate({
+                            serviceLabel: activeItem.title || "",
+                            heroImageUrl: activeItem.heroImage || "",
+                            heroImageAlt: activeItem.title || ""
+                          });
+                        const availableArticles = data.articles || [];
+                        const availableIds = new Set(
+                          availableArticles.map((article) => article.id).filter(Boolean)
+                        );
+                        const selectedIds = new Set(
+                          (articleContent.articles.items || [])
+                            .map((item) => item.id)
+                            .filter((id) => id && availableIds.has(id))
+                        );
+                        return (
+                          <>
                       <label className="flex flex-col gap-2 text-sm font-semibold">
                         ค้นหาบทความ
                         <input
@@ -2327,7 +2389,7 @@ export default function MockCmsApp() {
                         />
                       </label>
                       <div className="space-y-2">
-                        {(data.articles || [])
+                        {availableArticles
                           .filter((article) => {
                             const keyword = articleSearch.trim().toLowerCase();
                             if (!keyword) {
@@ -2335,55 +2397,48 @@ export default function MockCmsApp() {
                             }
                             return String(article.title || "").toLowerCase().includes(keyword);
                           })
-                          .map((article) => {
-                          const selectedIds = new Set(
-                            (serviceContent.articles.items || [])
-                              .map((item) => item.id)
-                              .filter(Boolean)
-                          );
-                          const isSelected = selectedIds.has(article.id);
-                          return (
-                            <label
-                              key={article.id}
-                              className="flex items-center gap-3 rounded-xl border border-gray-200 p-3"
-                            >
-                              <input
-                                type="checkbox"
-                                checked={isSelected}
-                                onChange={() => {
-                                  const currentIds = (serviceContent.articles.items || [])
-                                    .map((item) => item.id)
-                                    .filter(Boolean);
-                                  let nextIds = currentIds;
-                                  if (isSelected) {
-                                    nextIds = currentIds.filter((id) => id !== article.id);
-                                  } else if (currentIds.length < 3) {
-                                    nextIds = [...currentIds, article.id];
-                                  } else {
-                                    alert("เลือกบทความได้สูงสุด 3 รายการ");
-                                    return;
-                                  }
-                                  const nextItems = nextIds
-                                    .map((id) => (data.articles || []).find((entry) => entry.id === id))
-                                    .filter(Boolean)
-                                    .map((entry) => ({
-                                      id: entry.id,
-                                      image: {
-                                        url: entry.heroImage || "",
-                                        alt: entry.title || ""
-                                      },
-                                      categoryLabel:
-                                        entry.category ||
-                                        (entry.categories || [])[0] ||
-                                        "บทความ",
-                                      title: entry.title || "",
-                                      href: `/articles/${entry.slug || entry.id}`
-                                    }));
-                                  updateServiceContent((draft) => {
-                                    draft.articles.items = nextItems;
-                                  });
-                                }}
-                              />
+                           .map((article) => {
+                           const isSelected = selectedIds.has(article.id);
+                           return (
+                             <label
+                               key={article.id}
+                               className="flex items-center gap-3 rounded-xl border border-gray-200 p-3"
+                             >
+                                <input
+                                  type="checkbox"
+                                  checked={isSelected}
+                                  onChange={() => {
+                                    const currentIds = Array.from(selectedIds);
+                                    let nextIds = currentIds;
+                                    if (isSelected) {
+                                      nextIds = currentIds.filter((id) => id !== article.id);
+                                    } else if (currentIds.length < 3) {
+                                      nextIds = [...currentIds, article.id];
+                                   } else {
+                                     alert("เลือกบทความได้สูงสุด 3 รายการ");
+                                     return;
+                                   }
+                                    const nextItems = nextIds
+                                      .map((id) => availableArticles.find((entry) => entry.id === id))
+                                      .filter(Boolean)
+                                      .map((entry) => ({
+                                       id: entry.id,
+                                       image: {
+                                         url: entry.heroImage || "",
+                                         alt: entry.title || ""
+                                       },
+                                       categoryLabel:
+                                         entry.category ||
+                                         (entry.categories || [])[0] ||
+                                         "บทความ",
+                                        title: entry.title || "",
+                                        href: `/articles/${entry.slug || entry.id}`
+                                      }));
+                                    const nextContent = cloneContent(articleContent);
+                                    nextContent.articles.items = nextItems;
+                                    handleChange("content", stringifyServiceContent(nextContent));
+                                  }}
+                                />
                               <div className="w-14 h-14 rounded-lg overflow-hidden border border-gray-200 bg-gray-50">
                                 {article.heroImage ? (
                                   <img
@@ -2403,6 +2458,9 @@ export default function MockCmsApp() {
                           );
                         })}
                       </div>
+                          </>
+                        );
+                      })()}
                     </div>
                   ) : null}
 

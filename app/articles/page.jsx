@@ -135,7 +135,7 @@ export default async function ArticlesPage({ searchParams }) {
             <p className="ds-eyebrow text-sm">บทความทั้งหมด</p>
             <h1 className="ds-title text-4xl lg:text-5xl mt-2">แรงบันดาลใจแต่งบ้าน</h1>
             <p className="ds-muted mt-3 max-w-2xl">
-              รวมบทความและเคล็ดลับสำหรับคนรักบ้าน อัปเดตจากทีม Thai Haven Service
+              รวมบทความ ข่าวสาร และเคล็ดลับสำหรับคนรักบ้าน อัปเดตจากทีม Havenworks
             </p>
           </div>
         </div>

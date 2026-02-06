@@ -132,7 +132,10 @@ export default function HeroSection() {
             ทีมงานประสบการณ์สูง การันตีผลงาน พร้อมให้คำแนะนำ เพื่อสร้างสถานที่ ที่ใช่สำหรับคุณ
           </p>
           <div className="flex flex-wrap gap-4 pt-4">
-            <LineCTA className="w-full sm:w-auto h-14 px-8 text-base shadow-xl shadow-primary/20" />
+            <LineCTA
+              className="w-full sm:w-auto h-14 px-8 text-base shadow-xl shadow-primary/20"
+              color="#dc2626"
+            />
           </div>
         </div>
       </div>
