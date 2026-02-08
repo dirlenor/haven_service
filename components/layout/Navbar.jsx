@@ -40,7 +40,6 @@ export default function Navbar() {
         .from("services")
         .select("id, slug, title")
         .in("status", ["published", "Published"])
-        .order("sort_order", { ascending: true })
         .order("created_at", { ascending: false });
       if (!mounted) {
         return;

@@ -80,6 +80,8 @@ const cloneContent = (value) => {
   return JSON.parse(JSON.stringify(value));
 };
 
+const sameId = (a, b) => String(a ?? "") === String(b ?? "");
+
 const mapArticleFromRow = (row) => {
   const rawCategories = Array.isArray(row.categories) ? row.categories : [];
   const rawColors = Array.isArray(row.category_colors) ? row.category_colors : [];
@@ -165,8 +167,7 @@ const buildServiceRow = (item) => {
     summary: item.summary || summaryFromContent || "",
     hero_image: item.heroImage || heroFromContent || "",
     content: item.content || "",
-    status: item.status || "draft",
-    sort_order: typeof item.sortOrder === "number" ? item.sortOrder : null
+    status: item.status || "draft"
   };
   if (!item.id) {
     delete row.id;
@@ -221,6 +222,7 @@ export default function MockCmsApp() {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
   const [data, setData] = useState({ services: [], articles: [] });
+  const [persistedIdsByType, setPersistedIdsByType] = useState({ services: [], articles: [] });
   const [categoryOptions, setCategoryOptions] = useState([]);
   const [activeTab, setActiveTab] = useState("articles");
   const [activeId, setActiveId] = useState("");
@@ -337,7 +339,6 @@ export default function MockCmsApp() {
         supabase
           .from("services")
           .select("*")
-          .order("sort_order", { ascending: true })
           .order("created_at", { ascending: false }),
         supabase
           .from("article_categories")
@@ -372,6 +373,10 @@ export default function MockCmsApp() {
       const mappedServices = (serviceRows || []).map(mapServiceFromRow);
 
       setData({ services: mappedServices, articles: mappedArticles });
+      setPersistedIdsByType({
+        services: mappedServices.map((item) => item.id),
+        articles: mappedArticles.map((item) => item.id)
+      });
       const categoryPool = mappedArticles.flatMap((article) => article.categories || []);
       const mappedOptions = Array.isArray(categoryRows)
         ? categoryRows.map((row) => ({
@@ -545,25 +550,53 @@ export default function MockCmsApp() {
     setSaving(true);
     setError("");
     const row = type === "articles" ? buildArticleRow(item) : buildServiceRow(item);
-    const { data: saved, error: saveError } = await supabase
-      .from(type)
-      .upsert(row, { onConflict: "id" })
-      .select("*")
-      .single();
+    const persistedIds = persistedIdsByType[type] || [];
+    const isExisting = persistedIds.some((id) => sameId(id, item.id));
+    const table = supabase.from(type);
+    const request = isExisting
+      ? table
+          .update(row)
+          .eq("id", item.id)
+          .select("*")
+          .single()
+      : (() => {
+          const insertRow = { ...row };
+          delete insertRow.id;
+          return table.insert(insertRow).select("*").single();
+        })();
+    const { data: saved, error: saveError } = await request;
     if (saveError) {
       setError(saveError.message);
     } else if (saved) {
+      const mappedSaved = type === "articles" ? mapArticleFromRow(saved) : mapServiceFromRow(saved);
       setData((prev) => {
-        const updatedList = prev[type].map((entry) =>
-          entry.id === saved.id
-            ? type === "articles"
-              ? mapArticleFromRow(saved)
-              : mapServiceFromRow(saved)
-            : entry
-        );
+        let updatedList = [];
+        if (isExisting) {
+          updatedList = prev[type].map((entry) => (sameId(entry.id, saved.id) ? mappedSaved : entry));
+        } else if (item.id) {
+          const hasTemp = prev[type].some((entry) => sameId(entry.id, item.id));
+          updatedList = hasTemp
+            ? prev[type].map((entry) => (sameId(entry.id, item.id) ? mappedSaved : entry))
+            : [mappedSaved, ...prev[type]];
+        } else {
+          updatedList = [mappedSaved, ...prev[type]];
+        }
         return { ...prev, [type]: updatedList };
       });
-      setDirtyById((prev) => ({ ...prev, [saved.id]: false }));
+      setPersistedIdsByType((prev) => ({
+        ...prev,
+        [type]: Array.from(new Set([...(prev[type] || []), saved.id]))
+      }));
+      setDirtyById((prev) => {
+        const next = { ...prev, [saved.id]: false };
+        if (item.id && !sameId(item.id, saved.id)) {
+          delete next[item.id];
+        }
+        return next;
+      });
+      if (item.id && activeId && sameId(activeId, item.id) && !sameId(activeId, saved.id)) {
+        setActiveId(saved.id);
+      }
       setLastSavedAt(new Date().toLocaleString("th-TH"));
       if (!silent) {
         alert("บันทึกเรียบร้อย");
@@ -607,6 +640,12 @@ export default function MockCmsApp() {
       const updatedList = prev[activeTab].filter((item) => item.id !== itemId);
       return { ...prev, [activeTab]: updatedList };
     });
+    if (activeTab === "articles" || activeTab === "services") {
+      setPersistedIdsByType((prev) => ({
+        ...prev,
+        [activeTab]: (prev[activeTab] || []).filter((id) => !sameId(id, itemId))
+      }));
+    }
     if (activeId === itemId) {
       setActiveId(items.find((item) => item.id !== itemId)?.id || "");
       setIsEditorOpen(false);
@@ -710,12 +749,18 @@ export default function MockCmsApp() {
       id: item.id,
       sort_order: index + 1
     }));
-    const { error: updateError } = await supabase
-      .from("services")
-      .upsert(updates, { onConflict: "id" });
+    const results = await Promise.all(
+      updates.map(({ id, sort_order }) =>
+        supabase
+          .from("services")
+          .update({ sort_order })
+          .eq("id", id)
+      )
+    );
+    const updateError = results.find((result) => result.error)?.error;
     if (updateError) {
       setError(updateError.message);
-      setOrderNotice("");
+      setOrderNotice("ไม่สามารถบันทึกลำดับได้ (ฐานข้อมูลยังไม่รองรับ sort_order)");
     }
     setSaving(false);
     if (!updateError) {
