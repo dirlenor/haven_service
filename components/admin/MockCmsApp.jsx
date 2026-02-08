@@ -135,9 +135,9 @@ const buildArticleRow = (item) => {
     title: item.title || "",
     summary: item.summary || "",
     hero_image: item.heroImage || "",
-    category: normalized.categories[0] || item.category || "",
+    category: normalized.categories[0] || "",
     date: item.date || null,
-    category_color: normalized.categoryColors[0] || item.categoryColor || "#d32f2f",
+    category_color: normalized.categoryColors[0] || "#d32f2f",
     categories: normalized.categories,
     category_colors: normalized.categoryColors,
     content_html: item.contentHtml || "",
@@ -792,9 +792,8 @@ export default function MockCmsApp() {
   };
 
   const handleRefreshSite = async () => {
-    const secret = process.env.NEXT_PUBLIC_REVALIDATE_SECRET;
-    if (!secret) {
-      setError("ยังไม่ได้ตั้งค่า NEXT_PUBLIC_REVALIDATE_SECRET");
+    if (!session?.access_token) {
+      setError("ไม่พบสิทธิ์การใช้งาน กรุณาเข้าสู่ระบบใหม่");
       return;
     }
     setRefreshing(true);
@@ -802,9 +801,11 @@ export default function MockCmsApp() {
     try {
       const res = await fetch("/api/revalidate", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.access_token}`
+        },
         body: JSON.stringify({
-          secret,
           paths: ["/", "/services"]
         })
       });
@@ -896,16 +897,51 @@ export default function MockCmsApp() {
     setNewCategoryName("");
   };
 
-  const handleRemoveCategory = (index) => {
+  const handleRemoveCategory = (name, index) => {
     if (!activeItem) {
       return;
     }
     const currentCategories = activeItem.categories || [];
     const currentColors = activeItem.categoryColors || [];
-    const nextCategories = currentCategories.filter((_, i) => i !== index);
-    const nextColors = currentColors.filter((_, i) => i !== index);
+    const removeIndex =
+      typeof index === "number" && index >= 0
+        ? index
+        : currentCategories.findIndex((cat) => cat === name);
+    if (removeIndex < 0) {
+      return;
+    }
+    const nextCategories = currentCategories.filter((_, i) => i !== removeIndex);
+    const nextColors = currentColors.filter((_, i) => i !== removeIndex);
     handleChange("categories", nextCategories);
     handleChange("categoryColors", nextColors);
+  };
+
+  const handleDeleteCategoryOption = async (option) => {
+    if (!option?.name) {
+      return;
+    }
+    const shouldDelete = window.confirm(`ลบหมวดหมู่ \"${option.name}\" ออกจากรายการหรือไม่?`);
+    if (!shouldDelete) {
+      return;
+    }
+
+    setError("");
+    if (supabase) {
+      const { error: deleteError } = await supabase
+        .from("article_categories")
+        .delete()
+        .eq("name", option.name);
+      if (deleteError) {
+        setError(deleteError.message);
+        return;
+      }
+    }
+
+    setCategoryOptions((prev) => prev.filter((entry) => entry.name !== option.name));
+    const index = (activeItem?.categories || []).findIndex((cat) => cat === option.name);
+    if (index >= 0) {
+      handleRemoveCategory(option.name, index);
+    }
   };
 
   const handleUpload = async (file) => {
@@ -2618,7 +2654,11 @@ export default function MockCmsApp() {
                             <button
                               type="button"
                               className="text-[10px] font-bold text-white/80"
-                              onClick={() => handleRemoveCategory(index)}
+                              onClick={(event) => {
+                                event.preventDefault();
+                                event.stopPropagation();
+                                handleRemoveCategory(cat, index);
+                              }}
                             >
                               ×
                             </button>
@@ -2630,31 +2670,45 @@ export default function MockCmsApp() {
                           categoryOptions.map((option) => {
                             const selected = (activeItem.categories || []).includes(option.name);
                             return (
-                              <button
-                                key={option.id}
-                                type="button"
-                                className={`px-3 py-1 rounded-full text-xs font-bold border transition-colors ${
-                                  selected ? "text-white border-transparent" : "border-gray-200 text-[#181411]"
-                                }`}
-                                style={selected ? { backgroundColor: option.color } : undefined}
-                                onClick={() => {
-                                  if (selected) {
-                                    const index = activeItem.categories.indexOf(option.name);
-                                    handleRemoveCategory(index);
-                                    return;
-                                  }
-                                  const currentCategories = activeItem.categories || [];
-                                  const currentColors = activeItem.categoryColors || [];
-                                  if (currentCategories.length >= 3) {
-                                    alert("กำหนดหมวดหมู่ได้ไม่เกิน 3 รายการ");
-                                    return;
-                                  }
-                                  handleChange("categories", [...currentCategories, option.name]);
-                                  handleChange("categoryColors", [...currentColors, option.color || "#d32f2f"]);
-                                }}
-                              >
-                                {option.name}
-                              </button>
+                              <div key={option.id} className="inline-flex items-center gap-1">
+                                <button
+                                  type="button"
+                                  className={`px-3 py-1 rounded-full text-xs font-bold border transition-colors ${
+                                    selected ? "text-white border-transparent" : "border-gray-200 text-[#181411]"
+                                  }`}
+                                  style={selected ? { backgroundColor: option.color } : undefined}
+                                  onClick={() => {
+                                    if (selected) {
+                                      const index = activeItem.categories.indexOf(option.name);
+                                      handleRemoveCategory(option.name, index);
+                                      return;
+                                    }
+                                    const currentCategories = activeItem.categories || [];
+                                    const currentColors = activeItem.categoryColors || [];
+                                    if (currentCategories.length >= 3) {
+                                      alert("กำหนดหมวดหมู่ได้ไม่เกิน 3 รายการ");
+                                      return;
+                                    }
+                                    handleChange("categories", [...currentCategories, option.name]);
+                                    handleChange("categoryColors", [...currentColors, option.color || "#d32f2f"]);
+                                  }}
+                                >
+                                  {option.name}
+                                </button>
+                                <button
+                                  type="button"
+                                  className="h-6 w-6 rounded-full border border-gray-200 text-[11px] font-bold text-[#897261] hover:text-red-600 hover:border-red-200"
+                                  onClick={(event) => {
+                                    event.preventDefault();
+                                    event.stopPropagation();
+                                    handleDeleteCategoryOption(option);
+                                  }}
+                                  title={`ลบหมวดหมู่ ${option.name}`}
+                                  aria-label={`ลบหมวดหมู่ ${option.name}`}
+                                >
+                                  x
+                                </button>
+                              </div>
                             );
                           })
                         ) : (

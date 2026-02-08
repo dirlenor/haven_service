@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { getHtmlPageSlugs, readHtmlPage, readHtmlPageBody } from "../../lib/html";
+import { sanitizeRenderedHtml } from "../../lib/sanitizeHtml";
 
 export const generateStaticParams = () =>
   getHtmlPageSlugs().map((slug) => ({ slug }));
@@ -25,6 +26,7 @@ export default async function HtmlPage({ params }) {
         .replace(/<script[\s\S]*?<\/script>/gi, "")
         .replace(/class=\"w-full h-full bg-center bg-no-repeat bg-cover rounded-xl object-cover shadow-lg border border-\\[#e6e0db\\]  overflow-hidden\"/g, 'class=\"w-full h-full min-h-[260px] bg-center bg-no-repeat bg-cover rounded-xl object-cover shadow-lg border border-[#e6e0db]  overflow-hidden\"');
     }
+    const sanitizedBodyHtml = sanitizeRenderedHtml(bodyHtml);
     const wrapperClassName = [
       "legacy-page",
       "min-h-screen",
@@ -38,7 +40,7 @@ export default async function HtmlPage({ params }) {
       <div
         className={wrapperClassName}
         suppressHydrationWarning
-        dangerouslySetInnerHTML={{ __html: bodyHtml }}
+        dangerouslySetInnerHTML={{ __html: sanitizedBodyHtml }}
       />
     );
   } catch (error) {

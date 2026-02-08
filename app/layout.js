@@ -3,6 +3,7 @@ import MainLayout from "../components/layout/MainLayout";
 import "../styles/globals.css";
 import "react-quill/dist/quill.snow.css";
 import { supabaseServer } from "../lib/supabaseServer";
+import { sanitizeSiteSnippet } from "../lib/sanitizeHtml";
 
 export const metadata = {
   title: "Thai Haven Service"
@@ -97,6 +98,8 @@ const loadSiteScripts = async () => {
 
 export default async function RootLayout({ children }) {
   const siteScripts = await loadSiteScripts();
+  const safeHeadScripts = sanitizeSiteSnippet(siteScripts?.head_scripts || "");
+  const safeBodyScripts = sanitizeSiteSnippet(siteScripts?.body_scripts || "");
   return (
     <html lang="th" suppressHydrationWarning>
       <head>
@@ -116,11 +119,11 @@ export default async function RootLayout({ children }) {
           strategy="afterInteractive"
           dangerouslySetInnerHTML={{ __html: tailwindReady }}
         />
-        {siteScripts?.head_scripts ? (
+        {safeHeadScripts ? (
           <script
             id="site-head-scripts"
             // Advanced use only: raw tags/snippets injected into <head> (no escaping).
-            dangerouslySetInnerHTML={{ __html: siteScripts.head_scripts }}
+            dangerouslySetInnerHTML={{ __html: safeHeadScripts }}
           />
         ) : null}
         <Script
@@ -132,11 +135,11 @@ export default async function RootLayout({ children }) {
         />
       </head>
       <body className="bg-background-light  font-display text-[#181411] ">
-        {siteScripts?.body_scripts ? (
+        {safeBodyScripts ? (
           <div
             id="site-body-scripts"
             // Advanced use only: raw tags/snippets injected right after <body> (no escaping).
-            dangerouslySetInnerHTML={{ __html: siteScripts.body_scripts }}
+            dangerouslySetInnerHTML={{ __html: safeBodyScripts }}
           />
         ) : null}
         <div

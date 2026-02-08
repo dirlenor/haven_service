@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import ReadyCtaSection from "../../../components/sections/ReadyCtaSection";
 import ShareButton from "../../../components/ui/ShareButton";
 import { supabaseServer } from "../../../lib/supabaseServer";
+import { sanitizeRenderedHtml } from "../../../lib/sanitizeHtml";
 
 export const revalidate = 60;
 
@@ -109,6 +110,7 @@ export default async function ArticleDetailPage({ params }) {
     : [];
   const relatedArticles = await loadRelatedArticles(article);
   const keywords = parseKeywords(article.meta_keywords);
+  const contentHtml = sanitizeRenderedHtml(article.content_html || "");
 
   return (
     <section className="ds-section">
@@ -171,7 +173,7 @@ export default async function ArticleDetailPage({ params }) {
         ) : null}
         <div
           className="cms-content max-w-none text-[#4c3f35]"
-          dangerouslySetInnerHTML={{ __html: article.content_html || "" }}
+          dangerouslySetInnerHTML={{ __html: contentHtml }}
         />
       </div>
       <div className="ds-container">
