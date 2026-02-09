@@ -146,6 +146,8 @@ export default async function FooterSection() {
                   src="https://api.iconify.design/simple-icons/facebook.svg?color=%231877F2"
                   alt="Facebook"
                   className="h-5 w-5 object-contain"
+                  loading="lazy"
+                  decoding="async"
                 />
               </a>
               <a
@@ -157,6 +159,8 @@ export default async function FooterSection() {
                   src="https://api.iconify.design/simple-icons/youtube.svg?color=%23FF0000"
                   alt="YouTube"
                   className="h-5 w-5 object-contain"
+                  loading="lazy"
+                  decoding="async"
                 />
               </a>
             </div>

@@ -153,6 +153,7 @@ export default function Navbar() {
           </Link>
           <Link
             href="/contact"
+            prefetch={false}
             className={navLinkClass("contact")}
             style={activeKey === "contact" ? activeStyle : undefined}
           >
@@ -247,6 +248,7 @@ export default function Navbar() {
           </Link>
           <Link
             href="/contact"
+            prefetch={false}
             className={mobileLinkClass("contact")}
             style={activeKey === "contact" ? activeStyle : undefined}
             onClick={() => setMobileOpen(false)}

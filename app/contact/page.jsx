@@ -89,6 +89,8 @@ export default async function ContactPage() {
                           src="https://api.iconify.design/simple-icons/line.svg?color=%23ffffff"
                           alt="LINE"
                           className="h-5 w-5 object-contain"
+                          loading="lazy"
+                          decoding="async"
                         />
                         LINE
                       </a>
@@ -101,6 +103,8 @@ export default async function ContactPage() {
                           src="https://api.iconify.design/simple-icons/facebook.svg?color=%23ffffff"
                           alt="Facebook"
                           className="h-5 w-5 object-contain"
+                          loading="lazy"
+                          decoding="async"
                         />
                         Facebook
                       </a>
@@ -113,6 +117,8 @@ export default async function ContactPage() {
                           src="https://api.iconify.design/simple-icons/youtube.svg?color=%23ffffff"
                           alt="YouTube"
                           className="h-5 w-5 object-contain"
+                          loading="lazy"
+                          decoding="async"
                         />
                         YouTube
                       </a>
