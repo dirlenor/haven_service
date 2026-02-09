@@ -385,6 +385,7 @@ button {
 }
 
 .legacy-page {
+  background-color: var(--ds-color-bg) !important;
   color: var(--ds-color-text);
 }
 
