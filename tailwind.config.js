@@ -1,3 +1,36 @@
+const fs = require("fs");
+const path = require("path");
+
+const collectLegacyHtmlClasses = () => {
+  const legacyDir = path.join(__dirname, "legacy", "html");
+  if (!fs.existsSync(legacyDir)) {
+    return [];
+  }
+
+  const classNames = new Set();
+  const files = fs.readdirSync(legacyDir).filter((file) => file.endsWith(".html"));
+
+  for (const file of files) {
+    const fullPath = path.join(legacyDir, file);
+    const html = fs.readFileSync(fullPath, "utf8");
+    const classRegex = /class=("|')([^"']+)(\1)/gi;
+    let match;
+
+    while ((match = classRegex.exec(html)) !== null) {
+      const raw = match[2] || "";
+      for (const className of raw.split(/\s+/)) {
+        if (className) {
+          classNames.add(className);
+        }
+      }
+    }
+  }
+
+  return [...classNames];
+};
+
+const legacySafelist = collectLegacyHtmlClasses();
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
@@ -5,6 +38,7 @@ module.exports = {
     "./components/**/*.{js,jsx,ts,tsx}",
     "./lib/**/*.{js,jsx,ts,tsx}"
   ],
+  safelist: legacySafelist,
   theme: {
     extend: {
       colors: {
