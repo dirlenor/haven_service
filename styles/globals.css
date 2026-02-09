@@ -1,5 +1,9 @@
 @import url("https://fonts.googleapis.com/css2?family=Anuphan:wght@300;400;500;600;700;800;900&display=swap");
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 @font-face {
   font-family: "Material Symbols Outlined";
   font-style: normal;
@@ -94,10 +98,6 @@ body {
 
 html[lang="th"] * {
   letter-spacing: 0 !important;
-}
-
-html:not(.tw-ready) body {
-  visibility: hidden;
 }
 
 body {
