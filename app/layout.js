@@ -4,6 +4,7 @@ import "../styles/globals.css";
 import "react-quill/dist/quill.snow.css";
 import { supabaseServer } from "../lib/supabaseServer";
 import { sanitizeSiteSnippet } from "../lib/sanitizeHtml";
+import { parseSiteHeadScripts } from "../lib/parseSiteHeadScripts";
 
 export const metadata = {
   title: "Thai Haven Service"
@@ -100,6 +101,7 @@ export default async function RootLayout({ children }) {
   const siteScripts = await loadSiteScripts();
   const safeHeadScripts = sanitizeSiteSnippet(siteScripts?.head_scripts || "");
   const safeBodyScripts = sanitizeSiteSnippet(siteScripts?.body_scripts || "");
+  const headScriptBlocks = parseSiteHeadScripts(safeHeadScripts);
   return (
     <html lang="th" suppressHydrationWarning>
       <head>
@@ -119,13 +121,17 @@ export default async function RootLayout({ children }) {
           strategy="afterInteractive"
           dangerouslySetInnerHTML={{ __html: tailwindReady }}
         />
-        {safeHeadScripts ? (
-          <script
-            id="site-head-scripts"
-            // Advanced use only: raw tags/snippets injected into <head> (no escaping).
-            dangerouslySetInnerHTML={{ __html: safeHeadScripts }}
-          />
-        ) : null}
+        {headScriptBlocks.map((block) =>
+          block.attrs.src ? (
+            <script key={block.key} {...block.attrs} />
+          ) : (
+            <script
+              key={block.key}
+              {...block.attrs}
+              dangerouslySetInnerHTML={{ __html: block.inlineCode }}
+            />
+          )
+        )}
         <Script
           id="scroll-restoration"
           strategy="beforeInteractive"
