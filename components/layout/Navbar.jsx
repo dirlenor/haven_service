@@ -160,7 +160,7 @@ export default function Navbar() {
             ติดต่อเรา
           </Link>
         </nav>
-        <div className="flex items-center gap-3">
+        <div className="ml-auto md:ml-0 flex items-center gap-3">
           <button
             className="md:hidden inline-flex items-center justify-center size-10 rounded-lg border border-transparent text-[#d32f2f] hover:bg-[#d32f2f] hover:text-white transition-colors"
             id="mobile-menu-toggle"
@@ -171,7 +171,9 @@ export default function Navbar() {
           >
             <span className="material-symbols-outlined text-2xl">menu</span>
           </button>
-          <LineCTA className="hidden md:inline-flex" />
+          <div className="hidden md:block">
+            <LineCTA />
+          </div>
         </div>
       </div>
       <div
@@ -255,9 +257,6 @@ export default function Navbar() {
           >
             ติดต่อเรา
           </Link>
-          <div className="mt-4 pt-4 border-t border-gray-200 ">
-            <LineCTA className="w-full justify-center h-11 px-5 text-sm" />
-          </div>
         </div>
       </div>
     </header>
