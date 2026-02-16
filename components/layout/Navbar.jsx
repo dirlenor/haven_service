@@ -87,7 +87,7 @@ export default function Navbar() {
       data-react-navbar
       className="sticky top-0 z-50 bg-white/80  backdrop-blur-md"
     >
-      <div className="ds-container flex items-center justify-between h-16">
+      <div className="ds-container relative flex items-center justify-between h-16">
         <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity cursor-pointer">
           <div className="size-8">
             <img src="/assets/images/logo.png" alt="Havenworks" className="w-full h-full object-contain" />
@@ -160,21 +160,19 @@ export default function Navbar() {
             ติดต่อเรา
           </Link>
         </nav>
-        <div className="ml-auto md:ml-0 flex items-center gap-3">
-          <button
-            className="md:hidden inline-flex items-center justify-center size-10 rounded-lg border border-transparent text-[#d32f2f] hover:bg-[#d32f2f] hover:text-white transition-colors"
-            id="mobile-menu-toggle"
-            aria-controls="mobile-menu"
-            aria-expanded={mobileOpen}
-            aria-label="เปิดเมนู"
-            onClick={() => setMobileOpen((prev) => !prev)}
-          >
-            <span className="material-symbols-outlined text-2xl">menu</span>
-          </button>
-          <div className="hidden md:block">
-            <LineCTA />
-          </div>
+        <div className="hidden md:block">
+          <LineCTA />
         </div>
+        <button
+          className="md:hidden absolute right-0 top-1/2 -translate-y-1/2 inline-flex items-center justify-center size-10 rounded-lg border border-transparent text-[#d32f2f] hover:bg-[#d32f2f] hover:text-white transition-colors"
+          id="mobile-menu-toggle"
+          aria-controls="mobile-menu"
+          aria-expanded={mobileOpen}
+          aria-label="เปิดเมนู"
+          onClick={() => setMobileOpen((prev) => !prev)}
+        >
+          <span className="material-symbols-outlined text-2xl">menu</span>
+        </button>
       </div>
       <div
         id="mobile-menu"
