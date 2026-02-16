@@ -93,7 +93,7 @@ export default function Navbar() {
             <img src="/assets/images/logo.png" alt="Havenworks" className="w-full h-full object-contain" />
           </div>
           <h2
-            className="text-xl font-bold leading-tight tracking-tight"
+            className="text-2xl font-bold leading-tight tracking-tight"
             style={{ color: "var(--ds-color-text)" }}
           >
             Haven<span className="text-[#d32f2f]">works</span>

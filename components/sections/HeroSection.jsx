@@ -6,21 +6,15 @@ import LineCTA from "../ui/LineCTA";
 const heroSlides = [
   {
     id: "hero-image-1",
-    alt: "Modern minimal living room with warm wood accents",
+    alt: "Havenworks Room Divider Installation",
     url:
-      'url("https://lh3.googleusercontent.com/aida-public/AB6AXuDl5uTFJaAojEA8fxgh559xVltb6aWPnEg6OvkJDK7-9sRTM70LD9sOz070MLsUJGT5v_kXW75_V9AAGSB9jOrgfiEJWUMtoXcvfIZ30RicCC_vIXGwxmDhFNPlvCLYgXedy-C4poXFFvCqd20gsaQGzexl6NEIbm1m3xN16F0Iz0bOXboxFqY4W8w9u8g0VpvkRRmtTcjB5LRPpHrxjrllCa8eqvcqVakCDAzdvV0XWrGOkqxWrXF7hGAOl1reAoTDuh1bWtxUIKFg")'
+      'url("/legacy/assets/images/S__5160978_0.jpg")'
   },
   {
     id: "hero-image-2",
-    alt: "Elegant bedroom with soft lighting",
+    alt: "Havenworks Roller Blinds Installation",
     url:
-      'url("https://lh3.googleusercontent.com/aida-public/AB6AXuDoogdFXoQOg9w_XWRhRJBcm9Klp6Kzr2fDLowP2Bm4925Ls-Fnvm4BC5sQk7e6mc0PDvan6rRLcRu0ikNY4_HRYE0tiH0rhpdAlh__nnuf4jMfkW34ZeRWakeo00uOJzfGENpZ3tZOIBA_2NXnGdV8u7_bky5nRhD_gtc5LHQy5bl_8XJWEwItmuQwt6hhkekrWD1Z9Iz_QGiYN95OdN2Z1SWIVzIlZRDLn86DxPdehtva5tKzaV6fD0adiZBvr0f8MznG8E13cnXI")'
-  },
-  {
-    id: "hero-image-3",
-    alt: "Stylish kitchen with built-in features",
-    url:
-      'url("https://lh3.googleusercontent.com/aida-public/AB6AXuCwwZQANjYHsqsNGZvUPPUmZL0Sw7BXmvXS7J28Klxyt1jk8Y_lIkNXrjlx74iLjQAdgnD1gxGqzxT_NyIdtLYUBKvnXb3-wvnxRSx2kJAAKarik2cRfFhIg4XYVejP8bdGpX3dshPRoKMbzEX06NTBLF3SMFNICVvOCISABvMsGWiH4ZJt5mGuoHWATaDwBys5qLFyCxNiesph0j3f1zS23HvaCc45zudSf99vCnqHqRe8rUSH_p6vY3DzthgVMgrNxxHIeGd8SQDd")'
+      'url("/legacy/assets/images/S__5160976_0.jpg")'
   }
 ];
 
@@ -83,15 +77,6 @@ export default function HeroSection() {
             aria-label="ดูภาพตัวอย่าง 2"
             data-hero-index="1"
             onClick={() => handleSetIndex(1)}
-          />
-          <button
-            type="button"
-            className={`size-3 rounded-full transition-colors cursor-pointer ${
-              activeIndex === 2 ? "bg-white" : "bg-white/50 hover:bg-white"
-            }`}
-            aria-label="ดูภาพตัวอย่าง 3"
-            data-hero-index="2"
-            onClick={() => handleSetIndex(2)}
           />
         </div>
 
