@@ -5,34 +5,46 @@ import LineCTA from "../ui/LineCTA";
 const heroImages = [
   {
     id: "hero-image-1",
-    alt: "Modern living room interior design",
-    url: "https://images.unsplash.com/photo-1616486029423-aaa4789e8c9a?auto=format&fit=crop&w=1600&q=80"
+    alt: "Havenworks interior inspiration 1",
+    url: "/assets/images/hero_img/hero-marquee-1.jpg"
   },
   {
     id: "hero-image-2",
-    alt: "Bright minimal bedroom interior",
-    url: "https://images.unsplash.com/photo-1618220179428-22790b461013?auto=format&fit=crop&w=1600&q=80"
+    alt: "Havenworks interior inspiration 2",
+    url: "/assets/images/hero_img/hero-marquee-2.jpg"
   },
   {
     id: "hero-image-3",
-    alt: "Warm modern kitchen interior",
-    url: "https://images.unsplash.com/photo-1600210492493-0946911123ea?auto=format&fit=crop&w=1600&q=80"
+    alt: "Havenworks interior inspiration 3",
+    url: "/assets/images/hero_img/hero-marquee-3.jpg"
   },
   {
     id: "hero-image-4",
-    alt: "Contemporary house interior space",
-    url: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1600&q=80"
+    alt: "Havenworks interior inspiration 4",
+    url: "/assets/images/hero_img/hero-marquee-4.jpg"
+  },
+  {
+    id: "hero-image-5",
+    alt: "Havenworks interior inspiration 5",
+    url: "/assets/images/hero_img/hero-marquee-5.jpg"
+  },
+  {
+    id: "hero-image-6",
+    alt: "Havenworks interior inspiration 6",
+    url: "/assets/images/hero_img/hero-marquee-6.jpg"
+  },
+  {
+    id: "hero-image-7",
+    alt: "Havenworks interior inspiration 7",
+    url: "/assets/images/hero_img/hero-marquee-7.jpg"
   }
 ];
 
-const marqueeImages = Array.from({ length: 8 }, (_, index) => {
-  const image = heroImages[index % heroImages.length];
-  return {
-    id: `${image.id}-marquee-${index}`,
-    alt: image.alt,
-    url: image.url
-  };
-});
+const marqueeImages = heroImages.map((image, index) => ({
+  id: `${image.id}-marquee-${index}`,
+  alt: image.alt,
+  url: image.url
+}));
 
 export default function HeroSection() {
   return (
