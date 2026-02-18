@@ -1,0 +1,78 @@
+name: Deploy VPS
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-vps-main
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      DEPLOY_BRANCH: ${{ vars.DEPLOY_BRANCH }}
+      APP_DIR: ${{ vars.APP_DIR }}
+      APP_NAME: ${{ vars.APP_NAME }}
+      REPO_URL: ${{ vars.REPO_URL }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure SSH
+        shell: bash
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_PORT: ${{ secrets.VPS_PORT }}
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+        run: |
+          set -euo pipefail
+
+          test -n "${VPS_HOST}" || (echo "Missing secret: VPS_HOST" && exit 1)
+          test -n "${VPS_USER}" || (echo "Missing secret: VPS_USER" && exit 1)
+          test -n "${VPS_SSH_KEY}" || (echo "Missing secret: VPS_SSH_KEY" && exit 1)
+
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+
+          printf '%s\n' "${VPS_SSH_KEY}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+          PORT="${VPS_PORT:-22}"
+          ssh-keyscan -p "${PORT}" -H "${VPS_HOST}" >> ~/.ssh/known_hosts
+
+          cat > ~/.ssh/config <<EOF
+          Host vps-deploy-target
+            HostName ${VPS_HOST}
+            User ${VPS_USER}
+            Port ${PORT}
+            IdentityFile ~/.ssh/id_rsa
+            IdentitiesOnly yes
+            StrictHostKeyChecking yes
+          EOF
+
+          chmod 600 ~/.ssh/config
+
+      - name: Bootstrap once if needed, otherwise deploy
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          chmod +x vps-bootstrap.sh vps-deploy.sh
+
+          BRANCH="${DEPLOY_BRANCH:-${GITHUB_REF_NAME}}"
+          TARGET_DIR="${APP_DIR:-/var/www/haven_service}"
+          TARGET_APP="${APP_NAME:-haven-service}"
+          TARGET_REPO_URL="${REPO_URL:-https://github.com/${GITHUB_REPOSITORY}.git}"
+
+          if ssh vps-deploy-target "[ -d '${TARGET_DIR}/.git' ]"; then
+            ./vps-deploy.sh "vps-deploy-target" "${BRANCH}" "${TARGET_DIR}" "${TARGET_APP}"
+          else
+            ./vps-bootstrap.sh "vps-deploy-target" "${TARGET_REPO_URL}" "${BRANCH}" "${TARGET_DIR}" "${TARGET_APP}"
+          fi
