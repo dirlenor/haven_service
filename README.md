@@ -4,6 +4,15 @@
 
 ## การ Deploy
 
+### VPS (เร็วสุด: bootstrap ครั้งเดียว + deploy คำสั่งเดียว)
+1. ตั้งค่า VPS ครั้งแรกจากเครื่องคุณ:
+   - `chmod +x vps-bootstrap.sh vps-deploy.sh`
+   - `./vps-bootstrap.sh root@<VPS_IP> <REPO_URL> main /var/www/haven_service haven-service`
+2. Deploy รอบถัดไป:
+   - `./vps-deploy.sh root@<VPS_IP> main /var/www/haven_service haven-service`
+3. เช็กสถานะบนเซิร์ฟเวอร์:
+   - `ssh root@<VPS_IP> "pm2 status && pm2 logs haven-service --lines 100"`
+
 ### Netlify (แนะนำ - ง่ายที่สุด)
 1. ไปที่ https://app.netlify.com/drop
 2. ลากโฟลเดอร์ `haven_service` ทั้งหมดไปวาง
