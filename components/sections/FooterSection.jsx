@@ -138,7 +138,7 @@ export default async function FooterSection() {
             </div>
             <div className="flex items-center gap-3">
               <a
-                href="#"
+                href="https://www.facebook.com/havenworksthailand/"
                 aria-label="Facebook"
                 className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#f4f2ee] transition hover:bg-[#e9e4df]"
               >

@@ -74,9 +74,9 @@ export const generateMetadata = async ({ params }) => {
   const { slug } = await params;
   const article = await loadArticle(slug);
   if (!article) {
-    return { title: "Thai Haven Service" };
+    return { title: "Havenworks" };
   }
-  const title = article.title || "Thai Haven Service";
+  const title = article.title || "Havenworks";
   const description = article.summary || "";
   const keywords = (article.meta_keywords || "")
     .split(",")

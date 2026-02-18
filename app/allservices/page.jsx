@@ -1,5 +1,5 @@
 export const metadata = {
-  title: "Thai Haven Service - บริการทั้งหมด"
+  title: "Havenworks - บริการทั้งหมด"
 };
 
 export default function AllServicesPage() {

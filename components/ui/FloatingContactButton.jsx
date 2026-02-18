@@ -41,7 +41,7 @@ export default function FloatingContactButton() {
         }`}
       >
         <a
-          href="https://www.facebook.com/haven86/"
+          href="https://www.facebook.com/havenworksthailand/"
           className={`floating-action inline-flex h-12 w-12 items-center justify-center rounded-full text-white shadow-lg hover:scale-105 ${
             animateIn ? "floating-action--in" : closing ? "floating-action--out" : "floating-action--hidden"
           }`}

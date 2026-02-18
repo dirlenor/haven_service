@@ -11,7 +11,7 @@ export const generateMetadata = async ({ params }) => {
     const pageData = readHtmlPage(`${slug}.html`);
     return { title: pageData.title };
   } catch (error) {
-    return { title: "Thai Haven Service" };
+    return { title: "Havenworks" };
   }
 };
 

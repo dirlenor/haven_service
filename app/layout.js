@@ -7,7 +7,7 @@ import { sanitizeSiteSnippet } from "../lib/sanitizeHtml";
 import { parseSiteHeadScripts } from "../lib/parseSiteHeadScripts";
 
 export const metadata = {
-  title: "Thai Haven Service"
+  title: "Havenworks"
 };
 
 export const viewport = {

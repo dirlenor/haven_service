@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import LineCTA from "../ui/LineCTA";
+import QuickTranslateToggle from "../ui/QuickTranslateToggle";
 import { supabase } from "../../lib/supabaseClient";
 
 export default function Navbar() {
@@ -160,11 +161,12 @@ export default function Navbar() {
             ติดต่อเรา
           </Link>
         </nav>
-        <div className="hidden md:block">
+        <div className="hidden md:flex items-center gap-3">
+          <QuickTranslateToggle mountWidget />
           <LineCTA />
         </div>
         <button
-          className="md:hidden absolute right-0 top-1/2 -translate-y-1/2 inline-flex items-center justify-center size-10 rounded-lg border border-transparent text-[#d32f2f] hover:bg-[#d32f2f] hover:text-white transition-colors"
+          className="md:hidden absolute right-6 top-1/2 -translate-y-1/2 inline-flex items-center justify-center size-10 rounded-lg border border-transparent text-[#d32f2f] hover:bg-[#d32f2f] hover:text-white transition-colors"
           id="mobile-menu-toggle"
           aria-controls="mobile-menu"
           aria-expanded={mobileOpen}
@@ -255,6 +257,12 @@ export default function Navbar() {
           >
             ติดต่อเรา
           </Link>
+          <div className="mt-4">
+            <QuickTranslateToggle fullWidth />
+          </div>
+          <div className="mt-3 pt-4 border-t border-gray-100">
+            <LineCTA className="w-full justify-center" />
+          </div>
         </div>
       </div>
     </header>

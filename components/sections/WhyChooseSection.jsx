@@ -17,7 +17,7 @@ export default function WhyChooseSection() {
             <div className="w-full lg:w-1/2 relative group">
               <div className="aspect-[4/3] rounded-[2rem] overflow-hidden shadow-2xl relative z-10">
                 <img
-                  src="/assets/images/ChatGPT Image Jan 29, 2026, 11_26_18 PM.png"
+                  src="/assets/images/expert-installation-feb-16-2026.png"
                   alt="Expert Installation"
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />

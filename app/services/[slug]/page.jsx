@@ -49,9 +49,9 @@ export const generateMetadata = async ({ params }) => {
   const resolvedParams = await params;
   const service = await loadService(resolvedParams?.slug);
   if (!service) {
-    return { title: "Thai Haven Service" };
+    return { title: "Havenworks" };
   }
-  return { title: service.title || "Thai Haven Service" };
+  return { title: service.title || "Havenworks" };
 };
 
 export default async function ServiceDetailPage({ params }) {

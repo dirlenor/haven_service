@@ -95,7 +95,7 @@ export default async function ContactPage() {
                         LINE
                       </a>
                       <a
-                        href="https://www.facebook.com/haven86/"
+                        href="https://www.facebook.com/havenworksthailand/"
                         className="inline-flex h-[50px] w-[120px] items-center justify-center gap-2 rounded-xl font-semibold text-white shadow-sm transition hover:opacity-90"
                         style={{ backgroundColor: "#1877F2" }}
                       >

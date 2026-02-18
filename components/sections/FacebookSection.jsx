@@ -2,6 +2,10 @@ export default function FacebookSection() {
   const shouldRenderSocialEmbeds =
     process.env.NODE_ENV === "production" ||
     process.env.NEXT_PUBLIC_ENABLE_SOCIAL_EMBEDS === "true";
+  const facebookPageUrl = "https://www.facebook.com/havenworksthailand/";
+  const facebookPluginSrc = `https://www.facebook.com/plugins/page.php?href=${encodeURIComponent(
+    facebookPageUrl
+  )}&tabs=timeline&width=500&height=500&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true`;
 
   return (
     <section
@@ -17,11 +21,29 @@ export default function FacebookSection() {
               ติดตามช่องทางออนไลน์ของเรา
             </h2>
             <p className="ds-muted">เข้าร่วมชุมชนของเราเพื่อรับข่าวสารและแรงบันดาลใจ</p>
+            <div className="mt-3 md:hidden flex flex-col gap-2 w-full">
+              <a
+                className="inline-flex items-center justify-center px-4 py-2.5 rounded-lg bg-[#1877F2] text-white text-sm font-semibold shadow-sm w-full"
+                href={facebookPageUrl}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Facebook
+              </a>
+              <a
+                className="inline-flex items-center justify-center px-4 py-2.5 rounded-lg bg-[#FF0000] text-white text-sm font-semibold shadow-sm w-full"
+                href="https://www.youtube.com/@HavenService-m1i"
+                target="_blank"
+                rel="noreferrer"
+              >
+                YouTube
+              </a>
+            </div>
           </div>
           <div className="hidden md:flex items-center gap-3">
             <a
               className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#1877F2] text-white font-bold hover:bg-[#166fe5] transition-colors shadow-lg shadow-blue-500/20"
-              href="https://www.facebook.com/haven86/"
+              href={facebookPageUrl}
               target="_blank"
               rel="noreferrer"
             >
@@ -45,7 +67,7 @@ export default function FacebookSection() {
                 <div className="w-full overflow-hidden rounded-xl">
                   <iframe
                     title="Havenworks Facebook Page"
-                    src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fhaven86%2F&tabs=timeline&width=500&height=500&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true"
+                    src={facebookPluginSrc}
                     width="100%"
                     height="500"
                     style={{ border: "none", overflow: "hidden" }}
@@ -100,24 +122,6 @@ export default function FacebookSection() {
           )}
         </div>
 
-        <div className="mt-6 flex flex-col md:hidden gap-3">
-          <a
-            className="flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-[#1877F2] text-white font-bold w-full shadow-lg"
-            href="https://www.facebook.com/haven86/"
-            target="_blank"
-            rel="noreferrer"
-          >
-            เยี่ยมชมเพจ Facebook ของเรา
-          </a>
-          <a
-            className="flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-[#FF0000] text-white font-bold w-full shadow-lg"
-            href="https://www.youtube.com/@HavenService-m1i"
-            target="_blank"
-            rel="noreferrer"
-          >
-            เยี่ยมชม YouTube
-          </a>
-        </div>
       </div>
     </section>
   );

@@ -10,7 +10,7 @@ import { parseServiceContent } from "../lib/serviceContent";
 import { supabaseServer } from "../lib/supabaseServer";
 
 export const metadata = {
-  title: "Thai Haven Service - หน้าหลัก"
+  title: "Havenworks - หน้าหลัก"
 };
 
 const loadCmsData = async () => {
