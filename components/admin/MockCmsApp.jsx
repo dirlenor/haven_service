@@ -311,6 +311,13 @@ export default function MockCmsApp() {
   }, []);
 
   useEffect(() => {
+    if (!["articles", "services", "scripts"].includes(activeTab)) {
+      setActiveTab("articles");
+      setIsEditorOpen(false);
+    }
+  }, [activeTab]);
+
+  useEffect(() => {
     if (activeTab === "services") {
       setServiceEditorTab("hero");
       setArticleSearch("");
@@ -455,6 +462,9 @@ export default function MockCmsApp() {
     try {
       const saved = JSON.parse(raw);
       if (!saved?.activeTab || !saved?.activeId) {
+        return;
+      }
+      if (!["articles", "services", "scripts"].includes(saved.activeTab)) {
         return;
       }
       if (!data[saved.activeTab]?.find((item) => item.id === saved.activeId)) {
@@ -1159,20 +1169,6 @@ export default function MockCmsApp() {
             >
               สคริปต์ไซต์
             </button>
-            <button
-              type="button"
-              className={`w-full text-left px-4 py-3 rounded-xl text-sm font-bold transition-colors ${
-                activeTab === "settings"
-                  ? "bg-[#d32f2f] text-white"
-                  : "bg-transparent text-[#181411] hover:bg-[#f8f7f6]"
-              }`}
-              onClick={() => {
-                setActiveTab("settings");
-                setIsEditorOpen(false);
-              }}
-            >
-              ตั้งค่าแบบฟอร์ม
-            </button>
           </div>
           <div className="mt-auto pt-6">
             <button
@@ -1193,27 +1189,21 @@ export default function MockCmsApp() {
                   ? "Articles"
                   : activeTab === "services"
                   ? "Services"
-                  : activeTab === "scripts"
-                  ? "Site Scripts"
-                  : "Form Settings"}
+                  : "Site Scripts"}
               </p>
               <h2 className="text-3xl font-black mt-2">
                 {activeTab === "articles"
                   ? "รายการบทความ"
                   : activeTab === "services"
                   ? "รายการบริการ"
-                  : activeTab === "scripts"
-                  ? "สคริปต์ของเว็บไซต์"
-                  : "ตั้งค่าแบบฟอร์มติดต่อ"}
+                  : "สคริปต์ของเว็บไซต์"}
               </h2>
               <p className="text-xs text-[#897261] mt-2">
                 {activeTab === "articles"
                   ? "คลิกบทความเพื่อแก้ไขในหน้าต่างแบบป๊อปอัป"
                   : activeTab === "services"
                   ? "คลิกบริการเพื่อแก้ไขในหน้าต่างแบบป๊อปอัป"
-                  : activeTab === "scripts"
-                  ? "ใช้สำหรับใส่สคริปต์/แท็กที่ต้องแทรกใน <head> และ <body>"
-                  : "ตั้งค่า Apps Script เพื่อบันทึกข้อมูลฟอร์มลง Google Sheet"}
+                  : "ใช้สำหรับใส่สคริปต์/แท็กที่ต้องแทรกใน <head> และ <body>"}
               </p>
               {activeTab === "articles" ? (
                 <div className="mt-3 flex flex-wrap gap-3 text-xs text-[#897261]">
@@ -1245,7 +1235,7 @@ export default function MockCmsApp() {
                   {refreshing ? "กำลังรีเฟรช..." : "รีเฟรชหน้าเว็บ"}
                 </button>
               ) : null}
-              {!isScriptsTab && !isSettingsTab ? (
+              {!isScriptsTab ? (
                 <button
                   type="button"
                   className="px-5 py-2 rounded-full text-sm font-bold bg-[#d32f2f] text-white"

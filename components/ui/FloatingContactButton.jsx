@@ -1,11 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 
 export default function FloatingContactButton() {
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [closing, setClosing] = useState(false);
   const [animateIn, setAnimateIn] = useState(false);
+
+  if (pathname?.startsWith("/admin")) {
+    return null;
+  }
 
   useEffect(() => {
     if (open) {
