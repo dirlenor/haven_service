@@ -34,7 +34,7 @@ export default function FloatingContactButton() {
   }, [open, closing]);
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-center">
+    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
       <div
         className={`absolute bottom-16 right-0 flex flex-col items-center gap-2 ${
           open ? "pointer-events-auto" : "pointer-events-none"
@@ -80,19 +80,61 @@ export default function FloatingContactButton() {
           </svg>
         </a>
       </div>
-      <button
-        type="button"
-        onClick={() => setOpen((prev) => !prev)}
-        className="inline-flex h-14 w-14 items-center justify-center rounded-full text-white shadow-lg transition-transform hover:scale-105"
-        style={{ backgroundColor: "var(--ds-color-primary)" }}
-        aria-label="ติดต่อสอบถาม"
-        aria-expanded={open}
-      >
-        <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" aria-hidden="true">
-          <path d="M4 3h16a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H9l-5 5v-5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zm2 4h12v2H6V7zm0 4h9v2H6v-2z" />
-        </svg>
-      </button>
+      <div className="flex items-center gap-3">
+        <button
+          type="button"
+          onClick={() => setOpen((prev) => !prev)}
+          className="floating-contact-hint"
+          aria-label="เปิดเมนูติดต่อ"
+          aria-expanded={open}
+        >
+          ติดต่อเราที่นี่เลยค่ะ
+        </button>
+        <button
+          type="button"
+          onClick={() => setOpen((prev) => !prev)}
+          className="inline-flex h-14 w-14 items-center justify-center rounded-full text-white shadow-lg transition-transform hover:scale-105"
+          style={{ backgroundColor: "var(--ds-color-primary)" }}
+          aria-label="ติดต่อสอบถาม"
+          aria-expanded={open}
+        >
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" aria-hidden="true">
+            <path d="M4 3h16a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H9l-5 5v-5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zm2 4h12v2H6V7zm0 4h9v2H6v-2z" />
+          </svg>
+        </button>
+      </div>
       <style>{`
+        .floating-contact-hint {
+          position: relative;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          min-height: 44px;
+          border-radius: 9999px;
+          padding: 10px 16px;
+          background: #edf1f5;
+          color: #0f172a;
+          font-size: 16px;
+          font-weight: 500;
+          line-height: 1;
+          box-shadow: 0 8px 20px rgba(15, 23, 42, 0.14);
+          transition: transform 180ms ease;
+        }
+        .floating-contact-hint::after {
+          content: "";
+          position: absolute;
+          right: -8px;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 0;
+          height: 0;
+          border-top: 8px solid transparent;
+          border-bottom: 8px solid transparent;
+          border-left: 8px solid #edf1f5;
+        }
+        .floating-contact-hint:hover {
+          transform: translateY(-1px);
+        }
         .floating-action {
           transform: translateY(8px);
           opacity: 0;
