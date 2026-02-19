@@ -69,16 +69,12 @@ export default function ContactForm({ endpoint = "", successMessage = "" }) {
         </label>
         <label className="flex flex-col gap-2">
           <span className="text-sm font-bold text-[#181411]">ประเภทบริการ</span>
-          <select
+          <input
             className="w-full rounded-lg border-[#e6e0db] h-12 focus:ring-primary focus:border-primary"
+            placeholder="เช่น ฉากกั้นห้อง, มูลี่, ผ้าม่าน"
+            type="text"
             name="service_type"
-          >
-            <option>ออกแบบตกแต่งภายใน</option>
-            <option>รีโนเวทบ้าน</option>
-            <option>เฟอร์นิเจอร์สั่งทำ</option>
-            <option>พื้นที่เชิงพาณิชย์</option>
-            <option>ปรึกษาเบื้องต้น</option>
-          </select>
+          />
         </label>
       </div>
       <label className="flex flex-col gap-2">
