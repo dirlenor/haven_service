@@ -30,13 +30,14 @@ const loadCmsData = async () => {
       .order("created_at", { ascending: false })
   ]);
 
-  const normalizedServices = (services || []).map((service) => ({
-    ...service,
-    summary:
-      service.summary ||
-      parseServiceContent(service.content || "")?.hero?.subtitle ||
-      ""
-  }));
+  const normalizedServices = (services || []).map((service) => {
+    const parsed = parseServiceContent(service.content || "");
+    return {
+      ...service,
+      summary: service.summary || parsed?.hero?.subtitle || "",
+      hero_image: parsed?.hero?.image?.url || service.hero_image || ""
+    };
+  });
 
   return {
     services: normalizedServices,

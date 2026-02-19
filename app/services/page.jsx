@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { supabaseServer } from "../../lib/supabaseServer";
+import { parseServiceContent } from "../../lib/serviceContent";
 
 export const revalidate = 60;
 
@@ -9,14 +10,21 @@ const loadServices = async () => {
   }
   const { data: services, error } = await supabaseServer
     .from("services")
-    .select("id, slug, title, summary, hero_image")
+    .select("id, slug, title, summary, hero_image, content")
     .in("status", ["published", "Published"])
     .order("created_at", { ascending: false })
     .limit(60);
   if (error) {
     console.warn("Failed to load services:", error.message);
   }
-  return services || [];
+  return (services || []).map((service) => {
+    const parsed = parseServiceContent(service.content || "");
+    return {
+      ...service,
+      summary: service.summary || parsed?.hero?.subtitle || "",
+      hero_image: parsed?.hero?.image?.url || service.hero_image || ""
+    };
+  });
 };
 
 export default async function ServicesPage() {

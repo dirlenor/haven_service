@@ -112,16 +112,19 @@ const mapArticleFromRow = (row) => {
   };
 };
 
-const mapServiceFromRow = (row) => ({
-  id: row.id,
-  slug: row.slug || "",
-  title: row.title || "",
-  summary: row.summary || "",
-  heroImage: row.hero_image || "",
-  content: row.content || "",
-  status: row.status || "draft",
-  sortOrder: typeof row.sort_order === "number" ? row.sort_order : null
-});
+const mapServiceFromRow = (row) => {
+  const heroFromContent = parseServiceContent(row.content || "")?.hero?.image?.url || "";
+  return {
+    id: row.id,
+    slug: row.slug || "",
+    title: row.title || "",
+    summary: row.summary || "",
+    heroImage: heroFromContent || row.hero_image || "",
+    content: row.content || "",
+    status: row.status || "draft",
+    sortOrder: typeof row.sort_order === "number" ? row.sort_order : null
+  };
+};
 
 const buildArticleRow = (item) => {
   const normalized = normalizeCategoryList(
@@ -165,7 +168,7 @@ const buildServiceRow = (item) => {
     slug: item.slug?.trim() || fallbackSlug || null,
     title: item.title || "",
     summary: item.summary || summaryFromContent || "",
-    hero_image: item.heroImage || heroFromContent || "",
+    hero_image: heroFromContent || item.heroImage || "",
     content: item.content || "",
     status: item.status || "draft"
   };
@@ -1414,7 +1417,7 @@ export default function MockCmsApp() {
                 const previewHref = item.id ? `${previewBase}?id=${item.id}` : previewBase;
                 const heroImage =
                   activeTab === "services"
-                    ? item.heroImage || parseServiceContent(item.content || "")?.hero?.image?.url
+                    ? parseServiceContent(item.content || "")?.hero?.image?.url || item.heroImage
                     : item.heroImage;
                 return (
                 <div
