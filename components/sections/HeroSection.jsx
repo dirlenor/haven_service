@@ -9,9 +9,19 @@ const heroImages = [
     url: "/assets/images/hero_img/hero-marquee-1.jpg"
   },
   {
+    id: "hero-image-6",
+    alt: "Havenworks promotion roller blind",
+    url: "/assets/images/hero_img/hero-marquee-6.jpg"
+  },
+  {
     id: "hero-image-2",
     alt: "Havenworks interior inspiration 2",
     url: "/assets/images/hero_img/hero-marquee-2.jpg"
+  },
+  {
+    id: "hero-image-7",
+    alt: "Havenworks promotion room divider",
+    url: "/assets/images/hero_img/hero-marquee-7.jpg"
   },
   {
     id: "hero-image-3",
@@ -27,16 +37,6 @@ const heroImages = [
     id: "hero-image-5",
     alt: "Havenworks interior inspiration 5",
     url: "/assets/images/hero_img/hero-marquee-5.jpg"
-  },
-  {
-    id: "hero-image-6",
-    alt: "Havenworks interior inspiration 6",
-    url: "/assets/images/hero_img/hero-marquee-6.jpg"
-  },
-  {
-    id: "hero-image-7",
-    alt: "Havenworks interior inspiration 7",
-    url: "/assets/images/hero_img/hero-marquee-7.jpg"
   }
 ];
 
